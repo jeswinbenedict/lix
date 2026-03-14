@@ -1,0 +1,51 @@
+name: lix
+description: "A mood-based movie & music recommendation app."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── Localizations ─────────────────────────────────────────
+  flutter_localizations:
+    sdk: flutter
+
+  # ── UI ────────────────────────────────────────────────────
+  cupertino_icons: ^1.0.8
+
+  # ── Firebase ──────────────────────────────────────────────
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  cloud_firestore: ^6.1.2
+  google_sign_in: ^6.2.1
+
+  # ── Network ───────────────────────────────────────────────
+  http: ^1.6.0
+
+  # ── Image Caching (album covers, movie posters) ───────────
+  cached_network_image: ^3.4.1
+
+  # ── Audio Player (30s preview) ────────────────────────────
+  audioplayers: ^6.0.0
+
+  # ── URL Launcher (open Spotify / streaming links) ─────────
+  url_launcher: ^6.3.0
+
+  # ── Local Storage ─────────────────────────────────────────
+  shared_preferences: ^2.3.2
+
+  # ── Date Formatting (history timestamps) ──────────────────
+  intl: ^0.20.2                       # ✅ FIXED — was ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true

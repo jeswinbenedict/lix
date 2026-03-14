@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "607610620583",
+    "project_id": "lizx-3093e",
+    "storage_bucket": "lizx-3093e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:607610620583:android:13c771398b914154902982",
+        "android_client_info": {
+          "package_name": "com.example.lix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPn6R4G5I9WJkRqGy-Yk0fn9LM3kABgBA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
