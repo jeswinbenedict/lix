@@ -456,9 +456,9 @@ class _ChatScreenState extends State<ChatScreen> {
     for (final entry in languages.entries) {
       if (RegExp(r'\b' + entry.key + r'\b').hasMatch(t)) {
         String moodCtx = '';
-        if (RegExp(r'\b(sad|dukhi|emotional|kazhivu)\b').hasMatch(t))
+        if (RegExp(r'\b(sad|dukhi|emotional|kazhivu)\b').hasMatch(t)) {
           moodCtx = 'sad';
-        else if (RegExp(r'\b(happy|khushi|joyful)\b').hasMatch(t))
+        } else if (RegExp(r'\b(happy|khushi|joyful)\b').hasMatch(t))
           moodCtx = 'happy';
         else if (RegExp(r'\b(love|romantic|romance|kadhal)\b').hasMatch(t))
           moodCtx = 'love';
@@ -772,7 +772,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           ? Image.network(
                               movie['poster']!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _moviePlaceholder(),
+                              errorBuilder: (_, _, _) => _moviePlaceholder(),
                             )
                           : _moviePlaceholder(),
                     ),
@@ -855,7 +855,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           width: 40,
                           height: 40,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _musicIcon(),
+                          errorBuilder: (_, _, _) => _musicIcon(),
                         )
                       : _musicIcon(),
                 ),
@@ -1498,8 +1498,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       itemCount: _messages.length + (_isTyping ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (_isTyping && index == _messages.length)
+                        if (_isTyping && index == _messages.length) {
                           return _buildTypingIndicator();
+                        }
                         return _buildMessage(_messages[index]);
                       },
                     ),

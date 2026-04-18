@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // ✅ NEW
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
@@ -12,7 +12,14 @@ import 'language_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // ✅ Prevent [core/duplicate-app] crash on hot restart
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
   await ThemeService().init();
   await LanguageService().init();
 
@@ -42,11 +49,10 @@ class LixApp extends StatelessWidget {
           locale: LanguageService().locale,
           supportedLocales: LanguageService.supportedLocales,
           localizationsDelegates: const [
-            // ✅ NEW
-            GlobalMaterialLocalizations.delegate, // ✅ NEW
-            GlobalWidgetsLocalizations.delegate, // ✅ NEW
-            GlobalCupertinoLocalizations.delegate, // ✅ NEW
-          ], // ✅ NEW
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           home: const _AuthGate(),
         ),
       ),
@@ -76,7 +82,7 @@ class _AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          return HomeScreen();
+          return const HomeScreen();
         }
 
         return const LoginScreen();
