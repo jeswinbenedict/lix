@@ -1,127 +1,187 @@
-# 🎬 Lix — Multilingual Entertainment App
+<div align="center">
 
-> *Discover Movies and Music in your language — 42 languages, one platform.*
+# LIX
 
+### Multilingual Entertainment — Movies & Music Across 42 Languages
 
+[![Flutter](https://img.shields.io/badge/Built%20with-Flutter-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-brightgreen?style=flat-square)](https://github.com/jeswinbenedict/lix)
+[![Languages](https://img.shields.io/badge/Languages-42-blueviolet?style=flat-square)](https://github.com/jeswinbenedict/lix)
+[![RTL Support](https://img.shields.io/badge/RTL-Supported-orange?style=flat-square)](https://github.com/jeswinbenedict/lix)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
+*Breaking language barriers, one screen at a time.*
 
+[Getting Started](#getting-started) · [Features](#features) · [Languages](#supported-languages) · [Tech Stack](#tech-stack)
 
+</div>
 
-***
+---
 
-## 📖 About Lix
+## Overview
 
-**Lix** is a multilingual entertainment platform that breaks language barriers in digital media. Built with Flutter, the entire app UI — every label, button, and screen — dynamically switches across **42 languages** in real time. With native **RTL support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri, Lix is truly built for everyone.
+**Lix** is a multilingual entertainment platform that makes movies and music truly accessible — regardless of the language you speak. Built with Flutter, every label, button, and screen dynamically switches across **42 languages** in real time, with full **RTL support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri.
 
-***
+Whether you're discovering regional cinema or exploring global music, Lix adapts to you.
 
-## ✨ Features
+---
+
+## Features
+
+### Core Experience
 
 | Feature | Description |
-|--------|-------------|
-| 🌐 42 Languages | Full UI translation — 22 Indian + 20 Global languages |
-| 🎥 Movies | Browse and discover films by language and category |
-| 🎵 Music | Explore music across cultures and genres |
-| 🧠 Mood Engine | Content recommended based on your current mood |
-| 🇮🇳 Indian & Foreign Tabs | Dedicated content sections for Indian and global media |
-| 🔍 Smart Search | Instantly find content or switch languages |
-| ❤️ Favourites | Bookmark content you love |
-| 🕑 Watch History | Pick up right where you left off |
-| 🌙 Dark Mode | Comfortable viewing at any time |
-| 🔔 Notifications | Stay updated with new releases |
-| ↔️ RTL Support | Seamless layout for right-to-left language users |
-| 👤 User Profile | Login, personalisation, and account management |
+|---|---|
+| **42 Languages** | Full UI localisation across 22 Indian and 20 global languages |
+| **Movies** | Browse and discover films by language, genre, and category |
+| **Music** | Explore music across cultures, moods, and regions |
+| **Mood Engine** | AI-driven content recommendations based on your emotional state |
+| **Indian & Foreign Tabs** | Curated sections for Indian and international content |
 
-***
+### Personalisation
 
-## 🧠 Mood-Based Discovery
+| Feature | Description |
+|---|---|
+| **Smart Search** | Instantly find content or switch languages on the fly |
+| **Favourites** | Bookmark content you love, always within reach |
+| **Watch History** | Seamlessly pick up right where you left off |
+| **User Profile** | Personalised login and account management |
 
-Lix understands how you feel and recommends content accordingly.
+### Accessibility & Design
 
-> 😊 Happy · 😢 Sad · 😰 Anxious · 😐 Bored · 💪 Motivated · 💕 Romantic
+| Feature | Description |
+|---|---|
+| **RTL Support** | Fluid, pixel-perfect layouts for right-to-left languages |
+| **Dark Mode** | Comfortable viewing experience at any hour |
+| **Notifications** | Stay in the loop with new releases and updates |
 
-***
+---
 
-## 🗺️ App Workflow
+## Mood-Based Discovery
 
-```
-┌─────────────────────────────────────────┐
-│             User Opens Lix              │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│        Select Your Language             │
-│  Indian: Hindi, Tamil, Telugu...        │
-│  Global: English, Arabic, Japanese...   │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│              Home Screen                │
-│  ┌──────────┬──────────┬─────────────┐  │
-│  │ 🎥 Movies│ 🎵 Music │  💬 Chat   │  │
-│  └──────────┴──────────┴─────────────┘  │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│         🧠 Mood Engine Activates        │
-│   Picks content matching your mood      │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│    ❤️ Save Favourites / 🕑 History      │
-└─────────────────────────────────────────┘
-```
-
-***
-
-## 🌐 Supported Languages
-
-### 🇮🇳 Indian (22)
-`Hindi` `Tamil` `Telugu` `Kannada` `Malayalam` `Bengali` `Marathi` `Gujarati` `Punjabi` `Odia` `Urdu` `Assamese` `Kashmiri` `Konkani` `Maithili` `Manipuri` `Nepali` `Sanskrit` `Santali` `Sindhi` `Bodo` `Dogri`
-
-### 🌍 Global (20)
-`English` `Mandarin` `Spanish` `French` `Arabic` `Portuguese` `Russian` `Japanese` `German` `Korean` `Italian` `Turkish` `Dutch` `Polish` `Swedish` `Greek` `Hebrew` `Thai` `Vietnamese` `Indonesian`
-
-***
-
-## 🛠️ Tech Stack
+Lix goes beyond categories — it understands how you feel.
 
 ```
-Framework       →   Flutter (Dart)
-State Mgmt      →   Provider (ChangeNotifier)
-Local Storage   →   SharedPreferences
-Localisation    →   Custom in-app translation engine (42 languages)
-Platform        →   Android & iOS
+Happy  ·  Sad  ·  Anxious  ·  Bored  ·  Motivated  ·  Romantic
 ```
 
-***
+Select your mood and let the engine surface content that resonates.
 
-## 🚀 Getting Started
+---
+
+## How It Works
+
+```
+  Open Lix
+      │
+      ▼
+  Choose Your Language
+  ├── Indian: Hindi, Tamil, Telugu, Kannada, and 18 more
+  └── Global: English, Arabic, Japanese, Korean, and 16 more
+      │
+      ▼
+  Land on Home
+  ├── Movies       Browse by language, genre, and category
+  ├── Music        Discover across cultures and regions
+  └── Chat         Connect and discuss
+      │
+      ▼
+  Mood Engine
+  └── Tailors your feed to match how you feel
+      │
+      ▼
+  Your Space
+  ├── Save Favourites
+  └── Resume from History
+```
+
+---
+
+## Supported Languages
+
+### Indian Languages — 22
+
+| | | | | |
+|---|---|---|---|---|
+| Hindi | Tamil | Telugu | Kannada | Malayalam |
+| Bengali | Marathi | Gujarati | Punjabi | Odia |
+| Urdu | Assamese | Kashmiri | Konkani | Maithili |
+| Manipuri | Nepali | Sanskrit | Santali | Sindhi |
+| Bodo | Dogri | | | |
+
+### Global Languages — 20
+
+| | | | | |
+|---|---|---|---|---|
+| English | Mandarin | Spanish | French | Arabic |
+| Portuguese | Russian | Japanese | German | Korean |
+| Italian | Turkish | Dutch | Polish | Swedish |
+| Greek | Hebrew | Thai | Vietnamese | Indonesian |
+
+---
+
+## Tech Stack
+
+```
+Framework         Flutter (Dart)
+State Management  Provider — ChangeNotifier pattern
+Local Storage     SharedPreferences
+Localisation      Custom in-app translation engine (42 languages)
+RTL               Native Flutter bidirectionality
+Platforms         Android · iOS
+```
+
+---
+
+## Getting Started
+
+**Prerequisites:** Flutter SDK installed and configured on your machine.
 
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/jeswinbenedict/lix.git
 
-# 2. Navigate to project
+# Navigate into the project
 cd lix
 
-# 3. Install dependencies
+# Install dependencies
 flutter pub get
 
-# 4. Run the app
+# Launch the app
 flutter run
 ```
 
-***
+---
 
-## 👨‍💻 Developer
+## Project Structure
 
-**Jeswin Benedict** — [GitHub](https://github.com/jeswinbenedict)
+```
+lix/
+├── lib/
+│   ├── main.dart               App entry point
+│   ├── screens/                All app screens
+│   ├── widgets/                Reusable UI components
+│   ├── providers/              State management
+│   ├── models/                 Data models
+│   └── localisation/           42-language translation engine
+├── assets/
+│   ├── images/
+│   └── translations/
+└── pubspec.yaml
+```
 
-***
+---
 
-*"Breaking language barriers, one screen at a time."* 🌏
+## Developer
+
+**Jeswin Benedict**
+
+[![GitHub](https://img.shields.io/badge/GitHub-jeswinbenedict-181717?style=flat-square&logo=github)](https://github.com/jeswinbenedict)
+
+---
+
+<div align="center">
+
+Made with dedication for a multilingual world.
+
+</div>
