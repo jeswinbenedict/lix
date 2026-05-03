@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'tmdb_service.dart';
 import 'movie_detail_screen.dart';
-import 'app_theme.dart';
 import 'home_screen.dart';
 import 'music_screen.dart';
 import 'profile_screen.dart';
@@ -56,8 +55,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page,
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -132,7 +131,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -221,7 +220,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (_, __) => _ShimmerCard(),
+      itemBuilder: (_, _) => _ShimmerCard(),
     );
   }
 
@@ -285,13 +284,15 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     (route) => false,
                   );
                 }
-                if (i == 2)
+                if (i == 2) {
                   Navigator.push(
                     context,
                     _slideRoute(MusicScreen(mood: _selectedMood)),
                   );
-                if (i == 3)
+                }
+                if (i == 3) {
                   Navigator.push(context, _slideRoute(const ProfileScreen()));
+                }
               },
               behavior: HitTestBehavior.opaque,
               child: Column(
@@ -421,7 +422,7 @@ class _MovieCard extends StatelessWidget {
                         poster,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) => _placeholder(),
+                        errorBuilder: (_, _, _) => _placeholder(),
                       )
                     : _placeholder(),
               ),

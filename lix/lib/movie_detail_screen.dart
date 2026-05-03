@@ -262,7 +262,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ? Image.network(
                           poster,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _posterPlaceholder(),
+                          errorBuilder: (_, _, _) => _posterPlaceholder(),
                         )
                       : _posterPlaceholder(),
                   // Bottom fade into bg
@@ -557,7 +557,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: 5,
-                      itemBuilder: (_, __) => _SimilarShimmer(),
+                      itemBuilder: (_, _) => _SimilarShimmer(),
                     ),
                   )
                 : SizedBox(
@@ -603,7 +603,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                         ? Image.network(
                                             m['poster']!,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) =>
+                                            errorBuilder: (_, _, _) =>
                                                 _miniPlaceholder(),
                                           )
                                         : _miniPlaceholder(),

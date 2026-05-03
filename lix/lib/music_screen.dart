@@ -95,12 +95,12 @@ class _MusicScreenState extends State<MusicScreen> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, animation, __) => MusicPlayerScreen(
+        pageBuilder: (_, animation, _) => MusicPlayerScreen(
           song: enriched[index],
           playlist: enriched,
           currentIndex: index,
         ),
-        transitionsBuilder: (_, animation, __, child) => SlideTransition(
+        transitionsBuilder: (_, animation, _, child) => SlideTransition(
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
               .animate(
                 CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -150,7 +150,7 @@ class _MusicScreenState extends State<MusicScreen> {
                           width: 52,
                           height: 52,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _albumPlaceholder(52),
+                          errorBuilder: (_, _, _) => _albumPlaceholder(52),
                         )
                       : _albumPlaceholder(52),
                 ),
@@ -337,8 +337,8 @@ class _MusicScreenState extends State<MusicScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page,
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -411,7 +411,7 @@ class _MusicScreenState extends State<MusicScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -470,7 +470,7 @@ class _MusicScreenState extends State<MusicScreen> {
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                       itemCount: _songs.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (_, i) => _SongCard(
                         song: _songs[i],
                         onPlay: () => _openPlayer(i),
@@ -523,7 +523,7 @@ class _MusicScreenState extends State<MusicScreen> {
                     width: 44,
                     height: 44,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _albumPlaceholder(44),
+                    errorBuilder: (_, _, _) => _albumPlaceholder(44),
                   )
                 : _albumPlaceholder(44),
           ),
@@ -698,8 +698,8 @@ class _MusicScreenState extends State<MusicScreen> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       itemCount: 7,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (_, __) => _ShimmerCard(),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
+      itemBuilder: (_, _) => _ShimmerCard(),
     );
   }
 
@@ -795,7 +795,7 @@ class _SongCard extends StatelessWidget {
                       width: 72,
                       height: 72,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholder(),
+                      errorBuilder: (_, _, _) => _placeholder(),
                     )
                   : _placeholder(),
             ),

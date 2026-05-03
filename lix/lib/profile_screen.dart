@@ -22,8 +22,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   // ── Theme tokens ──────────────────────────────────────────
   static const Color _purple = Color(0xFF7C3AED);
-  static const Color _pink = Color(0xFFE91E8C);
-  static const Color _orange = Color(0xFFFF9500);
   static const Color _bgColor = Color(0xFFF2F2F7);
   static const Color _cardBg = Color(0xFFFFFFFF);
   static const Color _textDark = Color(0xFF1C1C1E);
@@ -110,8 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ── Helpers ───────────────────────────────────────────────
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, __) => page,
-    transitionsBuilder: (_, animation, __, child) => SlideTransition(
+    pageBuilder: (_, animation, _) => page,
+    transitionsBuilder: (_, animation, _, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,

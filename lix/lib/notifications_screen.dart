@@ -46,7 +46,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Future<void> _markAllRead() async {
     await NotificationsService.markAllAsRead();
     setState(() {
-      for (final n in _notifications) n['read'] = true;
+      for (final n in _notifications) {
+        n['read'] = true;
+      }
     });
   }
 
@@ -147,8 +149,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       _notifications.where((n) => n['read'] == false).length;
 
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, __) => page,
-    transitionsBuilder: (_, animation, __, child) => SlideTransition(
+    pageBuilder: (_, animation, _) => page,
+    transitionsBuilder: (_, animation, _, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
@@ -376,7 +378,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Image.network(
                           imgUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          errorBuilder: (_, _, _) =>
                               Icon(icon, color: Colors.white, size: 22),
                         ),
                       )

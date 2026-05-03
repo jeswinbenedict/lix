@@ -376,8 +376,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         ? Image.network(
                             cover,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                _artPlaceholder(accent),
+                            errorBuilder: (_, _, _) => _artPlaceholder(accent),
                           )
                         : _artPlaceholder(accent),
                   ),
