@@ -20,10 +20,10 @@ void main() async {
     );
   }
 
-  await ThemeService().init();
-  await LanguageService().init();
+  await ThemeService.instance.init();
+  await LanguageService.instance.init();
 
-  SystemChrome.setPreferredOrientations([
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
@@ -37,16 +37,16 @@ class LixApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: ThemeService(),
+      listenable: ThemeService.instance,
       builder: (context, _) => ListenableBuilder(
-        listenable: LanguageService(),
+        listenable: LanguageService.instance,
         builder: (context, _) => MaterialApp(
           title: 'Lix',
           debugShowCheckedModeBanner: false,
-          themeMode: ThemeService().themeMode,
+          themeMode: ThemeService.instance.themeMode,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          locale: LanguageService().locale,
+          locale: LanguageService.instance.locale,
           supportedLocales: LanguageService.supportedLocales,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
@@ -69,6 +69,7 @@ class _AuthGate extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        // ✅ Show loader while Firebase checks auth state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             backgroundColor: AppTheme.background,
@@ -81,6 +82,21 @@ class _AuthGate extends StatelessWidget {
           );
         }
 
+        // ✅ Handle stream errors gracefully
+        if (snapshot.hasError) {
+          return Scaffold(
+            backgroundColor: AppTheme.background,
+            body: Center(
+              child: Text(
+                'Something went wrong.\nPlease restart the app.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red.shade300),
+              ),
+            ),
+          );
+        }
+
+        // ✅ Navigate based on auth state
         if (snapshot.hasData && snapshot.data != null) {
           return const HomeScreen();
         }

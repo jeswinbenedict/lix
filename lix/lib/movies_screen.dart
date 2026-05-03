@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'tmdb_service.dart';
 import 'movie_detail_screen.dart';
 import 'app_theme.dart';
+import 'home_screen.dart';
+import 'music_screen.dart';
+import 'profile_screen.dart';
 
 class MoviesScreen extends StatefulWidget {
   final String mood;
@@ -16,14 +19,21 @@ class _MoviesScreenState extends State<MoviesScreen> {
   List<Map<String, String>> _movies = [];
   bool _loading = true;
   String _selectedMood = '';
+  int _selectedNav = 1; // Movies tab active
 
-  final List<Map<String, dynamic>> _moods = const [
-    {'label': 'Happy', 'emoji': '😊', 'color': AppTheme.moodHappy},
-    {'label': 'Sad', 'emoji': '😢', 'color': AppTheme.moodSad},
-    {'label': 'Anxious', 'emoji': '😰', 'color': AppTheme.moodAnxious},
-    {'label': 'Bored', 'emoji': '😴', 'color': AppTheme.moodBored},
-    {'label': 'Motivated', 'emoji': '💪', 'color': AppTheme.moodMotivated},
-    {'label': 'Romantic', 'emoji': '😍', 'color': AppTheme.moodRomantic},
+  static const Color _purple = Color(0xFF7C3AED);
+  static const Color _bgColor = Color(0xFFF2F2F7);
+  static const Color _cardBg = Color(0xFFFFFFFF);
+  static const Color _textDark = Color(0xFF1C1C1E);
+  static const Color _textGrey = Color(0xFF8E8E93);
+
+  final List<String> _moods = const [
+    'Happy',
+    'Sad',
+    'Anxious',
+    'Bored',
+    'Motivated',
+    'Romantic',
   ];
 
   @override
@@ -44,63 +54,70 @@ class _MoviesScreenState extends State<MoviesScreen> {
     }
   }
 
+  Route _slideRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (_, animation, __) => page,
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+            .animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
+        child: child,
+      ),
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hPad = AppTheme.horizontalPadding(context);
-
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: _bgColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Header ──────────────────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(hPad, 20, hPad, 0),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surface,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                        border: Border.all(color: AppTheme.border),
-                        boxShadow: AppTheme.shadowSM,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 16,
-                        color: AppTheme.textPrimary,
+                  // Back button — left aligned
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 18,
+                          color: _textDark,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Movies for You 🎬',
-                          style: TextStyle(
-                            color: AppTheme.textPrimary,
-                            fontSize: AppTheme.heading2(context),
-                            fontWeight: FontWeight.bold,
-                          ),
+                  // Centered title
+                  Column(
+                    children: [
+                      const Text(
+                        'Movies for You',
+                        style: TextStyle(
+                          color: _textDark,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.3,
                         ),
-                        Text(
-                          'Mood: $_selectedMood',
-                          style: TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontSize: AppTheme.caption(context),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Based on your mood',
+                        style: TextStyle(color: _textGrey, fontSize: 12),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -108,59 +125,53 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
             const SizedBox(height: 16),
 
-            // ── Mood Filter Chips ────────────────────────
+            // ── Mood Chips ───────────────────────────────
             SizedBox(
-              height: 44,
-              child: ListView.builder(
+              height: 38,
+              child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: hPad),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
-                  final m = _moods[i];
-                  final selected = m['label'] == _selectedMood;
-                  final color = m['color'] as Color;
+                  final mood = _moods[i];
+                  final isSelected = mood == _selectedMood;
                   return GestureDetector(
                     onTap: () {
                       HapticFeedback.lightImpact();
-                      setState(() => _selectedMood = m['label']);
-                      _fetchMovies(m['label']);
+                      setState(() => _selectedMood = mood);
+                      _fetchMovies(mood);
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      margin: const EdgeInsets.only(right: 10),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 18,
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: selected ? color : AppTheme.surface,
-                        borderRadius: BorderRadius.circular(
-                          AppTheme.radiusFull,
-                        ),
+                        color: isSelected ? _purple : _cardBg,
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: selected ? color : AppTheme.border,
+                          color: isSelected ? _purple : Colors.grey.shade300,
+                          width: 1.5,
                         ),
-                        boxShadow: selected ? AppTheme.shadowSM : [],
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: _purple.withOpacity(0.3),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : [],
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            m['emoji'],
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            m['label'],
-                            style: TextStyle(
-                              color: selected
-                                  ? Colors.white
-                                  : AppTheme.textSecondary,
-                              fontSize: AppTheme.caption(context),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        mood,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : _textDark,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   );
@@ -170,20 +181,20 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
             const SizedBox(height: 16),
 
-            // ── Movie Grid ──────────────────────────────
+            // ── Movie Grid ───────────────────────────────
             Expanded(
               child: _loading
-                  ? _buildShimmer(hPad)
+                  ? _buildShimmer()
                   : _movies.isEmpty
                   ? _buildEmpty()
                   : GridView.builder(
                       physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 20),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 14,
-                            mainAxisSpacing: 14,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
                             childAspectRatio: 0.62,
                           ),
                       itemCount: _movies.length,
@@ -193,66 +204,188 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ],
         ),
       ),
+
+      // ── Bottom Nav Bar ───────────────────────────────
+      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
-  Widget _buildShimmer(double hPad) {
+  Widget _buildShimmer() {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 20),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 14,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (_, _) => Container(
-        decoration: BoxDecoration(
-          color: AppTheme.shimmerBase,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLG),
-        ),
-      ),
+      itemBuilder: (_, __) => _ShimmerCard(),
     );
   }
 
   Widget _buildEmpty() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('🎬', style: TextStyle(fontSize: 48)),
-          const SizedBox(height: 12),
+          Icon(Icons.movie_outlined, size: 56, color: Color(0xFF8E8E93)),
+          SizedBox(height: 12),
           Text(
             'No movies found',
             style: TextStyle(
-              color: AppTheme.textPrimary,
-              fontSize: AppTheme.bodyLarge(context),
+              color: Color(0xFF1C1C1E),
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             'Try a different mood',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: AppTheme.bodyRegular(context),
-            ),
+            style: TextStyle(color: Color(0xFF8E8E93), fontSize: 14),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildBottomNav(BuildContext context) {
+    final items = [
+      {'icon': Icons.home_rounded, 'label': 'Home'},
+      {'icon': Icons.movie_outlined, 'label': 'Movies'},
+      {'icon': Icons.music_note_outlined, 'label': 'Music'},
+      {'icon': Icons.person_outline, 'label': 'Profile'},
+    ];
+
+    return Container(
+      height: 72,
+      decoration: BoxDecoration(
+        color: _cardBg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: List.generate(items.length, (i) {
+          final isActive = _selectedNav == i;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setState(() => _selectedNav = i);
+                if (i == 0) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    _slideRoute(const HomeScreen()),
+                    (route) => false,
+                  );
+                }
+                if (i == 2)
+                  Navigator.push(
+                    context,
+                    _slideRoute(MusicScreen(mood: _selectedMood)),
+                  );
+                if (i == 3)
+                  Navigator.push(context, _slideRoute(const ProfileScreen()));
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    items[i]['icon'] as IconData,
+                    color: isActive ? _purple : const Color(0xFF8E8E93),
+                    size: 24,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    items[i]['label'] as String,
+                    style: TextStyle(
+                      color: isActive ? _purple : const Color(0xFF8E8E93),
+                      fontSize: 11,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: isActive ? 18 : 0,
+                    height: isActive ? 3 : 0,
+                    decoration: BoxDecoration(
+                      color: _purple,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
 }
 
-// ── Movie Card ───────────────────────────────────────────────
+// ── Shimmer Card ──────────────────────────────────────────────
+class _ShimmerCard extends StatefulWidget {
+  @override
+  State<_ShimmerCard> createState() => _ShimmerCardState();
+}
+
+class _ShimmerCardState extends State<_ShimmerCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(begin: 0.3, end: 1.0).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _anim,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Movie Card ────────────────────────────────────────────────
 class _MovieCard extends StatelessWidget {
   final Map<String, String> movie;
   const _MovieCard({required this.movie});
 
+  static const Color _textDark = Color(0xFF1C1C1E);
+  static const Color _textGrey = Color(0xFF8E8E93);
+
   @override
   Widget build(BuildContext context) {
-    final hasPoster = movie['poster'] != null && movie['poster']!.isNotEmpty;
+    final poster = movie['poster'] ?? '';
+    final title = movie['title'] ?? '';
+    final rating = movie['rating'] ?? '';
+    final year = movie['year'] ?? '';
 
     return GestureDetector(
       onTap: () {
@@ -264,68 +397,72 @@ class _MovieCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLG),
-          border: Border.all(color: AppTheme.border),
-          boxShadow: AppTheme.shadowSM,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Poster
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(AppTheme.radiusLG),
+                  top: Radius.circular(16),
                 ),
-                child: hasPoster
+                child: poster.isNotEmpty
                     ? Image.network(
-                        movie['poster']!,
+                        poster,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, _, _) => _placeholder(),
+                        errorBuilder: (_, __, ___) => _placeholder(),
                       )
                     : _placeholder(),
               ),
             ),
+            // Info
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    movie['title'] ?? '',
-                    style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: AppTheme.caption(context),
+                    title,
+                    style: const TextStyle(
+                      color: _textDark,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 5),
                   Row(
                     children: [
                       const Icon(
                         Icons.star_rounded,
-                        color: AppTheme.warning,
+                        color: Color(0xFFFFD700),
                         size: 13,
                       ),
                       const SizedBox(width: 3),
                       Text(
-                        movie['rating'] ?? '',
-                        style: TextStyle(
-                          color: AppTheme.warning,
-                          fontSize: AppTheme.caption(context),
+                        rating,
+                        style: const TextStyle(
+                          color: Color(0xFFFFD700),
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const Spacer(),
                       Text(
-                        movie['year'] ?? '',
-                        style: TextStyle(
-                          color: AppTheme.textSecondary,
-                          fontSize: AppTheme.caption(context),
-                        ),
+                        year,
+                        style: const TextStyle(color: _textGrey, fontSize: 11),
                       ),
                     ],
                   ),
@@ -338,14 +475,12 @@ class _MovieCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() => Container(
-    color: AppTheme.shimmerBase,
-    child: const Center(
-      child: Icon(
-        Icons.movie_outlined,
-        color: AppTheme.textSecondary,
-        size: 32,
+  Widget _placeholder() {
+    return Container(
+      color: const Color(0xFF1A1A2E),
+      child: const Center(
+        child: Icon(Icons.movie_outlined, color: Colors.white24, size: 36),
       ),
-    ),
-  );
+    );
+  }
 }

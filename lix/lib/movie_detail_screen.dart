@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'tmdb_service.dart';
-import 'app_theme.dart';
 import 'favourites_service.dart';
-import 'history_service.dart'; // ✅ NEW
+import 'history_service.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Map<String, String> movie;
@@ -14,19 +13,27 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  static const Color _purple = Color(0xFF7C3AED);
+  static const Color _bgColor = Color(0xFFF2F2F7);
+  static const Color _cardBg = Color(0xFFFFFFFF);
+  static const Color _textDark = Color(0xFF1C1C1E);
+  static const Color _textGrey = Color(0xFF8E8E93);
+  static const Color _gold = Color(0xFFFFD700);
+  static const Color _red = Color(0xFFFF0000);
+
   bool _isLiked = false;
   bool _likeLoading = false;
   bool _inWatchlist = false;
+  bool _trailerLoading = false;
   List<Map<String, String>> _similarMovies = [];
   bool _loadingSimilar = true;
-  bool _trailerLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadSimilarMovies();
     _checkFav();
-    HistoryService.addMovieHistory(widget.movie); // ✅ NEW — save to history
+    HistoryService.addMovieHistory(widget.movie);
   }
 
   Future<void> _checkFav() async {
@@ -43,6 +50,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         _similarMovies = movies
             .where((m) => m['title'] != widget.movie['title'])
             .take(10)
+            .map((m) => Map<String, String>.from(m))
             .toList();
         _loadingSimilar = false;
       });
@@ -63,11 +71,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           content: Text(
             added ? '❤️ Added to Favourites' : '💔 Removed from Favourites',
           ),
-          backgroundColor: added ? Colors.red : AppTheme.textSecondary,
+          backgroundColor: added ? Colors.redAccent : _textGrey,
           duration: const Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       );
@@ -90,10 +98,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Could not open YouTube'),
-              backgroundColor: AppTheme.error,
+              backgroundColor: Colors.redAccent,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           );
@@ -111,7 +119,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       5,
       (i) => Icon(
         i < stars ? Icons.star_rounded : Icons.star_outline_rounded,
-        color: AppTheme.warning,
+        color: _gold,
         size: 18,
       ),
     );
@@ -122,7 +130,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
@@ -134,7 +142,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             label,
             style: TextStyle(
               color: color,
-              fontSize: AppTheme.caption(context),
+              fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -146,21 +154,22 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final movie = widget.movie;
-    final hPad = AppTheme.horizontalPadding(context);
     final rating = movie['rating'] ?? '0';
-    final hasPoster = movie['poster'] != null && movie['poster']!.isNotEmpty;
+    final poster = movie['poster'] ?? '';
+    final hasPoster = poster.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: _bgColor,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // ── Collapsible Header ───────────────────────────
+          // ── Collapsible Poster Header ─────────────────────
           SliverAppBar(
             expandedHeight: MediaQuery.of(context).size.height * 0.45,
             pinned: true,
-            backgroundColor: AppTheme.surface,
+            backgroundColor: _cardBg,
             elevation: 0,
+            surfaceTintColor: Colors.transparent,
             leading: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
@@ -189,11 +198,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ? '✅ Added to Watchlist'
                             : 'Removed from Watchlist',
                       ),
-                      backgroundColor: AppTheme.primary,
+                      backgroundColor: _purple,
                       duration: const Duration(seconds: 1),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   );
@@ -209,12 +218,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     _inWatchlist
                         ? Icons.bookmark_rounded
                         : Icons.bookmark_border_rounded,
-                    color: _inWatchlist ? AppTheme.warning : Colors.white,
+                    color: _inWatchlist ? _gold : Colors.white,
                     size: 20,
                   ),
                 ),
               ),
-              // Like — saves to Firebase
+              // Favourite
               GestureDetector(
                 onTap: _likeLoading ? null : _toggleFav,
                 child: Container(
@@ -248,13 +257,15 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
+                  // Poster image
                   hasPoster
                       ? Image.network(
-                          movie['poster']!,
+                          poster,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _posterPlaceholder(),
+                          errorBuilder: (_, __, ___) => _posterPlaceholder(),
                         )
                       : _posterPlaceholder(),
+                  // Bottom fade into bg
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -267,13 +278,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            AppTheme.background.withOpacity(0.9),
-                            AppTheme.background,
+                            _bgColor.withOpacity(0.85),
+                            _bgColor,
                           ],
                         ),
                       ),
                     ),
                   ),
+                  // Rating badge
                   Positioned(
                     top: 60,
                     right: 16,
@@ -283,14 +295,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                        color: Colors.black.withOpacity(0.65),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
                         children: [
                           const Icon(
                             Icons.star_rounded,
-                            color: AppTheme.warning,
+                            color: _gold,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
@@ -318,59 +330,61 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
           ),
 
-          // ── Content ──────────────────────────────────────
+          // ── Body Content ────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 0),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title
                   Text(
                     movie['title'] ?? '',
-                    style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: AppTheme.heading1(context),
+                    style: const TextStyle(
+                      color: _textDark,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       height: 1.2,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 10),
+
+                  // Stars + rating
                   Row(
                     children: [
                       ..._buildStars(rating),
                       const SizedBox(width: 8),
                       Text(
                         '$rating / 10',
-                        style: TextStyle(
-                          color: AppTheme.warning,
-                          fontSize: AppTheme.bodyRegular(context),
+                        style: const TextStyle(
+                          color: _gold,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
+
+                  // Info chips
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (movie['year'] != null && movie['year']!.isNotEmpty)
+                      if ((movie['year'] ?? '').isNotEmpty)
                         _infoChip(
                           movie['year']!,
                           Icons.calendar_today_rounded,
-                          AppTheme.primary,
+                          _purple,
                         ),
-                      if (movie['genre'] != null && movie['genre']!.isNotEmpty)
+                      if ((movie['genre'] ?? '').isNotEmpty)
                         _infoChip(
                           movie['genre']!,
                           Icons.local_movies_rounded,
-                          AppTheme.secondary,
+                          Colors.teal,
                         ),
-                      _infoChip(
-                        'HD Quality',
-                        Icons.hd_rounded,
-                        AppTheme.moodMotivated,
-                      ),
+                      _infoChip('HD Quality', Icons.hd_rounded, Colors.green),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -392,10 +406,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                        borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF0000).withOpacity(0.35),
+                            color: _red.withOpacity(0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -403,79 +417,89 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (_trailerLoading)
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          else ...[
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.play_arrow_rounded,
-                                  color: Color(0xFFFF0000),
-                                  size: 20,
+                        children: _trailerLoading
+                            ? [
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Watch Trailer on YouTube',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: AppTheme.bodyLarge(context),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ],
+                              ]
+                            : [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.play_arrow_rounded,
+                                      color: _red,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'Watch Trailer on YouTube',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 24),
-                  Divider(color: AppTheme.border),
+                  Divider(color: Colors.grey.shade200),
                   const SizedBox(height: 16),
 
-                  Text(
+                  // Synopsis
+                  const Text(
                     'Synopsis',
                     style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: AppTheme.heading2(context),
+                      color: _textDark,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: -0.3,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    movie['desc'] != null && movie['desc']!.isNotEmpty
+                    (movie['desc'] != null && movie['desc']!.isNotEmpty)
                         ? movie['desc']!
                         : 'No description available for this movie.',
-                    style: TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: AppTheme.bodyRegular(context),
+                    style: const TextStyle(
+                      color: _textGrey,
+                      fontSize: 14,
                       height: 1.7,
                     ),
                   ),
 
                   const SizedBox(height: 24),
+
+                  // Details card
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLG),
-                      border: Border.all(color: AppTheme.border),
-                      boxShadow: AppTheme.shadowSM,
+                      color: _cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -484,19 +508,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           'Release Year',
                           movie['year'] ?? 'N/A',
                         ),
-                        Divider(height: 20, color: AppTheme.border),
+                        Divider(height: 20, color: Colors.grey.shade100),
                         _detailRow(
                           Icons.star_rounded,
                           'TMDB Rating',
                           '$rating / 10',
                         ),
-                        Divider(height: 20, color: AppTheme.border),
+                        Divider(height: 20, color: Colors.grey.shade100),
                         _detailRow(
                           Icons.category_rounded,
                           'Genre',
                           movie['genre'] ?? 'N/A',
                         ),
-                        Divider(height: 20, color: AppTheme.border),
+                        Divider(height: 20, color: Colors.grey.shade100),
                         _detailRow(
                           Icons.language_rounded,
                           'Source',
@@ -507,12 +531,15 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
 
                   const SizedBox(height: 28),
-                  Text(
+
+                  // Similar Movies header
+                  const Text(
                     'Similar Movies',
                     style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: AppTheme.heading2(context),
+                      color: _textDark,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: -0.3,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -521,37 +548,27 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
           ),
 
-          // ── Similar Movies ───────────────────────────────
+          // ── Similar Movies Horizontal List ───────────────
           SliverToBoxAdapter(
             child: _loadingSimilar
                 ? SizedBox(
                     height: 200,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: hPad),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: 5,
-                      itemBuilder: (_, _) => Container(
-                        width: 120,
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          color: AppTheme.shimmerBase,
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusMD,
-                          ),
-                        ),
-                      ),
+                      itemBuilder: (_, __) => _SimilarShimmer(),
                     ),
                   )
                 : SizedBox(
                     height: 245,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: hPad),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: _similarMovies.length,
                       itemBuilder: (_, i) {
                         final m = _similarMovies[i];
-                        final hasCover =
-                            m['poster'] != null && m['poster']!.isNotEmpty;
+                        final hasCover = (m['poster'] ?? '').isNotEmpty;
                         return GestureDetector(
                           onTap: () => Navigator.pushReplacement(
                             context,
@@ -563,19 +580,22 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             width: 120,
                             margin: const EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
-                              color: AppTheme.surface,
-                              borderRadius: BorderRadius.circular(
-                                AppTheme.radiusMD,
-                              ),
-                              border: Border.all(color: AppTheme.border),
-                              boxShadow: AppTheme.shadowSM,
+                              color: _cardBg,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(AppTheme.radiusMD),
+                                    top: Radius.circular(14),
                                   ),
                                   child: AspectRatio(
                                     aspectRatio: 2 / 3,
@@ -583,7 +603,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                         ? Image.network(
                                             m['poster']!,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, _, _) =>
+                                            errorBuilder: (_, __, ___) =>
                                                 _miniPlaceholder(),
                                           )
                                         : _miniPlaceholder(),
@@ -597,29 +617,28 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     children: [
                                       Text(
                                         m['title'] ?? '',
-                                        style: TextStyle(
-                                          color: AppTheme.textPrimary,
-                                          fontSize: AppTheme.caption(context),
+                                        style: const TextStyle(
+                                          color: _textDark,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      const SizedBox(height: 2),
+                                      const SizedBox(height: 3),
                                       Row(
                                         children: [
                                           const Icon(
                                             Icons.star_rounded,
-                                            color: AppTheme.warning,
+                                            color: _gold,
                                             size: 11,
                                           ),
                                           const SizedBox(width: 2),
                                           Text(
                                             m['rating'] ?? '',
-                                            style: TextStyle(
-                                              color: AppTheme.warning,
-                                              fontSize:
-                                                  AppTheme.caption(context) - 1,
+                                            style: const TextStyle(
+                                              color: _gold,
+                                              fontSize: 10,
                                             ),
                                           ),
                                         ],
@@ -635,6 +654,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ),
                   ),
           ),
+
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
@@ -647,25 +667,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight,
-            borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+            color: _purple.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primary, size: 16),
+          child: Icon(icon, color: _purple, size: 16),
         ),
         const SizedBox(width: 12),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: AppTheme.bodyRegular(context),
-          ),
-        ),
+        Text(label, style: const TextStyle(color: _textGrey, fontSize: 14)),
         const Spacer(),
         Text(
           value,
-          style: TextStyle(
-            color: AppTheme.textPrimary,
-            fontSize: AppTheme.bodyRegular(context),
+          style: const TextStyle(
+            color: _textDark,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -674,24 +688,59 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Widget _posterPlaceholder() => Container(
-    color: AppTheme.shimmerBase,
+    color: const Color(0xFF1A1A2E),
     child: const Center(
-      child: Icon(
-        Icons.movie_outlined,
-        color: AppTheme.textSecondary,
-        size: 60,
-      ),
+      child: Icon(Icons.movie_outlined, color: Colors.white24, size: 60),
     ),
   );
 
   Widget _miniPlaceholder() => Container(
-    color: AppTheme.shimmerBase,
+    color: const Color(0xFF1A1A2E),
     child: const Center(
-      child: Icon(
-        Icons.movie_outlined,
-        color: AppTheme.textSecondary,
-        size: 24,
-      ),
+      child: Icon(Icons.movie_outlined, color: Colors.white24, size: 24),
     ),
   );
+}
+
+// ── Similar Movie Shimmer ─────────────────────────────────────
+class _SimilarShimmer extends StatefulWidget {
+  @override
+  State<_SimilarShimmer> createState() => _SimilarShimmerState();
+}
+
+class _SimilarShimmerState extends State<_SimilarShimmer>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(begin: 0.3, end: 1.0).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _anim,
+      child: Container(
+        width: 120,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+    );
+  }
 }

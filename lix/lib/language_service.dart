@@ -4,7 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LanguageService extends ChangeNotifier {
   static const _key = 'selectedLanguage';
   static final LanguageService _instance = LanguageService._();
+
   factory LanguageService() => _instance;
+  static LanguageService get instance => _instance; // ✅ Added this
+
   LanguageService._();
 
   String _language = 'English';
@@ -72,7 +75,7 @@ class LanguageService extends ChangeNotifier {
   static List<Locale> get supportedLocales =>
       _localeMap.values.toSet().toList();
 
-  // ── Full translation map — all 42 languages ───────────
+  // ── Full translation map ───────────────────────────────
   static final Map<String, Map<String, String>> _translations = {
     'English': {
       'History': 'History',
@@ -785,7 +788,7 @@ class LanguageService extends ChangeNotifier {
       'Build Number': 'ꯕꯤꯜꯗ ꯅꯝꯕꯔ',
       'Release Year': 'ꯔꯤꯂꯤꯖ ꯆꯥꯍꯤ',
       'Platform': 'ꯄ꯭ꯂꯦꯇꯐꯣꯔꯝ',
-      'Data Source': 'ꯗꯦꯇꯥ ꯁꯣꯔꯁ',
+      'Data Source': 'ꯗꯦꯇꯥ ꯁ꯳꯭ꯔꯁ',
       'Backend': 'ꯕꯦꯛꯑꯦꯟꯗ',
       'Legal': 'ꯀꯥꯅꯨꯅꯤ',
       'Privacy Policy': 'ꯄ꯭ꯔꯥꯏꯚꯦꯁꯤ ꯄꯣꯂꯤꯁꯤ',

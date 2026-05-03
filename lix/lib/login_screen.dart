@@ -76,10 +76,11 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       _goToHome();
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _errorMessage = 'Google sign in failed. Please try again.',
         );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -113,8 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() => _errorMessage = 'Failed to send reset email.');
+      }
     }
   }
 

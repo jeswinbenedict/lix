@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'app_theme.dart';
 import 'favourites_screen.dart';
 import 'history_screen.dart';
 import 'notifications_screen.dart';
@@ -9,7 +8,10 @@ import 'dark_mode_screen.dart';
 import 'language_screen.dart';
 import 'help_support_screen.dart';
 import 'about_screen.dart';
-import 'language_service.dart'; // ✅ ADD
+import 'language_service.dart';
+import 'home_screen.dart';
+import 'movies_screen.dart';
+import 'music_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,159 +20,151 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final User? _user = FirebaseAuth.instance.currentUser;
-  final LanguageService _lang = LanguageService(); // ✅ single instance
+  // ── Theme tokens ──────────────────────────────────────────
+  static const Color _purple = Color(0xFF7C3AED);
+  static const Color _pink = Color(0xFFE91E8C);
+  static const Color _orange = Color(0xFFFF9500);
+  static const Color _bgColor = Color(0xFFF2F2F7);
+  static const Color _cardBg = Color(0xFFFFFFFF);
+  static const Color _textDark = Color(0xFF1C1C1E);
+  static const Color _textGrey = Color(0xFF8E8E93);
 
-  final List<Map<String, dynamic>> _stats = const [
-    {
-      'labelKey': 'Movies\nWatched', // keep as-is (not in translation map)
-      'value': '24',
-      'icon': Icons.movie_outlined,
-      'color': AppTheme.primary,
-    },
-    {
-      'labelKey': 'Songs\nPlayed',
-      'value': '58',
-      'icon': Icons.music_note,
-      'color': AppTheme.secondary,
-    },
-    {
-      'labelKey': 'Moods\nTracked',
-      'value': '12',
-      'icon': Icons.mood,
-      'color': AppTheme.moodMotivated,
-    },
+  final User? _user = FirebaseAuth.instance.currentUser;
+  final LanguageService _lang = LanguageService();
+  int _selectedNav = 3; // Profile active
+
+  // ── Stats ─────────────────────────────────────────────────
+  static const List<Map<String, dynamic>> _stats = [
+    {'label': 'Movies\nWatched', 'value': '142', 'color': Color(0xFF7C3AED)},
+    {'label': 'Songs\nPlayed', 'value': '389', 'color': Color(0xFFE91E8C)},
+    {'label': 'Moods\nTracked', 'value': '68', 'color': Color(0xFFFF9500)},
   ];
 
-  final List<Map<String, dynamic>> _favouriteMoods = const [
+  // ── Favourite moods ───────────────────────────────────────
+  static const List<Map<String, dynamic>> _favouriteMoods = [
     {
       'mood': 'Happy',
-      'emoji': '😊',
-      'count': '8 times',
-      'color': AppTheme.moodHappy,
+      'emoji': '⭐',
+      'count': '47 times',
+      'color': Color(0xFFFFCC00),
     },
     {
       'mood': 'Motivated',
-      'emoji': '💪',
-      'count': '6 times',
-      'color': AppTheme.moodMotivated,
+      'emoji': '🎵',
+      'count': '32 times',
+      'color': Color(0xFF7C3AED),
     },
     {
       'mood': 'Romantic',
-      'emoji': '😍',
-      'count': '4 times',
-      'color': AppTheme.moodRomantic,
+      'emoji': '💗',
+      'count': '21 times',
+      'color': Color(0xFFFF2D55),
     },
   ];
 
-  // ✅ Use translation keys for labels
+  // ── Menu items ────────────────────────────────────────────
   List<Map<String, dynamic>> get _menuItems => [
     {
-      'icon': Icons.favorite_border,
-      'labelKey': 'Favourites',
-      'color': AppTheme.secondary,
+      'icon': Icons.favorite_rounded,
+      'label': 'Favourites',
+      'color': const Color(0xFFFF2D55),
       'action': 'favourites',
     },
     {
       'icon': Icons.history,
-      'labelKey': 'History',
-      'color': AppTheme.primary,
+      'label': 'History',
+      'color': const Color(0xFF7C3AED),
       'action': 'history',
     },
     {
-      'icon': Icons.notifications_outlined,
-      'labelKey': 'Notifications',
-      'color': AppTheme.moodMotivated,
+      'icon': Icons.notifications_rounded,
+      'label': 'Notifications',
+      'color': const Color(0xFFFF9500),
       'action': 'notifications',
     },
     {
       'icon': Icons.language,
-      'labelKey': 'Language',
-      'color': AppTheme.moodSad,
+      'label': 'Language',
+      'color': const Color(0xFF34C759),
       'action': 'language',
     },
     {
-      'icon': Icons.dark_mode_outlined,
-      'labelKey': 'Dark Mode',
-      'color': AppTheme.moodAnxious,
+      'icon': Icons.dark_mode_rounded,
+      'label': 'Dark Mode',
+      'color': const Color(0xFF1C1C1E),
       'action': 'darkmode',
     },
     {
-      'icon': Icons.help_outline,
-      'labelKey': 'Help & Support',
-      'color': AppTheme.moodBored,
+      'icon': Icons.help_rounded,
+      'label': 'Help and Support',
+      'color': const Color(0xFF30B0C7),
       'action': 'help',
     },
     {
-      'icon': Icons.info_outline,
-      'labelKey': 'About Lix',
-      'color': AppTheme.warning,
+      'icon': Icons.info_rounded,
+      'label': 'About Lix',
+      'color': const Color(0xFF8E8E93),
       'action': 'about',
     },
   ];
 
+  // ── Helpers ───────────────────────────────────────────────
+  Route _slideRoute(Widget page) => PageRouteBuilder(
+    pageBuilder: (_, animation, __) => page,
+    transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+      child: child,
+    ),
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+
+  // ── Logout dialog ─────────────────────────────────────────
   void _logout() {
     HapticFeedback.mediumImpact();
     showDialog(
       context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: AppTheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _cardBg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Log Out',
+          style: TextStyle(color: _textDark, fontWeight: FontWeight.bold),
         ),
-        title: Text(
-          _lang.translate('Logout'),
-          style: TextStyle(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: AppTheme.heading2(context),
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to logout?',
-          style: TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: AppTheme.bodyRegular(context),
-          ),
+        content: const Text(
+          'Are you sure you want to log out?',
+          style: TextStyle(color: _textGrey),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: AppTheme.textSecondary,
-                fontSize: AppTheme.bodyRegular(context),
-              ),
-            ),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: _textGrey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.error,
+              backgroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                borderRadius: BorderRadius.circular(10),
               ),
               elevation: 0,
             ),
             onPressed: () async {
-              Navigator.pop(dialogCtx);
+              Navigator.pop(ctx);
               await FirebaseAuth.instance.signOut();
             },
-            child: Text(
-              _lang.translate('Logout'),
-              style: const TextStyle(color: Colors.white),
-            ),
+            child: const Text('Log Out', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
+  // ── Menu tap ──────────────────────────────────────────────
   void _handleMenuTap(Map<String, dynamic> item) {
     HapticFeedback.lightImpact();
-    final action = item['action'] as String? ?? 'soon';
-
-    switch (action) {
+    switch (item['action'] as String) {
       case 'favourites':
         Navigator.push(
           context,
@@ -216,47 +210,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${_lang.translate(item['labelKey'])} coming soon!'),
-            backgroundColor: AppTheme.primary,
+            content: Text('${item['label']} coming soon!'),
+            backgroundColor: _purple,
             duration: const Duration(seconds: 1),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         );
     }
   }
 
+  // ── Build ─────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    // ✅ Wrap entire screen with ListenableBuilder — rebuilds on language change
     return ListenableBuilder(
       listenable: _lang,
       builder: (context, _) {
         final displayName = _user?.displayName ?? 'Lix User';
         final email = _user?.email ?? 'user@lix.app';
         final photoUrl = _user?.photoURL;
-        final hPad = AppTheme.horizontalPadding(context);
-        final avatarR = AppTheme.avatarSize(context);
 
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: _bgColor,
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                // ── Profile Header ───────────────────────────
+                // ── Profile Header ─────────────────────────
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.fromLTRB(hPad, 56, hPad, 28),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surface,
-                    border: Border(bottom: BorderSide(color: AppTheme.border)),
-                    boxShadow: AppTheme.shadowSM,
-                  ),
+                  color: _cardBg,
+                  padding: const EdgeInsets.fromLTRB(16, 56, 16, 24),
                   child: Column(
                     children: [
+                      // Back arrow row
                       Row(
                         children: [
                           GestureDetector(
@@ -264,58 +253,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               HapticFeedback.lightImpact();
                               Navigator.pop(context);
                             },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: AppTheme.background,
-                                borderRadius: BorderRadius.circular(
-                                  AppTheme.radiusMD,
-                                ),
-                                border: Border.all(color: AppTheme.border),
-                              ),
-                              child: const Icon(
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
                                 Icons.arrow_back_ios_new,
-                                size: 16,
-                                color: AppTheme.textPrimary,
+                                size: 18,
+                                color: _textDark,
                               ),
                             ),
                           ),
                           const Spacer(),
-                          Text(
-                            'Profile', // Profile not in translation map — add if needed
+                          const Text(
+                            'Profile',
                             style: TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: AppTheme.heading2(context),
+                              color: _textDark,
+                              fontSize: 17,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: -0.3,
                             ),
                           ),
                           const Spacer(),
-                          const SizedBox(width: 40),
+                          const SizedBox(width: 26),
                         ],
                       ),
 
-                      SizedBox(height: AppTheme.sectionGap(context) * 0.8),
+                      const SizedBox(height: 20),
 
                       // Avatar
                       Stack(
                         children: [
                           Container(
-                            width: avatarR * 1.6,
-                            height: avatarR * 1.6,
+                            width: 88,
+                            height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppTheme.primary.withOpacity(0.3),
-                                width: 3,
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFB06BF5), Color(0xFF7C3AED)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              boxShadow: AppTheme.shadowPrimary,
-                              color: AppTheme.primaryLight,
                               image: photoUrl != null
                                   ? DecorationImage(
                                       image: NetworkImage(photoUrl),
                                       fit: BoxFit.cover,
                                     )
                                   : null,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: _purple.withOpacity(0.35),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
                             ),
                             child: photoUrl == null
                                 ? Center(
@@ -323,15 +312,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       displayName.isNotEmpty
                                           ? displayName[0].toUpperCase()
                                           : 'L',
-                                      style: TextStyle(
-                                        color: AppTheme.primary,
-                                        fontSize: AppTheme.heading1(context),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 34,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   )
                                 : null,
                           ),
+                          // Edit badge
                           Positioned(
                             bottom: 2,
                             right: 2,
@@ -342,31 +332,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       content: const Text(
                                         'Edit profile coming soon!',
                                       ),
-                                      backgroundColor: AppTheme.primary,
+                                      backgroundColor: _purple,
                                       duration: const Duration(seconds: 1),
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          AppTheme.radiusMD,
-                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                   ),
                               child: Container(
-                                padding: const EdgeInsets.all(6),
+                                padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primary,
+                                  color: _purple,
                                   shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppTheme.surface,
-                                    width: 2,
-                                  ),
-                                  boxShadow: AppTheme.shadowPrimary,
+                                  border: Border.all(color: _cardBg, width: 2),
                                 ),
                                 child: const Icon(
                                   Icons.edit_outlined,
                                   color: Colors.white,
-                                  size: 13,
+                                  size: 11,
                                 ),
                               ),
                             ),
@@ -374,27 +358,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
 
-                      SizedBox(height: AppTheme.sectionGap(context) * 0.5),
+                      const SizedBox(height: 12),
 
+                      // Name
                       Text(
                         displayName,
-                        style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: AppTheme.heading1(context),
+                        style: const TextStyle(
+                          color: _textDark,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: -0.4,
                         ),
                       ),
+
                       const SizedBox(height: 4),
+
+                      // Email
                       Text(
                         email,
-                        style: TextStyle(
-                          color: AppTheme.textSecondary,
-                          fontSize: AppTheme.bodyRegular(context),
-                        ),
+                        style: const TextStyle(color: _textGrey, fontSize: 13),
                       ),
+
                       const SizedBox(height: 14),
 
-                      // Premium Badge
+                      // Premium badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -404,31 +391,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           gradient: const LinearGradient(
                             colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
                           ),
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusFull,
-                          ),
+                          borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.warning.withOpacity(0.35),
+                              color: Colors.orange.withOpacity(0.35),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.star_rounded,
                               color: Colors.white,
-                              size: 15,
+                              size: 14,
                             ),
-                            const SizedBox(width: 5),
+                            SizedBox(width: 5),
                             Text(
                               'Premium Member',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: AppTheme.bodyRegular(context),
+                                fontSize: 13,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -439,83 +424,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                SizedBox(height: AppTheme.sectionGap(context) * 0.7),
+                const SizedBox(height: 12),
 
-                // ── Stats Row ────────────────────────────────
+                // ── Stats Row ──────────────────────────────
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: hPad),
-                  child: Row(
-                    children: List.generate(_stats.length, (i) {
-                      final stat = _stats[i];
-                      final color = stat['color'] as Color;
-                      return Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                            right: i < _stats.length - 1 ? 10 : 0,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: AppTheme.surface,
-                            borderRadius: BorderRadius.circular(
-                              AppTheme.radiusLG,
-                            ),
-                            border: Border.all(color: color.withOpacity(0.25)),
-                            boxShadow: AppTheme.shadowSM,
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: color.withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  stat['icon'] as IconData,
-                                  color: color,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                stat['value'],
-                                style: TextStyle(
-                                  color: color,
-                                  fontSize: AppTheme.heading2(context),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                stat['labelKey'],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppTheme.textSecondary,
-                                  fontSize: AppTheme.caption(context),
-                                  height: 1.3,
-                                ),
-                              ),
-                            ],
-                          ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
                         ),
-                      );
-                    }),
+                      ],
+                    ),
+                    child: Row(
+                      children: List.generate(_stats.length, (i) {
+                        final stat = _stats[i];
+                        final color = stat['color'] as Color;
+                        final isLast = i == _stats.length - 1;
+                        return Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: !isLast
+                                  ? const Border(
+                                      right: BorderSide(
+                                        color: Color(0xFFE5E5EA),
+                                        width: 1,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            child: Column(
+                              children: [
+                                Text(
+                                  stat['value'] as String,
+                                  style: TextStyle(
+                                    color: color,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  stat['label'] as String,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: _textGrey,
+                                    fontSize: 11,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
                   ),
                 ),
 
-                SizedBox(height: AppTheme.sectionGap(context)),
+                const SizedBox(height: 20),
 
-                // ── Top Moods ────────────────────────────────
+                // ── Your Top Moods ─────────────────────────
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _lang.translate('Your Top Moods'), // ✅ translated
+                      const Text(
+                        'Your Top Moods',
                         style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: AppTheme.heading2(context),
+                          color: _textDark,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -523,48 +509,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         children: List.generate(_favouriteMoods.length, (i) {
                           final item = _favouriteMoods[i];
-                          final color = item['color'] as Color;
+                          final isLast = i == _favouriteMoods.length - 1;
                           return Expanded(
                             child: Container(
-                              margin: EdgeInsets.only(
-                                right: i < _favouriteMoods.length - 1 ? 10 : 0,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              margin: EdgeInsets.only(right: isLast ? 0 : 10),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
-                                color: AppTheme.surface,
-                                borderRadius: BorderRadius.circular(
-                                  AppTheme.radiusLG,
-                                ),
-                                border: Border.all(
-                                  color: color.withOpacity(0.3),
-                                ),
-                                boxShadow: AppTheme.shadowSM,
+                                color: _cardBg,
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
                                   Text(
-                                    item['emoji'],
-                                    style: TextStyle(
-                                      fontSize: AppTheme.isSmall(context)
-                                          ? 24
-                                          : 28,
-                                    ),
+                                    item['emoji'] as String,
+                                    style: const TextStyle(fontSize: 26),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    item['mood'],
-                                    style: TextStyle(
-                                      color: AppTheme.textPrimary,
-                                      fontSize: AppTheme.bodyRegular(context),
+                                    item['mood'] as String,
+                                    style: const TextStyle(
+                                      color: _textDark,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    item['count'],
-                                    style: TextStyle(
-                                      color: AppTheme.textSecondary,
-                                      fontSize: AppTheme.caption(context),
+                                    item['count'] as String,
+                                    style: const TextStyle(
+                                      color: _textGrey,
+                                      fontSize: 11,
                                     ),
                                   ),
                                 ],
@@ -577,60 +558,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                SizedBox(height: AppTheme.sectionGap(context)),
+                const SizedBox(height: 20),
 
-                // ── Settings Menu ─────────────────────────────
+                // ── Settings ───────────────────────────────
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _lang.translate('Settings'), // ✅ translated
+                      const Text(
+                        'Settings',
                         style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: AppTheme.heading2(context),
+                          color: _textDark,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      ..._menuItems.map((item) => _buildMenuItem(item)),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: _cardBg,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: List.generate(_menuItems.length, (i) {
+                            final item = _menuItems[i];
+                            final isLast = i == _menuItems.length - 1;
+                            return _buildMenuItem(item, isLast: isLast);
+                          }),
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
-                SizedBox(height: AppTheme.sectionGap(context) * 0.7),
+                const SizedBox(height: 20),
 
-                // ── Logout ────────────────────────────────────
+                // ── Log Out button ─────────────────────────
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: GestureDetector(
                     onTap: _logout,
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       decoration: BoxDecoration(
-                        color: AppTheme.error.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                        color: _cardBg,
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: AppTheme.error.withOpacity(0.3),
+                          color: Colors.redAccent.withOpacity(0.4),
+                          width: 1.5,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.logout_outlined,
-                            color: AppTheme.error,
-                            size: 20,
+                          Icon(
+                            Icons.logout_rounded,
+                            color: Colors.redAccent,
+                            size: 18,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
-                            _lang.translate('Logout'), // ✅ translated
+                            'Log Out',
                             style: TextStyle(
-                              color: AppTheme.error,
-                              fontSize: AppTheme.bodyLarge(context),
-                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -643,52 +651,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
+
+          // ── Bottom Nav ─────────────────────────────────
+          bottomNavigationBar: _buildBottomNav(context),
         );
       },
     );
   }
 
-  Widget _buildMenuItem(Map<String, dynamic> item) {
+  // ── Menu item row ─────────────────────────────────────────
+  Widget _buildMenuItem(Map<String, dynamic> item, {bool isLast = false}) {
     final color = item['color'] as Color;
     return GestureDetector(
       onTap: () => _handleMenuTap(item),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-          border: Border.all(color: AppTheme.border),
-          boxShadow: AppTheme.shadowSM,
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSM),
-              ),
-              child: Icon(item['icon'] as IconData, color: color, size: 18),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                _lang.translate(item['labelKey']), // ✅ translated
-                style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: AppTheme.bodyRegular(context),
-                  fontWeight: FontWeight.w500,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                // Colored icon square
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Icon(
+                    item['icon'] as IconData,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    item['label'] as String,
+                    style: const TextStyle(
+                      color: _textDark,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: _textGrey, size: 18),
+              ],
+            ),
+          ),
+          if (!isLast)
+            const Divider(
+              height: 1,
+              thickness: 1,
+              indent: 64,
+              endIndent: 0,
+              color: Color(0xFFF2F2F7),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ── Bottom Nav ────────────────────────────────────────────
+  Widget _buildBottomNav(BuildContext context) {
+    final items = [
+      {'icon': Icons.home_rounded, 'label': 'Home'},
+      {'icon': Icons.movie_outlined, 'label': 'Movies'},
+      {'icon': Icons.music_note_outlined, 'label': 'Music'},
+      {'icon': Icons.person_rounded, 'label': 'Profile'},
+    ];
+
+    return Container(
+      height: 72,
+      decoration: BoxDecoration(
+        color: _cardBg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: List.generate(items.length, (i) {
+          final isActive = _selectedNav == i;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setState(() => _selectedNav = i);
+                if (i == 0) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    _slideRoute(const HomeScreen()),
+                    (r) => false,
+                  );
+                }
+                if (i == 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    _slideRoute(MoviesScreen(mood: 'Happy')),
+                  );
+                }
+                if (i == 2) {
+                  Navigator.pushReplacement(
+                    context,
+                    _slideRoute(MusicScreen(mood: 'Happy')),
+                  );
+                }
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    items[i]['icon'] as IconData,
+                    color: isActive ? _purple : _textGrey,
+                    size: 24,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    items[i]['label'] as String,
+                    style: TextStyle(
+                      color: isActive ? _purple : _textGrey,
+                      fontSize: 11,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: isActive ? 18 : 0,
+                    height: isActive ? 3 : 0,
+                    decoration: BoxDecoration(
+                      color: _purple,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              color: AppTheme.textSecondary,
-              size: 20,
-            ),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
