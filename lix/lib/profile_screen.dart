@@ -20,7 +20,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // ── Theme tokens ──────────────────────────────────────────
   static const Color _purple = Color(0xFF7C3AED);
   static const Color _bgColor = Color(0xFFF2F2F7);
   static const Color _cardBg = Color(0xFFFFFFFF);
@@ -28,17 +27,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static const Color _textGrey = Color(0xFF8E8E93);
 
   final User? _user = FirebaseAuth.instance.currentUser;
-  final LanguageService _lang = LanguageService();
-  int _selectedNav = 3; // Profile active
 
-  // ── Stats ─────────────────────────────────────────────────
+  // ✅ Fixed: use singleton instead of new instance
+  LanguageService get _lang => LanguageService.instance;
+
+  int _selectedNav = 3;
+
   static const List<Map<String, dynamic>> _stats = [
     {'label': 'Movies\nWatched', 'value': '142', 'color': Color(0xFF7C3AED)},
     {'label': 'Songs\nPlayed', 'value': '389', 'color': Color(0xFFE91E8C)},
     {'label': 'Moods\nTracked', 'value': '68', 'color': Color(0xFFFF9500)},
   ];
 
-  // ── Favourite moods ───────────────────────────────────────
   static const List<Map<String, dynamic>> _favouriteMoods = [
     {
       'mood': 'Happy',
@@ -60,7 +60,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     },
   ];
 
-  // ── Menu items ────────────────────────────────────────────
   List<Map<String, dynamic>> get _menuItems => [
     {
       'icon': Icons.favorite_rounded,
@@ -106,10 +105,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     },
   ];
 
-  // ── Helpers ───────────────────────────────────────────────
+  // ✅ Fixed: duplicate _ parameter names → __, __
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, _) => page,
-    transitionsBuilder: (_, animation, _, child) => SlideTransition(
+    pageBuilder: (_, animation, __) => page,
+    transitionsBuilder: (_, animation, __, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
@@ -119,7 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     transitionDuration: const Duration(milliseconds: 300),
   );
 
-  // ── Logout dialog ─────────────────────────────────────────
   void _logout() {
     HapticFeedback.mediumImpact();
     showDialog(
@@ -159,7 +157,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ── Menu tap ──────────────────────────────────────────────
   void _handleMenuTap(Map<String, dynamic> item) {
     HapticFeedback.lightImpact();
     switch (item['action'] as String) {
@@ -220,7 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // ── Build ─────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -243,7 +239,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 56, 16, 24),
                   child: Column(
                     children: [
-                      // Back arrow row
                       Row(
                         children: [
                           GestureDetector(
@@ -319,7 +314,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   )
                                 : null,
                           ),
-                          // Edit badge
                           Positioned(
                             bottom: 2,
                             right: 2,
@@ -358,7 +352,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 12),
 
-                      // Name
                       Text(
                         displayName,
                         style: const TextStyle(
@@ -371,7 +364,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 4),
 
-                      // Email
                       Text(
                         email,
                         style: const TextStyle(color: _textGrey, fontSize: 13),
@@ -379,7 +371,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Premium badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -495,9 +486,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Your Top Moods',
-                        style: TextStyle(
+                      Text(
+                        _lang.translate('Your Top Moods'),
+                        style: const TextStyle(
                           color: _textDark,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -531,7 +522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    item['mood'] as String,
+                                    _lang.translate(item['mood'] as String),
                                     style: const TextStyle(
                                       color: _textDark,
                                       fontSize: 13,
@@ -564,9 +555,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Settings',
-                        style: TextStyle(
+                      Text(
+                        _lang.translate('Settings'),
+                        style: const TextStyle(
                           color: _textDark,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -599,7 +590,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 20),
 
-                // ── Log Out button ─────────────────────────
+                // ── Log Out ────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: GestureDetector(
@@ -649,15 +640,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-
-          // ── Bottom Nav ─────────────────────────────────
           bottomNavigationBar: _buildBottomNav(context),
         );
       },
     );
   }
 
-  // ── Menu item row ─────────────────────────────────────────
   Widget _buildMenuItem(Map<String, dynamic> item, {bool isLast = false}) {
     final color = item['color'] as Color;
     return GestureDetector(
@@ -669,7 +657,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                // Colored icon square
                 Container(
                   width: 34,
                   height: 34,
@@ -686,7 +673,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
-                    item['label'] as String,
+                    _lang.translate(item['label'] as String),
                     style: const TextStyle(
                       color: _textDark,
                       fontSize: 15,
@@ -711,7 +698,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ── Bottom Nav ────────────────────────────────────────────
   Widget _buildBottomNav(BuildContext context) {
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
@@ -771,7 +757,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    items[i]['label'] as String,
+                    _lang.translate(items[i]['label'] as String),
                     style: TextStyle(
                       color: isActive ? _purple : _textGrey,
                       fontSize: 11,

@@ -31,20 +31,25 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSimilarMovies();
-    _checkFav();
-    HistoryService.addMovieHistory(widget.movie);
+    // ✅ Delay heavy work until after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSimilarMovies();
+      _checkFav();
+      HistoryService.addMovieHistory(widget.movie);
+    });
   }
 
   Future<void> _checkFav() async {
     final id = widget.movie['id'] ?? widget.movie['title'] ?? '';
     final fav = await FavouritesService.isMovieFav(id);
+    // ✅ mounted check before setState
     if (mounted) setState(() => _isLiked = fav);
   }
 
   Future<void> _loadSimilarMovies() async {
     final genre = widget.movie['genre'] ?? 'Happy';
     final movies = await TmdbService.getMoviesByMood(genre);
+    // ✅ mounted check before setState
     if (mounted) {
       setState(() {
         _similarMovies = movies
@@ -59,7 +64,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Future<void> _toggleFav() async {
     HapticFeedback.lightImpact();
-    setState(() => _likeLoading = true);
+    // ✅ mounted check before setState
+    if (mounted) setState(() => _likeLoading = true);
     final added = await FavouritesService.toggleMovie(widget.movie);
     if (mounted) {
       setState(() {
@@ -89,7 +95,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     final ytUrl = Uri.parse(
       'https://www.youtube.com/results?search_query=$query',
     );
-    setState(() => _trailerLoading = true);
+    // ✅ mounted check before setState
+    if (mounted) setState(() => _trailerLoading = true);
     try {
       if (await canLaunchUrl(ytUrl)) {
         await launchUrl(ytUrl, mode: LaunchMode.externalApplication);
@@ -106,6 +113,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
           );
         }
+      }
+    } catch (e) {
+      debugPrint('Trailer launch error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to open trailer'),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _trailerLoading = false);
@@ -190,7 +211,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               GestureDetector(
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  setState(() => _inWatchlist = !_inWatchlist);
+                  if (mounted) setState(() => _inWatchlist = !_inWatchlist);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
@@ -257,12 +278,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Poster image
+                  // ✅ Fixed: errorBuilder uses distinct param names
                   hasPoster
                       ? Image.network(
                           poster,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _posterPlaceholder(),
+                          errorBuilder: (ctx, err, stack) =>
+                              _posterPlaceholder(),
                         )
                       : _posterPlaceholder(),
                   // Bottom fade into bg
@@ -557,7 +579,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: 5,
-                      itemBuilder: (_, _) => _SimilarShimmer(),
+                      // ✅ Fixed: distinct param names (_, i) instead of (_, _)
+                      itemBuilder: (ctx, i) => const _SimilarShimmer(),
+                    ),
+                  )
+                : _similarMovies.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'No similar movies found.',
+                      style: TextStyle(color: Color(0xFF8E8E93)),
                     ),
                   )
                 : SizedBox(
@@ -566,7 +597,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: _similarMovies.length,
-                      itemBuilder: (_, i) {
+                      itemBuilder: (ctx, i) {
                         final m = _similarMovies[i];
                         final hasCover = (m['poster'] ?? '').isNotEmpty;
                         return GestureDetector(
@@ -600,10 +631,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   child: AspectRatio(
                                     aspectRatio: 2 / 3,
                                     child: hasCover
+                                        // ✅ Fixed: distinct param names
                                         ? Image.network(
                                             m['poster']!,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, _, _) =>
+                                            errorBuilder: (ctx, err, stack) =>
                                                 _miniPlaceholder(),
                                           )
                                         : _miniPlaceholder(),
@@ -704,6 +736,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
 // ── Similar Movie Shimmer ─────────────────────────────────────
 class _SimilarShimmer extends StatefulWidget {
+  // ✅ Added const constructor
+  const _SimilarShimmer();
+
   @override
   State<_SimilarShimmer> createState() => _SimilarShimmerState();
 }

@@ -18,7 +18,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
   List<Map<String, String>> _movies = [];
   bool _loading = true;
   String _selectedMood = '';
-  int _selectedNav = 1; // Movies tab active
+  int _selectedNav = 1;
 
   static const Color _purple = Color(0xFF7C3AED);
   static const Color _bgColor = Color(0xFFF2F2F7);
@@ -39,7 +39,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void initState() {
     super.initState();
     _selectedMood = widget.mood;
-    _fetchMovies(_selectedMood);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchMovies(_selectedMood);
+    });
   }
 
   Future<void> _fetchMovies(String mood) async {
@@ -55,8 +57,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, _) => page,
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
+      pageBuilder: (_, animation, __) => page, // ✅ Fixed: __ not _
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -81,7 +83,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Back button — left aligned
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -99,7 +100,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
                       ),
                     ),
                   ),
-                  // Centered title
                   Column(
                     children: [
                       const Text(
@@ -131,7 +131,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(width: 8), // ✅ Fixed
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -203,8 +204,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ],
         ),
       ),
-
-      // ── Bottom Nav Bar ───────────────────────────────
       bottomNavigationBar: _buildBottomNav(context),
     );
   }
@@ -220,7 +219,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (_, _) => _ShimmerCard(),
+      itemBuilder: (_, __) => const _ShimmerCard(), // ✅ Fixed
     );
   }
 
@@ -300,14 +299,14 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 children: [
                   Icon(
                     items[i]['icon'] as IconData,
-                    color: isActive ? _purple : const Color(0xFF8E8E93),
+                    color: isActive ? _purple : _textGrey,
                     size: 24,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     items[i]['label'] as String,
                     style: TextStyle(
-                      color: isActive ? _purple : const Color(0xFF8E8E93),
+                      color: isActive ? _purple : _textGrey,
                       fontSize: 11,
                       fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
                     ),
@@ -334,6 +333,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
 // ── Shimmer Card ──────────────────────────────────────────────
 class _ShimmerCard extends StatefulWidget {
+  const _ShimmerCard(); // ✅ Added const constructor
+
   @override
   State<_ShimmerCard> createState() => _ShimmerCardState();
 }
@@ -411,7 +412,6 @@ class _MovieCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Poster
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
@@ -422,12 +422,12 @@ class _MovieCard extends StatelessWidget {
                         poster,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, _, _) => _placeholder(),
+                        errorBuilder: (ctx, err, stack) =>
+                            _placeholder(), // ✅ Fixed
                       )
                     : _placeholder(),
               ),
             ),
-            // Info
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
               child: Column(

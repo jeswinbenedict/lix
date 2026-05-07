@@ -17,7 +17,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final LanguageService _lang = LanguageService();
+  // ✅ Fixed: use singleton instead of new instance
+  LanguageService get _lang => LanguageService.instance;
+
   int _selectedNav = 0;
   String _selectedMood = 'Happy';
 
@@ -44,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchData(_selectedMood);
+    // ✅ Fixed: delay fetch until after first frame to avoid frame skipping
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData(_selectedMood);
+    });
   }
 
   Future<void> _fetchData(String mood) async {
@@ -90,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ✅ Safe cast helper — converts Map<String, dynamic> → Map<String, String>
   Map<String, String> _toStringMap(Map<String, dynamic> map) {
     return map.map((key, value) => MapEntry(key, value?.toString() ?? ''));
   }
@@ -146,7 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Row(
                           children: [
-                            // Bell icon
                             Container(
                               width: 40,
                               height: 40,
@@ -168,7 +171,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            // Avatar
                             GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -297,7 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MovieCard(
                               movie: _movies[i],
-                              // ✅ Fixed: cast to Map<String, String>
                               onTap: () => Navigator.push(
                                 context,
                                 _slideRoute(
@@ -335,7 +336,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MusicCard(
                               track: _music[i],
-                              // ✅ Fixed: cast to Map<String, String>
                               onTap: () => Navigator.push(
                                 context,
                                 _slideRoute(
@@ -353,8 +353,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
-          // ── Bottom Nav Bar ───────────────────────────────
           bottomNavigationBar: _buildBottomNav(context),
         );
       },
@@ -551,7 +549,7 @@ class _ShimmerBoxState extends State<_ShimmerBox>
   }
 }
 
-// ── Movie Card (real TMDB poster) ──────────────────────────────
+// ── Movie Card ─────────────────────────────────────────────────
 class _MovieCard extends StatelessWidget {
   final Map<String, dynamic> movie;
   final VoidCallback onTap;
@@ -574,7 +572,6 @@ class _MovieCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Real TMDB poster
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: poster != null && poster.isNotEmpty
@@ -587,7 +584,6 @@ class _MovieCard extends StatelessWidget {
                     )
                   : _posterPlaceholder(),
             ),
-            // Gradient + info overlay
             Positioned(
               bottom: 0,
               left: 0,
@@ -672,7 +668,7 @@ class _MovieCard extends StatelessWidget {
   }
 }
 
-// ── Music Card (real album art) ────────────────────────────────
+// ── Music Card ─────────────────────────────────────────────────
 class _MusicCard extends StatelessWidget {
   final Map<String, dynamic> track;
   final VoidCallback onTap;
@@ -705,7 +701,6 @@ class _MusicCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Real album art from Apple Music / iTunes
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: cover != null && cover.isNotEmpty

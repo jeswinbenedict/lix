@@ -75,13 +75,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
       if (mounted) setState(() => _current = p);
     });
     _audioPlayer.onPlayerStateChanged.listen((state) {
-      if (mounted) {
-        setState(() => _isPlaying = state == PlayerState.playing);
-        if (state == PlayerState.playing) {
-          _rotationController.repeat();
-        } else {
-          _rotationController.stop();
-        }
+      if (!mounted) return;
+      setState(() => _isPlaying = state == PlayerState.playing);
+      if (state == PlayerState.playing) {
+        _rotationController.repeat();
+      } else {
+        _rotationController.stop();
       }
     });
     _audioPlayer.onPlayerComplete.listen((_) => _nextSong());
@@ -105,12 +104,13 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
       return;
     }
 
-    setState(() => _isLoading = true);
+    if (mounted) setState(() => _isLoading = true);
     await _audioPlayer.stop();
 
     try {
       await _audioPlayer.play(UrlSource(preview));
 
+      // ✅ Resume position logic
       int resumeMs = widget.resumePositionMs;
       if (resumeMs == 0) {
         final id = _currentSong['id'] ?? _currentSong['title'] ?? '';
@@ -123,7 +123,21 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
       }
 
       await HistoryService.addSongHistory(_currentSong);
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('MusicPlayer play error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to play song. Try again.'),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
 
     if (mounted) setState(() => _isLoading = false);
   }
@@ -133,7 +147,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     if (_isPlaying) {
       await _audioPlayer.pause();
     } else {
-      if (_current >= _total && _total > Duration.zero) {
+      if (_total > Duration.zero && _current >= _total) {
         await _audioPlayer.seek(Duration.zero);
       }
       await _audioPlayer.resume();
@@ -142,7 +156,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
 
   Future<void> _toggleFav() async {
     HapticFeedback.lightImpact();
-    setState(() => _likeLoading = true);
+    if (mounted) setState(() => _likeLoading = true);
     final added = await FavouritesService.toggleSong(_currentSong);
     if (mounted) {
       setState(() {
@@ -199,7 +213,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
 
   Future<void> _saveCurrentPosition() async {
     final id = _currentSong['id'] ?? _currentSong['title'] ?? '';
-    if (id.isNotEmpty) {
+    if (id.isNotEmpty && _current.inMilliseconds > 0) {
       await HistoryService.saveSongPosition(id, _current.inMilliseconds);
     }
   }
@@ -210,7 +224,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     return '$m:$s';
   }
 
-  // Mood colour — subtle tint only, purple stays as accent
   Color get _moodAccent {
     const map = {
       'Happy': Color(0xFFFF9F0A),
@@ -225,7 +238,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
 
   @override
   void dispose() {
-    _saveCurrentPosition();
+    // ✅ Fire-and-forget — dispose() must be synchronous
+    _saveCurrentPosition().catchError((_) {});
     _audioPlayer.dispose();
     _rotationController.dispose();
     super.dispose();
@@ -251,7 +265,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Down arrow — left
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -278,7 +291,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                       ),
                     ),
                   ),
-                  // Center label
                   Column(
                     children: [
                       const Text(
@@ -300,7 +312,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                       ),
                     ],
                   ),
-                  // Heart — right
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
@@ -373,10 +384,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                   ),
                   child: ClipOval(
                     child: hasCover
+                        // ✅ Fixed: errorBuilder must use 3 distinct param names
                         ? Image.network(
                             cover,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _artPlaceholder(accent),
+                            errorBuilder: (ctx, err, stack) =>
+                                _artPlaceholder(accent),
                           )
                         : _artPlaceholder(accent),
                   ),

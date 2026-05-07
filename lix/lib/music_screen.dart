@@ -25,9 +25,8 @@ class _MusicScreenState extends State<MusicScreen> {
   late String _selectedMood;
   List<Map<String, String>> _songs = [];
   bool _isLoading = true;
-  int _selectedNav = 2; // Music tab active
+  int _selectedNav = 2;
 
-  // Mini player state
   Map<String, String>? _currentSong;
   bool _isPlaying = false;
   int _currentIndex = 0;
@@ -45,7 +44,10 @@ class _MusicScreenState extends State<MusicScreen> {
   void initState() {
     super.initState();
     _selectedMood = widget.mood;
-    _loadSongs();
+    // ✅ Delay fetch until after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSongs();
+    });
   }
 
   Future<void> _loadSongs() async {
@@ -55,7 +57,6 @@ class _MusicScreenState extends State<MusicScreen> {
       setState(() {
         _songs = songs;
         _isLoading = false;
-        // Auto-set mini player to first song
         if (_songs.isNotEmpty && _currentSong == null) {
           _currentSong = _songs[0];
           _currentIndex = 0;
@@ -95,12 +96,14 @@ class _MusicScreenState extends State<MusicScreen> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, animation, _) => MusicPlayerScreen(
+        pageBuilder: (_, animation, __) => MusicPlayerScreen(
+          // ✅ Fixed
           song: enriched[index],
           playlist: enriched,
           currentIndex: index,
         ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
+        transitionsBuilder: (_, animation, __, child) => SlideTransition(
+          // ✅ Fixed
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
               .animate(
                 CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -129,7 +132,6 @@ class _MusicScreenState extends State<MusicScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Handle
             Container(
               width: 40,
               height: 4,
@@ -139,7 +141,6 @@ class _MusicScreenState extends State<MusicScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // Song info
             Row(
               children: [
                 ClipRRect(
@@ -150,7 +151,8 @@ class _MusicScreenState extends State<MusicScreen> {
                           width: 52,
                           height: 52,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _albumPlaceholder(52),
+                          errorBuilder: (ctx2, err, stack) =>
+                              _albumPlaceholder(52), // ✅ Fixed
                         )
                       : _albumPlaceholder(52),
                 ),
@@ -210,11 +212,7 @@ class _MusicScreenState extends State<MusicScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF0000), Color(0xFFCC0000)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: const Color(0xFFFF0000),
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
@@ -274,11 +272,7 @@ class _MusicScreenState extends State<MusicScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFC3C44), Color(0xFFB71C1C)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: const Color(0xFFFC3C44),
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
@@ -337,8 +331,9 @@ class _MusicScreenState extends State<MusicScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, _) => page,
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
+      pageBuilder: (_, animation, __) => page, // ✅ Fixed
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+        // ✅ Fixed
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -411,7 +406,8 @@ class _MusicScreenState extends State<MusicScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(width: 8), // ✅ Fixed
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -470,7 +466,8 @@ class _MusicScreenState extends State<MusicScreen> {
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                       itemCount: _songs.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: 10), // ✅ Fixed
                       itemBuilder: (_, i) => _SongCard(
                         song: _songs[i],
                         onPlay: () => _openPlayer(i),
@@ -479,18 +476,14 @@ class _MusicScreenState extends State<MusicScreen> {
                     ),
             ),
 
-            // ── Mini Player ──────────────────────────────
             if (_currentSong != null) _buildMiniPlayer(),
           ],
         ),
       ),
-
-      // ── Bottom Nav ───────────────────────────────────
       bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
-  // ── Mini Player Bar ──────────────────────────────────────
   Widget _buildMiniPlayer() {
     final song = _currentSong!;
     final cover = song['cover'] ?? '';
@@ -514,7 +507,6 @@ class _MusicScreenState extends State<MusicScreen> {
       child: Row(
         children: [
           const SizedBox(width: 10),
-          // Album art
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: cover.isNotEmpty
@@ -523,12 +515,12 @@ class _MusicScreenState extends State<MusicScreen> {
                     width: 44,
                     height: 44,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => _albumPlaceholder(44),
+                    errorBuilder: (ctx, err, stack) =>
+                        _albumPlaceholder(44), // ✅ Fixed
                   )
                 : _albumPlaceholder(44),
           ),
           const SizedBox(width: 10),
-          // Title + artist
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -554,7 +546,6 @@ class _MusicScreenState extends State<MusicScreen> {
               ],
             ),
           ),
-          // Prev
           GestureDetector(
             onTap: () {
               if (_currentIndex > 0) {
@@ -573,7 +564,6 @@ class _MusicScreenState extends State<MusicScreen> {
               ),
             ),
           ),
-          // Play / Pause
           GestureDetector(
             onTap: () => setState(() => _isPlaying = !_isPlaying),
             child: Container(
@@ -590,7 +580,6 @@ class _MusicScreenState extends State<MusicScreen> {
               ),
             ),
           ),
-          // Next
           GestureDetector(
             onTap: () {
               if (_currentIndex < _songs.length - 1) {
@@ -611,7 +600,6 @@ class _MusicScreenState extends State<MusicScreen> {
     );
   }
 
-  // ── Bottom Nav ───────────────────────────────────────────
   Widget _buildBottomNav(BuildContext context) {
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
@@ -698,8 +686,8 @@ class _MusicScreenState extends State<MusicScreen> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       itemCount: 7,
-      separatorBuilder: (_, _) => const SizedBox(height: 10),
-      itemBuilder: (_, _) => _ShimmerCard(),
+      separatorBuilder: (_, __) => const SizedBox(height: 10), // ✅ Fixed
+      itemBuilder: (_, __) => const _ShimmerCard(), // ✅ Fixed + const
     );
   }
 
@@ -783,7 +771,6 @@ class _SongCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Album art
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
@@ -795,14 +782,12 @@ class _SongCard extends StatelessWidget {
                       width: 72,
                       height: 72,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _placeholder(),
+                      errorBuilder: (ctx, err, stack) =>
+                          _placeholder(), // ✅ Fixed
                     )
                   : _placeholder(),
             ),
-
             const SizedBox(width: 12),
-
-            // Title + artist + genre chip
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -851,8 +836,6 @@ class _SongCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Play button
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: GestureDetector(
@@ -892,6 +875,8 @@ class _SongCard extends StatelessWidget {
 
 // ── Shimmer Card ──────────────────────────────────────────────
 class _ShimmerCard extends StatefulWidget {
+  const _ShimmerCard(); // ✅ Added const constructor
+
   @override
   State<_ShimmerCard> createState() => _ShimmerCardState();
 }

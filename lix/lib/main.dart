@@ -13,21 +13,32 @@ import 'language_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Prevent [core/duplicate-app] crash on hot restart
-  if (Firebase.apps.isEmpty) {
+  // ✅ Catch ALL flutter framework errors
+  FlutterError.onError = (FlutterErrorDetails details) {
+    debugPrint('🔴 FLUTTER ERROR: ${details.exception}');
+    debugPrint('🔴 STACK: ${details.stack}');
+  };
+
+  try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  } catch (e) {
+    debugPrint('Firebase init skipped: $e');
   }
 
   await ThemeService.instance.init();
+  debugPrint('✅ ThemeService done');
+
   await LanguageService.instance.init();
+  debugPrint('✅ LanguageService done');
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
+  debugPrint('✅ Calling runApp...');
   runApp(const LixApp());
 }
 
@@ -60,7 +71,6 @@ class LixApp extends StatelessWidget {
   }
 }
 
-// ── Auth Gate ─────────────────────────────────────────────────
 class _AuthGate extends StatelessWidget {
   const _AuthGate();
 
@@ -69,7 +79,10 @@ class _AuthGate extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // ✅ Show loader while Firebase checks auth state
+        debugPrint(
+          '🔵 Auth state: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, error: ${snapshot.error}',
+        );
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             backgroundColor: AppTheme.background,
@@ -82,13 +95,12 @@ class _AuthGate extends StatelessWidget {
           );
         }
 
-        // ✅ Handle stream errors gracefully
         if (snapshot.hasError) {
           return Scaffold(
             backgroundColor: AppTheme.background,
             body: Center(
               child: Text(
-                'Something went wrong.\nPlease restart the app.',
+                'Auth error: ${snapshot.error}',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.red.shade300),
               ),
@@ -96,11 +108,12 @@ class _AuthGate extends StatelessWidget {
           );
         }
 
-        // ✅ Navigate based on auth state
         if (snapshot.hasData && snapshot.data != null) {
+          debugPrint('✅ User logged in → HomeScreen');
           return const HomeScreen();
         }
 
+        debugPrint('✅ No user → LoginScreen');
         return const LoginScreen();
       },
     );
