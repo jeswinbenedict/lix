@@ -216,7 +216,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.red.withValues(alpha: 0.3),
+                            color: Colors.red.withOpacity(0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -276,7 +276,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFC3C44).withValues(alpha: 0.3),
+                            color: const Color(0xFFFC3C44).withOpacity(0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -406,8 +406,7 @@ class _MusicScreenState extends State<MusicScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(width: 8), // ✅ Fixed
+                separatorBuilder: (_, _) => const SizedBox(width: 8), // ✅ Fixed
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -433,7 +432,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: _purple.withValues(alpha: 0.3),
+                                  color: _purple.withOpacity(0.3),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -498,7 +497,7 @@ class _MusicScreenState extends State<MusicScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -614,7 +613,7 @@ class _MusicScreenState extends State<MusicScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -763,7 +762,7 @@ class _SongCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -819,13 +818,13 @@ class _SongCard extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: _purple.withValues(alpha: 0.08),
+                          color: _purple.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
                           genre,
                           style: TextStyle(
-                            color: _purple.withValues(alpha: 0.8),
+                            color: _purple.withOpacity(0.8),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),

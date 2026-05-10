@@ -131,8 +131,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(width: 8), // ✅ Fixed
+                separatorBuilder: (_, _) => const SizedBox(width: 8), // ✅ Fixed
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -158,7 +157,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: _purple.withValues(alpha: 0.3),
+                                  color: _purple.withOpacity(0.3),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -262,7 +261,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -403,7 +402,7 @@ class _MovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: Colors.black.withOpacity(0.06),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
