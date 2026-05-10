@@ -26,9 +26,4 @@ void main() {
     // Verify that the app builds and shows something (e.g., the title or a screen)
     expect(find.text('Lix'), findsOneWidget);
   });
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
 }

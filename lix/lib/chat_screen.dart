@@ -458,24 +458,25 @@ class _ChatScreenState extends State<ChatScreen> {
         String moodCtx = '';
         if (RegExp(r'\b(sad|dukhi|emotional|kazhivu)\b').hasMatch(t)) {
           moodCtx = 'sad';
-        } else if (RegExp(r'\b(happy|khushi|joyful)\b').hasMatch(t))
+        } else if (RegExp(r'\b(happy|khushi|joyful)\b').hasMatch(t)) {
           moodCtx = 'happy';
-        else if (RegExp(r'\b(love|romantic|romance|kadhal)\b').hasMatch(t))
+        } else if (RegExp(r'\b(love|romantic|romance|kadhal)\b').hasMatch(t)) {
           moodCtx = 'love';
-        else if (RegExp(r'\b(motivat|energy|pump|power)\b').hasMatch(t))
+        } else if (RegExp(r'\b(motivat|energy|pump|power)\b').hasMatch(t)) {
           moodCtx = 'motivation';
-        else if (RegExp(r'\b(lofi|chill|relax)\b').hasMatch(t))
+        } else if (RegExp(r'\b(lofi|chill|relax)\b').hasMatch(t)) {
           moodCtx = 'chill';
-        else if (RegExp(r'\b(party|dance|kuthu)\b').hasMatch(t))
+        } else if (RegExp(r'\b(party|dance|kuthu)\b').hasMatch(t)) {
           moodCtx = 'party';
-        else if (RegExp(r'\b(devotional|bhajan|worship)\b').hasMatch(t))
+        } else if (RegExp(r'\b(devotional|bhajan|worship)\b').hasMatch(t)) {
           moodCtx = 'devotional';
-        else if (RegExp(r'\b(workout|gym)\b').hasMatch(t))
+        } else if (RegExp(r'\b(workout|gym)\b').hasMatch(t)) {
           moodCtx = 'workout';
-        else if (RegExp(r'\b(sleep|night|calm)\b').hasMatch(t))
+        } else if (RegExp(r'\b(sleep|night|calm)\b').hasMatch(t)) {
           moodCtx = 'sleep';
-        else if (RegExp(r'\b(classical|instrumental)\b').hasMatch(t))
+        } else if (RegExp(r'\b(classical|instrumental)\b').hasMatch(t)) {
           moodCtx = 'classical';
+        }
         final q = moodCtx.isNotEmpty
             ? '${entry.value} $moodCtx songs'
             : '${entry.value} songs';
@@ -843,7 +844,7 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(
               color: AppTheme.primaryLight,
               borderRadius: BorderRadius.circular(AppTheme.radiusSM),
-              border: Border.all(color: AppTheme.primary.withOpacity(0.2)),
+              border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -887,7 +888,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Text(
                           song['duration']!,
                           style: TextStyle(
-                            color: AppTheme.primary.withOpacity(0.7),
+                            color: AppTheme.primary.withValues(alpha: 0.7),
                             fontSize: AppTheme.caption(context) - 2,
                           ),
                         ),
@@ -910,7 +911,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _musicIcon() => Container(
     width: 40,
     height: 40,
-    color: AppTheme.primary.withOpacity(0.15),
+    color: AppTheme.primary.withValues(alpha: 0.15),
     child: const Icon(Icons.music_note, color: AppTheme.primary, size: 20),
   );
 
@@ -1180,7 +1181,7 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(
               color: AppTheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-              border: Border.all(color: AppTheme.primary.withOpacity(0.4)),
+              border: Border.all(color: AppTheme.primary.withValues(alpha: 0.4)),
               boxShadow: AppTheme.shadowSM,
             ),
             child: Text(
@@ -1329,7 +1330,7 @@ class _ChatScreenState extends State<ChatScreen> {
         border: Border(top: BorderSide(color: AppTheme.border)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, -3),
           ),

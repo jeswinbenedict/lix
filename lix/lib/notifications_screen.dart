@@ -15,7 +15,6 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  // ── Theme ─────────────────────────────────────────────────
   static const Color _purple = Color(0xFF7C3AED);
   static const Color _bgColor = Color(0xFFF2F2F7);
   static const Color _cardBg = Color(0xFFFFFFFF);
@@ -24,7 +23,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   List<Map<String, dynamic>> _notifications = [];
   bool _loading = true;
-  int _selectedNav = 3; // Profile tab active (came from profile)
+  int _selectedNav = 3;
 
   @override
   void initState() {
@@ -101,7 +100,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   String _formatTime(dynamic ts) {
     if (ts == null) return '';
-    final dt = ts.toDate() as DateTime;
+    // ✅ Fixed: removed incorrect cast
+    final dt = ts.toDate();
     final now = DateTime.now();
     final diff = now.difference(dt);
     if (diff.inMinutes < 1) return 'Just now';
@@ -148,9 +148,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   int get _unreadCount =>
       _notifications.where((n) => n['read'] == false).length;
 
+  // ✅ Fixed: duplicate _ parameters → __
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, _) => page,
-    transitionsBuilder: (_, animation, _, child) => SlideTransition(
+    pageBuilder: (_, animation, __) => page,
+    transitionsBuilder: (_, animation, __, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
@@ -173,7 +174,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Back arrow
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -191,8 +191,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                     ),
                   ),
-
-                  // Title + badge
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -228,8 +226,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ],
                     ],
                   ),
-
-                  // Three-dot menu
                   if (_notifications.isNotEmpty)
                     Align(
                       alignment: Alignment.centerRight,
@@ -316,13 +312,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ],
         ),
       ),
-
-      // ── Bottom Nav ─────────────────────────────────────
       bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
-  // ── Notification tile ─────────────────────────────────────
   Widget _buildTile(Map<String, dynamic> item, int index) {
     final isRead = item['read'] == true;
     final type = item['type'] as String?;
@@ -337,7 +330,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       background: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.12),
+          color: Colors.redAccent.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(14),
         ),
         alignment: Alignment.centerRight,
@@ -359,7 +352,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -378,7 +371,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Image.network(
                           imgUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
+                          // ✅ Fixed: distinct parameter names
+                          errorBuilder: (ctx, err, stack) =>
                               Icon(icon, color: Colors.white, size: 22),
                         ),
                       )
@@ -392,7 +386,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title row + timestamp
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -412,7 +405,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        // Timestamp + unread dot
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -438,10 +430,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 4),
-
-                    // Body
                     Text(
                       item['body'] ?? '',
                       style: const TextStyle(
@@ -462,7 +451,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  // ── Empty state ───────────────────────────────────────────
   Widget _buildEmpty() => Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -470,7 +458,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         Icon(
           Icons.notifications_off_outlined,
           size: 72,
-          color: _textGrey.withOpacity(0.3),
+          color: _textGrey.withValues(alpha: 0.3),
         ),
         const SizedBox(height: 16),
         const Text(
@@ -491,7 +479,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
   );
 
-  // ── Bottom Nav ────────────────────────────────────────────
   Widget _buildBottomNav(BuildContext context) {
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
@@ -506,7 +493,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),

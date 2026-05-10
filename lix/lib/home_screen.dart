@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.06),
+                                    color: Colors.black.withValues(alpha: 0.06),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -253,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: _purple.withOpacity(0.3),
+                                        color: _purple.withValues(alpha: 0.3),
                                         blurRadius: 8,
                                         offset: const Offset(0, 3),
                                       ),
@@ -439,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -599,7 +599,7 @@ class _MovieCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.85),
+                      Colors.black.withValues(alpha: 0.85),
                     ],
                   ),
                 ),
@@ -637,7 +637,7 @@ class _MovieCard extends StatelessWidget {
                         Text(
                           year,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors.white.withValues(alpha: 0.6),
                             fontSize: 10,
                           ),
                         ),
@@ -692,7 +692,7 @@ class _MusicCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

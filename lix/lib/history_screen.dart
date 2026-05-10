@@ -152,7 +152,8 @@ class _HistoryScreenState extends State<HistoryScreen>
   String _formatTime(Map<String, dynamic> item) {
     final ts = item['playedAt'] ?? item['watchedAt'];
     if (ts == null) return '';
-    final dt = ts.toDate() as DateTime;
+    // ✅ Fixed: removed incorrect cast, toDate() already returns DateTime
+    final dt = ts.toDate();
     final now = DateTime.now();
     final diff = now.difference(dt);
     if (diff.inMinutes < 1) return 'Just now';
@@ -174,7 +175,6 @@ class _HistoryScreenState extends State<HistoryScreen>
     return colors[mood] ?? AppTheme.primary;
   }
 
-  // ✅ FIXED — converts dynamic map to String map for both screens
   void _onTap(Map<String, dynamic> item) {
     final isMovie = item['type'] == 'movie';
     final resumeMs = (item['resumePosition'] as int?) ?? 0;
@@ -304,7 +304,7 @@ class _HistoryScreenState extends State<HistoryScreen>
       background: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: AppTheme.error.withOpacity(0.15),
+          color: AppTheme.error.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(AppTheme.radiusMD),
         ),
         alignment: Alignment.centerRight,
@@ -337,7 +337,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                   borderRadius: BorderRadius.circular(AppTheme.radiusSM),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.3),
+                      color: color.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 1,
                     ),
@@ -349,7 +349,9 @@ class _HistoryScreenState extends State<HistoryScreen>
                       ? Image.network(
                           coverUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _thumb(color, isMovie),
+                          // ✅ Fixed: distinct parameter names
+                          errorBuilder: (ctx, err, stack) =>
+                              _thumb(color, isMovie),
                         )
                       : _thumb(color, isMovie),
                 ),
@@ -413,11 +415,13 @@ class _HistoryScreenState extends State<HistoryScreen>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.1),
+                              color: color.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                 AppTheme.radiusFull,
                               ),
-                              border: Border.all(color: color.withOpacity(0.3)),
+                              border: Border.all(
+                                color: color.withValues(alpha: 0.3),
+                              ),
                             ),
                             child: Text(
                               label,
@@ -436,7 +440,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.primary.withOpacity(0.1),
+                              color: AppTheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                 AppTheme.radiusFull,
                               ),
@@ -502,7 +506,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         Icon(
           Icons.history_rounded,
           size: 72,
-          color: AppTheme.textSecondary.withOpacity(0.3),
+          color: AppTheme.textSecondary.withValues(alpha: 0.3),
         ),
         const SizedBox(height: 16),
         const Text(
@@ -523,7 +527,7 @@ class _HistoryScreenState extends State<HistoryScreen>
   );
 
   Widget _thumb(Color color, bool isMovie) => Container(
-    color: color.withOpacity(0.1),
+    color: color.withValues(alpha: 0.1),
     child: Icon(
       isMovie ? Icons.movie_outlined : Icons.music_note_rounded,
       color: color,

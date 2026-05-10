@@ -167,21 +167,21 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.primary.withOpacity(0.15),
-                    AppTheme.secondary.withOpacity(0.08),
+                    AppTheme.primary.withValues(alpha: 0.15),
+                    AppTheme.secondary.withValues(alpha: 0.08),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(AppTheme.radiusXL),
-                border: Border.all(color: AppTheme.primary.withOpacity(0.2)),
+                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
               ),
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.15),
+                      color: AppTheme.primary.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -251,7 +251,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         Container(
                           padding: const EdgeInsets.all(7),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.12),
+                            color: color.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(
                               AppTheme.radiusSM,
                             ),
@@ -307,7 +307,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(0.1),
+                    color: AppTheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                   ),
                   child: Text(
@@ -335,12 +335,12 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   margin: const EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     color: isOpen
-                        ? AppTheme.primary.withOpacity(0.05)
+                        ? AppTheme.primary.withValues(alpha: 0.05)
                         : AppTheme.surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                     border: Border.all(
                       color: isOpen
-                          ? AppTheme.primary.withOpacity(0.3)
+                          ? AppTheme.primary.withValues(alpha: 0.3)
                           : AppTheme.border,
                     ),
                     boxShadow: AppTheme.shadowSM,
@@ -357,7 +357,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                               decoration: BoxDecoration(
                                 color: isOpen
                                     ? AppTheme.primary
-                                    : AppTheme.primary.withOpacity(0.1),
+                                    : AppTheme.primary.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Center(

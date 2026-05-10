@@ -57,8 +57,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page, // ✅ Fixed: __ not _
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page, // ✅ Fixed: __ not _
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -131,7 +131,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(width: 8), // ✅ Fixed
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
@@ -158,7 +158,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: _purple.withOpacity(0.3),
+                                  color: _purple.withValues(alpha: 0.3),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -219,7 +219,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (_, __) => const _ShimmerCard(), // ✅ Fixed
+      itemBuilder: (_, _) => const _ShimmerCard(), // ✅ Fixed
     );
   }
 
@@ -262,7 +262,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -403,7 +403,7 @@ class _MovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),

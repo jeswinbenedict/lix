@@ -107,8 +107,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ✅ Fixed: duplicate _ parameter names → __, __
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, __) => page,
-    transitionsBuilder: (_, animation, __, child) => SlideTransition(
+    pageBuilder: (_, animation, _) => page,
+    transitionsBuilder: (_, animation, _, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   : null,
                               boxShadow: [
                                 BoxShadow(
-                                  color: _purple.withOpacity(0.35),
+                                  color: _purple.withValues(alpha: 0.35),
                                   blurRadius: 20,
                                   offset: const Offset(0, 8),
                                 ),
@@ -383,7 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.orange.withOpacity(0.35),
+                              color: Colors.orange.withValues(alpha: 0.35),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -424,7 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -508,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
+                                    color: Colors.black.withValues(alpha: 0.04),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -570,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: Colors.black.withValues(alpha: 0.04),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
@@ -602,12 +602,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: _cardBg,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: Colors.redAccent.withOpacity(0.4),
+                          color: Colors.redAccent.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -712,7 +712,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: _cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),

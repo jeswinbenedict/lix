@@ -10,22 +10,58 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  final LanguageService _lang = LanguageService();
+  // ✅ Fixed: use singleton instead of orphan instance
+  LanguageService get _lang => LanguageService.instance;
+
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   int _selectedTab = 0;
 
   static const List<String> _indianLanguages = [
-    'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Bengali',
-    'Marathi', 'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'Assamese',
-    'Kashmiri', 'Konkani', 'Maithili', 'Manipuri', 'Nepali',
-    'Sanskrit', 'Santali', 'Sindhi', 'Bodo', 'Dogri', 'English',
+    'Hindi',
+    'Tamil',
+    'Telugu',
+    'Kannada',
+    'Malayalam',
+    'Bengali',
+    'Marathi',
+    'Gujarati',
+    'Punjabi',
+    'Odia',
+    'Urdu',
+    'Assamese',
+    'Kashmiri',
+    'Konkani',
+    'Maithili',
+    'Manipuri',
+    'Nepali',
+    'Sanskrit',
+    'Santali',
+    'Sindhi',
+    'Bodo',
+    'Dogri',
+    'English',
   ];
 
   static const List<String> _foreignLanguages = [
-    'Mandarin', 'Spanish', 'French', 'Arabic', 'Portuguese', 'Russian',
-    'Japanese', 'German', 'Korean', 'Italian', 'Turkish', 'Dutch',
-    'Polish', 'Swedish', 'Greek', 'Hebrew', 'Thai', 'Vietnamese',
+    'Mandarin',
+    'Spanish',
+    'French',
+    'Arabic',
+    'Portuguese',
+    'Russian',
+    'Japanese',
+    'German',
+    'Korean',
+    'Italian',
+    'Turkish',
+    'Dutch',
+    'Polish',
+    'Swedish',
+    'Greek',
+    'Hebrew',
+    'Thai',
+    'Vietnamese',
     'Indonesian',
   ];
 
@@ -75,8 +111,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: AppTheme.background,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusMD),
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusMD,
+                              ),
                               border: Border.all(color: AppTheme.border),
                             ),
                             child: const Icon(
@@ -126,8 +163,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             size: 20,
                           ),
                           border: InputBorder.none,
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
                         ),
                         onChanged: (v) => setState(() => _searchQuery = v),
                       ),
@@ -160,7 +198,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     : ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
-                            horizontal: hPad, vertical: 12),
+                          horizontal: hPad,
+                          vertical: 12,
+                        ),
                         itemCount: _filteredLanguages.length,
                         itemBuilder: (ctx, i) {
                           final language = _filteredLanguages[i];
@@ -173,16 +213,19 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             child: Container(
                               margin: const EdgeInsets.only(bottom: 10),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppTheme.primary.withOpacity(0.08)
+                                    ? AppTheme.primary.withValues(alpha: 0.08)
                                     : AppTheme.surface,
                                 borderRadius: BorderRadius.circular(
-                                    AppTheme.radiusMD),
+                                  AppTheme.radiusMD,
+                                ),
                                 border: Border.all(
                                   color: isSelected
-                                      ? AppTheme.primary.withOpacity(0.5)
+                                      ? AppTheme.primary.withValues(alpha: 0.5)
                                       : AppTheme.border,
                                   width: isSelected ? 1.5 : 1,
                                 ),
@@ -195,12 +238,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                     height: 36,
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? AppTheme.primary.withOpacity(0.15)
+                                          ? AppTheme.primary.withValues(
+                                              alpha: 0.15,
+                                            )
                                           : AppTheme.background,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: isSelected
-                                            ? AppTheme.primary.withOpacity(0.4)
+                                            ? AppTheme.primary.withValues(
+                                                alpha: 0.4,
+                                              )
                                             : AppTheme.border,
                                       ),
                                     ),
@@ -212,8 +259,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                               ? AppTheme.primary
                                               : AppTheme.textSecondary,
                                           fontWeight: FontWeight.bold,
-                                          fontSize:
-                                              AppTheme.bodyRegular(context),
+                                          fontSize: AppTheme.bodyRegular(
+                                            context,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -236,12 +284,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                   if (isSelected)
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 4),
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primary
-                                            .withOpacity(0.12),
+                                        color: AppTheme.primary.withValues(
+                                          alpha: 0.12,
+                                        ),
                                         borderRadius: BorderRadius.circular(
-                                            AppTheme.radiusFull),
+                                          AppTheme.radiusFull,
+                                        ),
                                       ),
                                       child: Text(
                                         'Selected',

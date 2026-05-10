@@ -180,7 +180,8 @@ class _MovieFavCard extends StatelessWidget {
                         ? Image.network(
                             movie['poster']!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _placeholder(),
+                            // ✅ Fixed: distinct parameter names
+                            errorBuilder: (ctx, err, stack) => _placeholder(),
                           )
                         : _placeholder(),
                     // Heart badge
@@ -190,7 +191,7 @@ class _MovieFavCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -332,7 +333,7 @@ class _MovieFavCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.red.withOpacity(0.3),
+                            color: Colors.red.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -428,21 +429,18 @@ class _SongFavCard extends StatelessWidget {
         child: Row(
           children: [
             // Cover
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                  child: hasCover
-                      ? Image.network(
-                          song['cover']!,
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _musicIcon(),
-                        )
-                      : _musicIcon(),
-                ),
-              ],
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+              child: hasCover
+                  ? Image.network(
+                      song['cover']!,
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                      // ✅ Fixed: distinct parameter names
+                      errorBuilder: (ctx, err, stack) => _musicIcon(),
+                    )
+                  : _musicIcon(),
             ),
             const SizedBox(width: 12),
             // Info
@@ -474,7 +472,7 @@ class _SongFavCard extends StatelessWidget {
                     Text(
                       song['duration']!,
                       style: TextStyle(
-                        color: AppTheme.primary.withOpacity(0.7),
+                        color: AppTheme.primary.withValues(alpha: 0.7),
                         fontSize: AppTheme.caption(context) - 1,
                       ),
                     ),
@@ -510,7 +508,7 @@ class _SongFavCard extends StatelessWidget {
     width: 56,
     height: 56,
     decoration: BoxDecoration(
-      color: AppTheme.primary.withOpacity(0.12),
+      color: AppTheme.primary.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(AppTheme.radiusMD),
     ),
     child: const Icon(Icons.music_note, color: AppTheme.primary, size: 26),
@@ -598,7 +596,7 @@ class _SongFavCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.red.withOpacity(0.3),
+                            color: Colors.red.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),

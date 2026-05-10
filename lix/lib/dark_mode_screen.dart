@@ -11,7 +11,8 @@ class DarkModeScreen extends StatefulWidget {
 }
 
 class _DarkModeScreenState extends State<DarkModeScreen> {
-  final _themeService = ThemeService();
+  // ✅ Fixed: use singleton instead of orphan instance
+  ThemeService get _themeService => ThemeService.instance;
 
   final List<Map<String, dynamic>> _options = [
     {
@@ -121,7 +122,6 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20),
-                      // Mini UI preview
                       _buildMiniPreview(isDark),
                     ],
                   ),
@@ -154,12 +154,12 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? color.withOpacity(0.08)
+                            ? color.withValues(alpha: 0.08)
                             : AppTheme.surface,
                         borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                         border: Border.all(
                           color: isSelected
-                              ? color.withOpacity(0.4)
+                              ? color.withValues(alpha: 0.4)
                               : AppTheme.border,
                           width: isSelected ? 1.5 : 1,
                         ),
@@ -170,7 +170,7 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.12),
+                              color: color.withValues(alpha: 0.12),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -248,7 +248,7 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primary.withOpacity(0.1),
+                          color: AppTheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             AppTheme.radiusSM,
                           ),
@@ -289,7 +289,9 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                           await _themeService.setDark(v);
                         },
                         activeThumbColor: AppTheme.primary,
-                        activeTrackColor: AppTheme.primary.withOpacity(0.3),
+                        activeTrackColor: AppTheme.primary.withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ],
                   ),
@@ -301,10 +303,10 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(0.06),
+                    color: AppTheme.primary.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                     border: Border.all(
-                      color: AppTheme.primary.withOpacity(0.2),
+                      color: AppTheme.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -357,7 +359,7 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AppTheme.primary.withOpacity(0.2),
+              color: AppTheme.primary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -375,7 +377,7 @@ class _DarkModeScreenState extends State<DarkModeScreen> {
                   height: 8,
                   width: 100,
                   decoration: BoxDecoration(
-                    color: txt.withOpacity(0.8),
+                    color: txt.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

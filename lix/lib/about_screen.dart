@@ -62,8 +62,8 @@ class AboutScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppTheme.primary.withOpacity(0.2),
-                      AppTheme.secondary.withOpacity(0.1),
+                      AppTheme.primary.withValues(alpha: 0.2),
+                      AppTheme.secondary.withValues(alpha: 0.1),
                       AppTheme.background,
                     ],
                     begin: Alignment.topCenter,
@@ -87,7 +87,7 @@ class AboutScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primary.withOpacity(0.45),
+                            color: AppTheme.primary.withValues(alpha: 0.45),
                             blurRadius: 24,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -132,12 +132,12 @@ class AboutScreen extends StatelessWidget {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.12),
+                        color: AppTheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(
                           AppTheme.radiusFull,
                         ),
                         border: Border.all(
-                          color: AppTheme.primary.withOpacity(0.3),
+                          color: AppTheme.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -178,7 +178,7 @@ class AboutScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.format_quote_rounded,
-                          color: AppTheme.primary.withOpacity(0.4),
+                          color: AppTheme.primary.withValues(alpha: 0.4),
                           size: 32,
                         ),
                         const SizedBox(height: 8),
@@ -423,7 +423,7 @@ class AboutScreen extends StatelessWidget {
                         Text(
                           '© $_year Lix. All rights reserved.',
                           style: TextStyle(
-                            color: AppTheme.textSecondary.withOpacity(0.5),
+                            color: AppTheme.textSecondary.withValues(alpha: 0.5),
                             fontSize: AppTheme.caption(context) - 1,
                           ),
                         ),
@@ -576,7 +576,7 @@ class AboutScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 20),

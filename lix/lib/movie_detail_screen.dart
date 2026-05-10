@@ -150,9 +150,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -196,7 +196,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               child: Container(
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.4),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -232,7 +232,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -251,7 +251,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   margin: const EdgeInsets.only(right: 10, top: 10, bottom: 10),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: _likeLoading
@@ -300,7 +300,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            _bgColor.withOpacity(0.85),
+                            _bgColor.withValues(alpha: 0.85),
                             _bgColor,
                           ],
                         ),
@@ -317,7 +317,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.65),
+                        color: Colors.black.withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -431,7 +431,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: _red.withOpacity(0.3),
+                            color: _red.withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -517,7 +517,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       border: Border.all(color: Colors.grey.shade200),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -615,7 +615,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.06),
+                                  color: Colors.black.withValues(alpha: 0.06),
                                   blurRadius: 8,
                                   offset: const Offset(0, 3),
                                 ),
@@ -699,7 +699,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _purple.withOpacity(0.08),
+            color: _purple.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: _purple, size: 16),

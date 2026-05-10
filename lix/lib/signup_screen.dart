@@ -174,8 +174,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF7C3AED).withOpacity(0.12),
-                      const Color(0xFFEC4899).withOpacity(0.05),
+                      const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                      const Color(0xFFEC4899).withValues(alpha: 0.05),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.45, 0.70],
@@ -212,7 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 BoxShadow(
                                   color: const Color(
                                     0xFF7C3AED,
-                                  ).withOpacity(0.35),
+                                  ).withValues(alpha: 0.35),
                                   blurRadius: 24,
                                   offset: const Offset(0, 6),
                                 ),
@@ -314,7 +314,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 BoxShadow(
                                   color: const Color(
                                     0xFF7C3AED,
-                                  ).withOpacity(0.4),
+                                  ).withValues(alpha: 0.4),
                                   blurRadius: 16,
                                   offset: const Offset(0, 6),
                                 ),
@@ -351,10 +351,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444).withOpacity(0.08),
+                              color: const Color(0xFFEF4444).withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: const Color(0xFFEF4444).withOpacity(0.3),
+                                color: const Color(0xFFEF4444).withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -456,7 +456,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // Loading overlay
           if (_isLoading)
             Container(
-              color: Colors.white.withOpacity(0.75),
+              color: Colors.white.withValues(alpha: 0.75),
               child: const Center(
                 child: CircularProgressIndicator(
                   color: Color(0xFF7C3AED),

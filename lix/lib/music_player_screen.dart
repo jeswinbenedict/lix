@@ -277,7 +277,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.06),
+                              color: Colors.black.withValues(alpha: 0.06),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -321,12 +321,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         height: 40,
                         decoration: BoxDecoration(
                           color: _isLiked
-                              ? Colors.red.withOpacity(0.08)
+                              ? Colors.red.withValues(alpha: 0.08)
                               : _cardBg,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.06),
+                              color: Colors.black.withValues(alpha: 0.06),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -371,12 +371,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: accent.withOpacity(0.25),
+                        color: accent.withValues(alpha: 0.25),
                         blurRadius: 40,
                         spreadRadius: 4,
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 20,
                         spreadRadius: 2,
                       ),
@@ -432,17 +432,17 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: _purple.withOpacity(0.08),
+                        color: _purple.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(99),
                         border: Border.all(
-                          color: _purple.withOpacity(0.2),
+                          color: _purple.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         _currentSong['genre']!,
                         style: TextStyle(
-                          color: _purple.withOpacity(0.8),
+                          color: _purple.withValues(alpha: 0.8),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -463,7 +463,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: _purple,
-                      inactiveTrackColor: _purple.withOpacity(0.15),
+                      inactiveTrackColor: _purple.withValues(alpha: 0.15),
                       thumbColor: _purple,
                       thumbShape: const RoundSliderThumbShape(
                         enabledThumbRadius: 7,
@@ -543,7 +543,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.07),
+                            color: Colors.black.withValues(alpha: 0.07),
                             blurRadius: 10,
                             offset: const Offset(0, 3),
                           ),
@@ -568,7 +568,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: _purple.withOpacity(0.4),
+                            color: _purple.withValues(alpha: 0.4),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 6),
@@ -604,7 +604,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.07),
+                            color: Colors.black.withValues(alpha: 0.07),
                             blurRadius: 10,
                             offset: const Offset(0, 3),
                           ),
@@ -649,13 +649,13 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
 
   Widget _artPlaceholder(Color color) {
     return Container(
-      color: color.withOpacity(0.08),
+      color: color.withValues(alpha: 0.08),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.music_note_rounded, color: color, size: 60),
           const SizedBox(height: 8),
-          Icon(Icons.apple, color: color.withOpacity(0.4), size: 24),
+          Icon(Icons.apple, color: color.withValues(alpha: 0.4), size: 24),
         ],
       ),
     );
