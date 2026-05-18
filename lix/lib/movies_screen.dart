@@ -5,6 +5,7 @@ import 'movie_detail_screen.dart';
 import 'home_screen.dart';
 import 'music_screen.dart';
 import 'profile_screen.dart';
+import 'language_service.dart';
 
 class MoviesScreen extends StatefulWidget {
   final String mood;
@@ -15,6 +16,9 @@ class MoviesScreen extends StatefulWidget {
 }
 
 class _MoviesScreenState extends State<MoviesScreen> {
+  // ✅ Singleton for translations (matches home screen)
+  LanguageService get _lang => LanguageService.instance;
+
   List<Map<String, String>> _movies = [];
   bool _loading = true;
   String _selectedMood = '';
@@ -25,6 +29,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
   static const Color _cardBg = Color(0xFFFFFFFF);
   static const Color _textDark = Color(0xFF1C1C1E);
   static const Color _textGrey = Color(0xFF8E8E93);
+
+  // ✅ Same dark pill nav colors as home screen
+  static const Color _navBg = Color(0xFF1C1C1E);
+  static const Color _navActive = Color(0xFF2C2C2E);
 
   final List<String> _moods = const [
     'Happy',
@@ -55,10 +63,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
     }
   }
 
+  // ✅ Fixed: duplicate _ → __
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, _) => page, // ✅ Fixed: __ not _
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
+      pageBuilder: (_, animation, __) => page,
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -73,7 +82,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bgColor,
+      extendBody: true, // ✅ Same as home screen
       body: SafeArea(
+        bottom: false, // ✅ Nav handles bottom padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -131,7 +142,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8), // ✅ Fixed
+                // ✅ Fixed: (_, __) not (_, _)
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -157,7 +169,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: _purple.withOpacity(0.3),
+                                  color: _purple.withValues(alpha: 0.3),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -188,7 +200,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   ? _buildEmpty()
                   : GridView.builder(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                      // ✅ Extra bottom padding so last row isn't hidden behind nav
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
@@ -210,7 +223,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget _buildShimmer() {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -218,7 +231,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (_, _) => const _ShimmerCard(), // ✅ Fixed
+      // ✅ Fixed: (_, __) not (_, _)
+      itemBuilder: (_, __) => const _ShimmerCard(),
     );
   }
 
@@ -247,7 +261,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
     );
   }
 
+  // ✅ Exact same floating dark pill nav as home screen
   Widget _buildBottomNav(BuildContext context) {
+    final systemNavHeight = MediaQuery.of(context).padding.bottom;
+
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.movie_outlined, 'label': 'Movies'},
@@ -256,75 +273,85 @@ class _MoviesScreenState extends State<MoviesScreen> {
     ];
 
     return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: _cardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final isActive = _selectedNav == i;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedNav = i);
-                if (i == 0) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    _slideRoute(const HomeScreen()),
-                    (route) => false,
-                  );
-                }
-                if (i == 2) {
-                  Navigator.push(
-                    context,
-                    _slideRoute(MusicScreen(mood: _selectedMood)),
-                  );
-                }
-                if (i == 3) {
-                  Navigator.push(context, _slideRoute(const ProfileScreen()));
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items[i]['icon'] as IconData,
-                    color: isActive ? _purple : _textGrey,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    items[i]['label'] as String,
-                    style: TextStyle(
-                      color: isActive ? _purple : _textGrey,
-                      fontSize: 11,
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: isActive ? 18 : 0,
-                    height: isActive ? 3 : 0,
-                    decoration: BoxDecoration(
-                      color: _purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ],
-              ),
+      height: 72 + systemNavHeight + 12,
+      color: Colors.transparent,
+      padding: EdgeInsets.fromLTRB(16, 0, 16, systemNavHeight + 8),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: _navBg,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
-          );
-        }),
+          ],
+        ),
+        child: Row(
+          children: List.generate(items.length, (i) {
+            final isActive = _selectedNav == i;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _selectedNav = i);
+                  if (i == 0) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      _slideRoute(const HomeScreen()),
+                      (route) => false,
+                    );
+                  }
+                  if (i == 2) {
+                    Navigator.push(
+                      context,
+                      _slideRoute(MusicScreen(mood: _selectedMood)),
+                    );
+                  }
+                  if (i == 3) {
+                    Navigator.push(context, _slideRoute(const ProfileScreen()));
+                  }
+                },
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive ? _navActive : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        items[i]['icon'] as IconData,
+                        color: isActive ? _purple : Colors.white60,
+                        size: 22,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _lang.translate(items[i]['label'] as String),
+                        style: TextStyle(
+                          color: isActive ? _purple : Colors.white60,
+                          fontSize: 10,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -332,7 +359,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
 // ── Shimmer Card ──────────────────────────────────────────────
 class _ShimmerCard extends StatefulWidget {
-  const _ShimmerCard(); // ✅ Added const constructor
+  const _ShimmerCard();
 
   @override
   State<_ShimmerCard> createState() => _ShimmerCardState();
@@ -402,7 +429,7 @@ class _MovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -421,8 +448,8 @@ class _MovieCard extends StatelessWidget {
                         poster,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (ctx, err, stack) =>
-                            _placeholder(), // ✅ Fixed
+                        // ✅ Fixed: distinct param names
+                        errorBuilder: (ctx, err, stack) => _placeholder(),
                       )
                     : _placeholder(),
               ),
@@ -475,12 +502,10 @@ class _MovieCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() {
-    return Container(
-      color: const Color(0xFF1A1A2E),
-      child: const Center(
-        child: Icon(Icons.movie_outlined, color: Colors.white24, size: 36),
-      ),
-    );
-  }
+  Widget _placeholder() => Container(
+    color: const Color(0xFF1A1A2E),
+    child: const Center(
+      child: Icon(Icons.movie_outlined, color: Colors.white24, size: 36),
+    ),
+  );
 }

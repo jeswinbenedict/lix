@@ -17,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // ✅ Fixed: use singleton instead of new instance
   LanguageService get _lang => LanguageService.instance;
 
   int _selectedNav = 0;
@@ -34,6 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   static const Color _textDark = Color(0xFF1C1C1E);
   static const Color _textGrey = Color(0xFF8E8E93);
 
+  // ── Dark nav colors (matching image 2) ──────────────────────
+  static const Color _navBg = Color(0xFF1C1C1E);
+  static const Color _navActive = Color(0xFF2C2C2E);
+
   final List<Map<String, dynamic>> _moods = const [
     {'label': 'Happy'},
     {'label': 'Sad'},
@@ -46,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // ✅ Fixed: delay fetch until after first frame to avoid frame skipping
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchData(_selectedMood);
     });
@@ -81,10 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // ✅ Fixed: duplicate _ parameters → __
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, _) => page,
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
+      pageBuilder: (_, animation, __) => page,
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -99,23 +102,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return map.map((key, value) => MapEntry(key, value?.toString() ?? ''));
   }
 
+  // ✅ Fixed: get real username — display name → email prefix → 'User'
+  String _getUsername(User? user) {
+    if (user == null) return 'User';
+    if (user.displayName != null && user.displayName!.isNotEmpty) {
+      return user.displayName!.split(' ').first;
+    }
+    if (user.email != null && user.email!.isNotEmpty) {
+      return user.email!.split('@').first;
+    }
+    return 'User';
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: _lang,
       builder: (context, _) {
         final user = FirebaseAuth.instance.currentUser;
-        final name =
-            (user?.displayName != null && user!.displayName!.isNotEmpty)
-            ? user.displayName!.split(' ').first
-            : 'there';
+        final name = _getUsername(user);
         final photo = user?.photoURL;
 
         return Scaffold(
           backgroundColor: _bgColor,
+          // ✅ extendBody lets the content go behind the nav bar area
+          extendBody: true,
           body: SafeArea(
+            bottom: false, // bottom handled by nav padding
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
+              // ✅ Bottom padding so content doesn't hide behind nav
+              padding: const EdgeInsets.only(bottom: 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -129,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hi, $name',
+                              'Hi, $name 👋',
                               style: const TextStyle(
                                 color: _textDark,
                                 fontSize: 28,
@@ -223,7 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _moods.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 10),
+                      // ✅ Fixed: (_, __) not (_, _)
+                      separatorBuilder: (_, __) => const SizedBox(width: 10),
                       itemBuilder: (ctx, i) {
                         final mood = _moods[i];
                         final isSelected = _selectedMood == mood['label'];
@@ -295,7 +313,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: _movies.length,
-                            separatorBuilder: (_, _) =>
+                            // ✅ Fixed: (_, __) not (_, _)
+                            separatorBuilder: (_, __) =>
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MovieCard(
                               movie: _movies[i],
@@ -332,7 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: _music.length,
-                            separatorBuilder: (_, _) =>
+                            // ✅ Fixed: (_, __) not (_, _)
+                            separatorBuilder: (_, __) =>
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MusicCard(
                               track: _music[i],
@@ -364,8 +384,9 @@ class _HomeScreenState extends State<HomeScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 4,
-      separatorBuilder: (_, _) => const SizedBox(width: 14),
-      itemBuilder: (_, _) => ClipRRect(
+      // ✅ Fixed: (_, __) not (_, _)
+      separatorBuilder: (_, __) => const SizedBox(width: 14),
+      itemBuilder: (_, __) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: const SizedBox(width: 140, child: _ShimmerBox()),
       ),
@@ -377,8 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 4,
-      separatorBuilder: (_, _) => const SizedBox(width: 14),
-      itemBuilder: (_, _) => ClipRRect(
+      separatorBuilder: (_, __) => const SizedBox(width: 14),
+      itemBuilder: (_, __) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: const SizedBox(width: 145, child: _ShimmerBox()),
       ),
@@ -425,7 +446,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ✅ NEW: Floating dark pill nav — matches image 2 style
+  // ✅ Sits ABOVE the phone's system navigation buttons automatically
   Widget _buildBottomNav(BuildContext context) {
+    // This gives us the height of the system navigation bar (back/home buttons)
+    final systemNavHeight = MediaQuery.of(context).padding.bottom;
+
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.movie_outlined, 'label': 'Movies'},
@@ -434,74 +460,88 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: _cardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final isActive = _selectedNav == i;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedNav = i);
-                if (i == 1) {
-                  Navigator.push(
-                    context,
-                    _slideRoute(MoviesScreen(mood: _selectedMood)),
-                  );
-                }
-                if (i == 2) {
-                  Navigator.push(
-                    context,
-                    _slideRoute(MusicScreen(mood: _selectedMood)),
-                  );
-                }
-                if (i == 3) {
-                  Navigator.push(context, _slideRoute(const ProfileScreen()));
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items[i]['icon'] as IconData,
-                    color: isActive ? _purple : _textGrey,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _lang.translate(items[i]['label'] as String),
-                    style: TextStyle(
-                      color: isActive ? _purple : _textGrey,
-                      fontSize: 11,
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: isActive ? 18 : 0,
-                    height: isActive ? 3 : 0,
-                    decoration: BoxDecoration(
-                      color: _purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ],
-              ),
+      // ✅ Total height = pill height + system nav height + top gap
+      height: 72 + systemNavHeight + 12,
+      color: Colors.transparent,
+      padding: EdgeInsets.fromLTRB(16, 0, 16, systemNavHeight + 8),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          // ✅ Dark background like image 2
+          color: _navBg,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
-          );
-        }),
+          ],
+        ),
+        child: Row(
+          children: List.generate(items.length, (i) {
+            final isActive = _selectedNav == i;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _selectedNav = i);
+                  if (i == 1) {
+                    Navigator.push(
+                      context,
+                      _slideRoute(MoviesScreen(mood: _selectedMood)),
+                    );
+                  }
+                  if (i == 2) {
+                    Navigator.push(
+                      context,
+                      _slideRoute(MusicScreen(mood: _selectedMood)),
+                    );
+                  }
+                  if (i == 3) {
+                    Navigator.push(context, _slideRoute(const ProfileScreen()));
+                  }
+                },
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    // ✅ Active item gets a lighter pill background
+                    color: isActive ? _navActive : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        items[i]['icon'] as IconData,
+                        // ✅ Active = purple, inactive = white (matches dark nav)
+                        color: isActive ? _purple : Colors.white60,
+                        size: 22,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _lang.translate(items[i]['label'] as String),
+                        style: TextStyle(
+                          color: isActive ? _purple : Colors.white60,
+                          fontSize: 10,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -580,7 +620,8 @@ class _MovieCard extends StatelessWidget {
                       width: 140,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _posterPlaceholder(),
+                      // ✅ Fixed: distinct parameter names
+                      errorBuilder: (ctx, err, stack) => _posterPlaceholder(),
                     )
                   : _posterPlaceholder(),
             ),
@@ -709,7 +750,8 @@ class _MusicCard extends StatelessWidget {
                       width: 56,
                       height: 56,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _albumPlaceholder(),
+                      // ✅ Fixed: distinct parameter names
+                      errorBuilder: (ctx, err, stack) => _albumPlaceholder(),
                     )
                   : _albumPlaceholder(),
             ),

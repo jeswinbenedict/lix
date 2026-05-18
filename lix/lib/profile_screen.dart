@@ -26,9 +26,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static const Color _textDark = Color(0xFF1C1C1E);
   static const Color _textGrey = Color(0xFF8E8E93);
 
-  final User? _user = FirebaseAuth.instance.currentUser;
+  // ✅ Same dark pill nav colors as home screen
+  static const Color _navBg = Color(0xFF1C1C1E);
+  static const Color _navActive = Color(0xFF2C2C2E);
 
-  // ✅ Fixed: use singleton instead of new instance
+  final User? _user = FirebaseAuth.instance.currentUser;
   LanguageService get _lang => LanguageService.instance;
 
   int _selectedNav = 3;
@@ -105,10 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     },
   ];
 
-  // ✅ Fixed: duplicate _ parameter names → __, __
+  // ✅ Fixed: duplicate _ → __
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, _) => page,
-    transitionsBuilder: (_, animation, _, child) => SlideTransition(
+    pageBuilder: (_, animation, __) => page,
+    transitionsBuilder: (_, animation, __, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
@@ -228,6 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return Scaffold(
           backgroundColor: _bgColor,
+          extendBody: true, // ✅ Same as home screen
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -293,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   : null,
                               boxShadow: [
                                 BoxShadow(
-                                  color: _purple.withOpacity(0.35),
+                                  color: _purple.withValues(alpha: 0.35),
                                   blurRadius: 20,
                                   offset: const Offset(0, 8),
                                 ),
@@ -361,14 +364,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           letterSpacing: -0.4,
                         ),
                       ),
-
                       const SizedBox(height: 4),
-
                       Text(
                         email,
                         style: const TextStyle(color: _textGrey, fontSize: 13),
                       ),
-
                       const SizedBox(height: 14),
 
                       Container(
@@ -383,7 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.orange.withOpacity(0.35),
+                              color: Colors.orange.withValues(alpha: 0.35),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -424,7 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -508,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
+                                    color: Colors.black.withValues(alpha: 0.04),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -570,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: Colors.black.withValues(alpha: 0.04),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
@@ -578,9 +578,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Column(
                           children: List.generate(_menuItems.length, (i) {
-                            final item = _menuItems[i];
-                            final isLast = i == _menuItems.length - 1;
-                            return _buildMenuItem(item, isLast: isLast);
+                            return _buildMenuItem(
+                              _menuItems[i],
+                              isLast: i == _menuItems.length - 1,
+                            );
                           }),
                         ),
                       ),
@@ -602,12 +603,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: _cardBg,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: Colors.redAccent.withOpacity(0.4),
+                          color: Colors.redAccent.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -636,7 +637,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                // ✅ Extra bottom padding so logout button isn't hidden behind nav
+                const SizedBox(height: 100),
               ],
             ),
           ),
@@ -698,87 +700,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ✅ Exact same floating dark pill nav as home screen
   Widget _buildBottomNav(BuildContext context) {
+    final systemNavHeight = MediaQuery.of(context).padding.bottom;
+
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.movie_outlined, 'label': 'Movies'},
       {'icon': Icons.music_note_outlined, 'label': 'Music'},
-      {'icon': Icons.person_rounded, 'label': 'Profile'},
+      {'icon': Icons.person_outline, 'label': 'Profile'},
     ];
 
     return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: _cardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final isActive = _selectedNav == i;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedNav = i);
-                if (i == 0) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    _slideRoute(const HomeScreen()),
-                    (r) => false,
-                  );
-                }
-                if (i == 1) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(MoviesScreen(mood: 'Happy')),
-                  );
-                }
-                if (i == 2) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(MusicScreen(mood: 'Happy')),
-                  );
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items[i]['icon'] as IconData,
-                    color: isActive ? _purple : _textGrey,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _lang.translate(items[i]['label'] as String),
-                    style: TextStyle(
-                      color: isActive ? _purple : _textGrey,
-                      fontSize: 11,
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: isActive ? 18 : 0,
-                    height: isActive ? 3 : 0,
-                    decoration: BoxDecoration(
-                      color: _purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ],
-              ),
+      height: 72 + systemNavHeight + 12,
+      color: Colors.transparent,
+      padding: EdgeInsets.fromLTRB(16, 0, 16, systemNavHeight + 8),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: _navBg,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
-          );
-        }),
+          ],
+        ),
+        child: Row(
+          children: List.generate(items.length, (i) {
+            final isActive = _selectedNav == i;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _selectedNav = i);
+                  if (i == 0) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      _slideRoute(const HomeScreen()),
+                      (r) => false,
+                    );
+                  }
+                  if (i == 1) {
+                    Navigator.pushReplacement(
+                      context,
+                      _slideRoute(MoviesScreen(mood: 'Happy')),
+                    );
+                  }
+                  if (i == 2) {
+                    Navigator.pushReplacement(
+                      context,
+                      _slideRoute(MusicScreen(mood: 'Happy')),
+                    );
+                  }
+                },
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive ? _navActive : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        items[i]['icon'] as IconData,
+                        color: isActive ? _purple : Colors.white60,
+                        size: 22,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _lang.translate(items[i]['label'] as String),
+                        style: TextStyle(
+                          color: isActive ? _purple : Colors.white60,
+                          fontSize: 10,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

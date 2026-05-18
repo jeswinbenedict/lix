@@ -6,6 +6,7 @@ import 'music_player_screen.dart';
 import 'home_screen.dart';
 import 'movies_screen.dart';
 import 'profile_screen.dart';
+import 'language_service.dart';
 
 class MusicScreen extends StatefulWidget {
   final String mood;
@@ -21,6 +22,13 @@ class _MusicScreenState extends State<MusicScreen> {
   static const Color _cardBg = Color(0xFFFFFFFF);
   static const Color _textDark = Color(0xFF1C1C1E);
   static const Color _textGrey = Color(0xFF8E8E93);
+
+  // ✅ Same dark pill nav colors as home screen
+  static const Color _navBg = Color(0xFF1C1C1E);
+  static const Color _navActive = Color(0xFF2C2C2E);
+
+  // ✅ Singleton for translations
+  LanguageService get _lang => LanguageService.instance;
 
   late String _selectedMood;
   List<Map<String, String>> _songs = [];
@@ -44,7 +52,6 @@ class _MusicScreenState extends State<MusicScreen> {
   void initState() {
     super.initState();
     _selectedMood = widget.mood;
-    // ✅ Delay fetch until after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSongs();
     });
@@ -96,14 +103,13 @@ class _MusicScreenState extends State<MusicScreen> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, animation, _) => MusicPlayerScreen(
-          // ✅ Fixed
+        // ✅ Fixed: (_, animation, __) not (_, animation, _)
+        pageBuilder: (_, animation, __) => MusicPlayerScreen(
           song: enriched[index],
           playlist: enriched,
           currentIndex: index,
         ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          // ✅ Fixed
+        transitionsBuilder: (_, animation, __, child) => SlideTransition(
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
               .animate(
                 CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -151,8 +157,9 @@ class _MusicScreenState extends State<MusicScreen> {
                           width: 52,
                           height: 52,
                           fit: BoxFit.cover,
+                          // ✅ Fixed: distinct param names
                           errorBuilder: (ctx2, err, stack) =>
-                              _albumPlaceholder(52), // ✅ Fixed
+                              _albumPlaceholder(52),
                         )
                       : _albumPlaceholder(52),
                 ),
@@ -216,7 +223,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.red.withOpacity(0.3),
+                            color: Colors.red.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -276,7 +283,9 @@ class _MusicScreenState extends State<MusicScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFC3C44).withOpacity(0.3),
+                            color: const Color(
+                              0xFFFC3C44,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -329,11 +338,11 @@ class _MusicScreenState extends State<MusicScreen> {
     );
   }
 
+  // ✅ Fixed: (_, animation, __) not (_, animation, _)
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, _) => page, // ✅ Fixed
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
-        // ✅ Fixed
+      pageBuilder: (_, animation, __) => page,
+      transitionsBuilder: (_, animation, __, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -348,7 +357,9 @@ class _MusicScreenState extends State<MusicScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bgColor,
+      extendBody: true, // ✅ Same as home screen
       body: SafeArea(
+        bottom: false, // ✅ Nav handles bottom padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -406,7 +417,8 @@ class _MusicScreenState extends State<MusicScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8), // ✅ Fixed
+                // ✅ Fixed: (_, __) not (_, _)
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -432,7 +444,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: _purple.withOpacity(0.3),
+                                  color: _purple.withValues(alpha: 0.3),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -463,10 +475,11 @@ class _MusicScreenState extends State<MusicScreen> {
                   ? _buildEmpty()
                   : ListView.separated(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                      // ✅ Extra bottom padding so last song isn't hidden behind nav
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
                       itemCount: _songs.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: 10), // ✅ Fixed
+                      // ✅ Fixed: (_, __) not (_, _)
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (_, i) => _SongCard(
                         song: _songs[i],
                         onPlay: () => _openPlayer(i),
@@ -497,7 +510,7 @@ class _MusicScreenState extends State<MusicScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -514,8 +527,8 @@ class _MusicScreenState extends State<MusicScreen> {
                     width: 44,
                     height: 44,
                     fit: BoxFit.cover,
-                    errorBuilder: (ctx, err, stack) =>
-                        _albumPlaceholder(44), // ✅ Fixed
+                    // ✅ Fixed: distinct param names
+                    errorBuilder: (ctx, err, stack) => _albumPlaceholder(44),
                   )
                 : _albumPlaceholder(44),
           ),
@@ -599,7 +612,10 @@ class _MusicScreenState extends State<MusicScreen> {
     );
   }
 
+  // ✅ Exact same floating dark pill nav as home screen
   Widget _buildBottomNav(BuildContext context) {
+    final systemNavHeight = MediaQuery.of(context).padding.bottom;
+
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.movie_outlined, 'label': 'Movies'},
@@ -608,85 +624,96 @@ class _MusicScreenState extends State<MusicScreen> {
     ];
 
     return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: _cardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final isActive = _selectedNav == i;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedNav = i);
-                if (i == 0) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    _slideRoute(const HomeScreen()),
-                    (route) => false,
-                  );
-                }
-                if (i == 1) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(MoviesScreen(mood: _selectedMood)),
-                  );
-                }
-                if (i == 3) {
-                  Navigator.push(context, _slideRoute(const ProfileScreen()));
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items[i]['icon'] as IconData,
-                    color: isActive ? _purple : _textGrey,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    items[i]['label'] as String,
-                    style: TextStyle(
-                      color: isActive ? _purple : _textGrey,
-                      fontSize: 11,
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: isActive ? 18 : 0,
-                    height: isActive ? 3 : 0,
-                    decoration: BoxDecoration(
-                      color: _purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ],
-              ),
+      height: 72 + systemNavHeight + 12,
+      color: Colors.transparent,
+      padding: EdgeInsets.fromLTRB(16, 0, 16, systemNavHeight + 8),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: _navBg,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
-          );
-        }),
+          ],
+        ),
+        child: Row(
+          children: List.generate(items.length, (i) {
+            final isActive = _selectedNav == i;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _selectedNav = i);
+                  if (i == 0) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      _slideRoute(const HomeScreen()),
+                      (route) => false,
+                    );
+                  }
+                  if (i == 1) {
+                    Navigator.pushReplacement(
+                      context,
+                      _slideRoute(MoviesScreen(mood: _selectedMood)),
+                    );
+                  }
+                  if (i == 3) {
+                    Navigator.push(context, _slideRoute(const ProfileScreen()));
+                  }
+                },
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive ? _navActive : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        items[i]['icon'] as IconData,
+                        color: isActive ? _purple : Colors.white60,
+                        size: 22,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _lang.translate(items[i]['label'] as String),
+                        style: TextStyle(
+                          color: isActive ? _purple : Colors.white60,
+                          fontSize: 10,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
 
   Widget _buildShimmer() {
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
       itemCount: 7,
-      separatorBuilder: (_, _) => const SizedBox(height: 10), // ✅ Fixed
-      itemBuilder: (_, _) => const _ShimmerCard(), // ✅ Fixed + const
+      // ✅ Fixed: (_, __) not (_, _)
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      itemBuilder: (_, __) => const _ShimmerCard(),
     );
   }
 
@@ -762,7 +789,7 @@ class _SongCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -781,8 +808,8 @@ class _SongCard extends StatelessWidget {
                       width: 72,
                       height: 72,
                       fit: BoxFit.cover,
-                      errorBuilder: (ctx, err, stack) =>
-                          _placeholder(), // ✅ Fixed
+                      // ✅ Fixed: distinct param names
+                      errorBuilder: (ctx, err, stack) => _placeholder(),
                     )
                   : _placeholder(),
             ),
@@ -818,13 +845,13 @@ class _SongCard extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: _purple.withOpacity(0.08),
+                          color: _purple.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
                           genre,
                           style: TextStyle(
-                            color: _purple.withOpacity(0.8),
+                            color: _purple.withValues(alpha: 0.8),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -860,22 +887,19 @@ class _SongCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() {
-    return Container(
-      width: 72,
-      height: 72,
-      color: const Color(0xFF3D1A6E),
-      child: const Center(
-        child: Icon(Icons.music_note_rounded, color: Colors.white54, size: 28),
-      ),
-    );
-  }
+  Widget _placeholder() => Container(
+    width: 72,
+    height: 72,
+    color: const Color(0xFF3D1A6E),
+    child: const Center(
+      child: Icon(Icons.music_note_rounded, color: Colors.white54, size: 28),
+    ),
+  );
 }
 
 // ── Shimmer Card ──────────────────────────────────────────────
 class _ShimmerCard extends StatefulWidget {
-  const _ShimmerCard(); // ✅ Added const constructor
-
+  const _ShimmerCard();
   @override
   State<_ShimmerCard> createState() => _ShimmerCardState();
 }
