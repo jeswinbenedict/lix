@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'app_theme.dart';
 import 'language_service.dart';
-import 'gemini_service.dart';
+import 'groq_service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -19,114 +19,112 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isTyping = false;
   final LanguageService _lang = LanguageService();
 
-  // ── UI strings ────────────────────────────────────────────────────────
   static const Map<String, Map<String, String>> _uiStrings = {
     'English': {
       'online': 'Online',
       'thinking': 'Lix is thinking...',
       'placeholder': 'Ask me anything...',
-      'try_saying': '💡 Try saying:',
-      'welcome_title': "Hey {name}! I'm Lix 👋",
+      'try_saying': 'Try saying:',
+      'welcome_title': "Hey {name}! I'm Lix",
       'welcome_sub':
-          'Tell me your mood, ask about movies,\nmusic, or just chat! 💜',
+          'Tell me your mood, ask about movies,\nmusic, or just chat!',
     },
     'Hindi': {
       'online': 'ऑनलाइन',
       'thinking': 'Lix सोच रहा है...',
       'placeholder': 'कुछ भी पूछें...',
-      'try_saying': '💡 ये आज़माएं:',
-      'welcome_title': 'नमस्ते {name}! मैं Lix हूँ 👋',
-      'welcome_sub': 'अपना मूड बताएं या कुछ भी पूछें! 💜',
+      'try_saying': 'ये आज़माएं:',
+      'welcome_title': 'नमस्ते {name}! मैं Lix हूँ',
+      'welcome_sub': 'अपना मूड बताएं या कुछ भी पूछें!',
     },
     'Tamil': {
       'online': 'ஆன்லைன்',
       'thinking': 'Lix யோசிக்கிறது...',
       'placeholder': 'எதையும் கேளுங்கள்...',
-      'try_saying': '💡 இதை முயற்சிக்கவும்:',
-      'welcome_title': 'வணக்கம் {name}! நான் Lix 👋',
-      'welcome_sub': 'உங்கள் மூட் சொல்லுங்கள் அல்லது எதையும் கேளுங்கள்! 💜',
+      'try_saying': 'இதை முயற்சிக்கவும்:',
+      'welcome_title': 'வணக்கம் {name}! நான் Lix',
+      'welcome_sub': 'உங்கள் மூட் சொல்லுங்கள் அல்லது எதையும் கேளுங்கள்!',
     },
     'Telugu': {
       'online': 'ఆన్‌లైన్',
       'thinking': 'Lix ఆలోచిస్తోంది...',
       'placeholder': 'ఏదైనా అడగండి...',
-      'try_saying': '💡 ఇది ప్రయత్నించండి:',
-      'welcome_title': 'నమస్కారం {name}! నేను Lix 👋',
-      'welcome_sub': 'మీ మూడ్ చెప్పండి లేదా ఏదైనా అడగండి! 💜',
+      'try_saying': 'ఇది ప్రయత్నించండి:',
+      'welcome_title': 'నమస్కారం {name}! నేను Lix',
+      'welcome_sub': 'మీ మూడ్ చెప్పండి లేదా ఏదైనా అడగండి!',
     },
     'Kannada': {
       'online': 'ಆನ್‌ಲೈನ್',
       'thinking': 'Lix ಯೋಚಿಸುತ್ತಿದೆ...',
       'placeholder': 'ಏನಾದರೂ ಕೇಳಿ...',
-      'try_saying': '💡 ಇದನ್ನು ಪ್ರಯತ್ನಿಸಿ:',
-      'welcome_title': 'ನಮಸ್ಕಾರ {name}! ನಾನು Lix 👋',
-      'welcome_sub': 'ನಿಮ್ಮ ಮೂಡ್ ಹೇಳಿ ಅಥವಾ ಏನಾದರೂ ಕೇಳಿ! 💜',
+      'try_saying': 'ಇದನ್ನು ಪ್ರಯತ್ನಿಸಿ:',
+      'welcome_title': 'ನಮಸ್ಕಾರ {name}! ನಾನು Lix',
+      'welcome_sub': 'ನಿಮ್ಮ ಮೂಡ್ ಹೇಳಿ ಅಥವಾ ಏನಾದರೂ ಕೇಳಿ!',
     },
     'Malayalam': {
       'online': 'ഓൺലൈൻ',
       'thinking': 'Lix ചിന്തിക്കുന്നു...',
       'placeholder': 'എന്തും ചോദിക്കൂ...',
-      'try_saying': '💡 ഇത് ശ്രമിക്കൂ:',
-      'welcome_title': 'നമസ്കാരം {name}! ഞാൻ Lix 👋',
-      'welcome_sub': 'മൂഡ് പറയൂ അല്ലെങ്കിൽ എന്തും ചോദിക്കൂ! 💜',
+      'try_saying': 'ഇത് ശ്രമിക്കൂ:',
+      'welcome_title': 'നമസ്കാരം {name}! ഞാൻ Lix',
+      'welcome_sub': 'മൂഡ് പറയൂ അല്ലെങ്കിൽ എന്തും ചോദിക്കൂ!',
     },
     'Bengali': {
       'online': 'অনলাইন',
       'thinking': 'Lix ভাবছে...',
       'placeholder': 'যেকোনো কিছু জিজ্ঞেস করুন...',
-      'try_saying': '💡 এটি চেষ্টা করুন:',
-      'welcome_title': 'নমস্কার {name}! আমি Lix 👋',
-      'welcome_sub': 'মুড বলুন বা যেকোনো কিছু জিজ্ঞেস করুন! 💜',
+      'try_saying': 'এটি চেষ্টা করুন:',
+      'welcome_title': 'নমস্কার {name}! আমি Lix',
+      'welcome_sub': 'মুড বলুন বা যেকোনো কিছু জিজ্ঞেস করুন!',
     },
     'Arabic': {
       'online': 'متصل',
       'thinking': 'Lix يفكر...',
       'placeholder': 'اسأل عن أي شيء...',
-      'try_saying': '💡 جرب قول:',
-      'welcome_title': 'مرحباً {name}! أنا Lix 👋',
-      'welcome_sub': 'أخبرني بمزاجك أو اسألني أي شيء! 💜',
+      'try_saying': 'جرب قول:',
+      'welcome_title': 'مرحباً {name}! أنا Lix',
+      'welcome_sub': 'أخبرني بمزاجك أو اسألني أي شيء!',
     },
     'Spanish': {
       'online': 'En línea',
       'thinking': 'Lix está pensando...',
       'placeholder': 'Pregunta cualquier cosa...',
-      'try_saying': '💡 Prueba decir:',
-      'welcome_title': '¡Hola {name}! Soy Lix 👋',
-      'welcome_sub':
-          '¡Cuéntame tu estado de ánimo o pregúntame lo que quieras! 💜',
+      'try_saying': 'Prueba decir:',
+      'welcome_title': 'Hola {name}! Soy Lix',
+      'welcome_sub': 'Cuéntame tu estado de ánimo o pregúntame lo que quieras!',
     },
     'French': {
       'online': 'En ligne',
       'thinking': 'Lix réfléchit...',
       'placeholder': 'Pose-moi une question...',
-      'try_saying': '💡 Essaie de dire:',
-      'welcome_title': 'Bonjour {name}! Je suis Lix 👋',
+      'try_saying': 'Essaie de dire:',
+      'welcome_title': 'Bonjour {name}! Je suis Lix',
       'welcome_sub':
-          "Dis-moi ton humeur ou pose-moi n'importe quelle question! 💜",
+          "Dis-moi ton humeur ou pose-moi n'importe quelle question!",
     },
     'German': {
       'online': 'Online',
       'thinking': 'Lix denkt nach...',
       'placeholder': 'Stell mir eine Frage...',
-      'try_saying': '💡 Versuch zu sagen:',
-      'welcome_title': 'Hallo {name}! Ich bin Lix 👋',
-      'welcome_sub': 'Sag mir deine Stimmung oder frag mich alles! 💜',
+      'try_saying': 'Versuch zu sagen:',
+      'welcome_title': 'Hallo {name}! Ich bin Lix',
+      'welcome_sub': 'Sag mir deine Stimmung oder frag mich alles!',
     },
     'Japanese': {
       'online': 'オンライン',
       'thinking': 'Lixが考えています...',
       'placeholder': '何でも聞いてください...',
-      'try_saying': '💡 試してみて:',
-      'welcome_title': 'こんにちは {name}! 私はLixです 👋',
-      'welcome_sub': '気分を教えて、何でも聞いてください! 💜',
+      'try_saying': '試してみて:',
+      'welcome_title': 'こんにちは {name}! 私はLixです',
+      'welcome_sub': '気分を教えて、何でも聞いてください!',
     },
     'Korean': {
       'online': '온라인',
       'thinking': 'Lix가 생각 중...',
       'placeholder': '무엇이든 물어보세요...',
-      'try_saying': '💡 이렇게 말해보세요:',
-      'welcome_title': '안녕하세요 {name}! 저는 Lix입니다 👋',
-      'welcome_sub': '무드를 알려주세요 또는 무엇이든 물어보세요! 💜',
+      'try_saying': '이렇게 말해보세요:',
+      'welcome_title': '안녕하세요 {name}! 저는 Lix입니다',
+      'welcome_sub': '무드를 알려주세요 또는 무엇이든 물어보세요!',
     },
   };
 
@@ -137,7 +135,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return text.replaceAll('{name}', name);
   }
 
-  // ── Detect script from typed characters ───────────────────────────────
   String _detectInputLanguage(String text) {
     if (RegExp(r'[\u0900-\u097F]').hasMatch(text)) return 'Hindi';
     if (RegExp(r'[\u0B80-\u0BFF]').hasMatch(text)) return 'Tamil';
@@ -181,7 +178,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController.clear();
     _scrollToBottom();
 
-    final reply = await GeminiService.generateReply(
+    // ── Uses GroqService (not GeminiService) ──────────────────────────
+    final reply = await GroqService.generateReply(
       userMessage: text,
       language: detectedLang,
       mood: 'neutral',
@@ -210,7 +208,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  // ── Lix avatar ────────────────────────────────────────────────────────
   Widget _lixAvatar({double size = 28}) => Container(
     width: size,
     height: size,
@@ -230,7 +227,6 @@ class _ChatScreenState extends State<ChatScreen> {
     ),
   );
 
-  // ── Message bubble ────────────────────────────────────────────────────
   Widget _buildMessage(Map<String, dynamic> message) {
     final isUser = message['role'] == 'user';
     final maxW = MediaQuery.of(context).size.width * 0.75;
@@ -302,7 +298,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Typing indicator ──────────────────────────────────────────────────
   Widget _buildTypingIndicator() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -341,7 +336,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Welcome screen ────────────────────────────────────────────────────
   Widget _buildWelcomeScreen() {
     final hPad = AppTheme.horizontalPadding(context);
     final screen = MediaQuery.of(context).size;
@@ -350,32 +344,15 @@ class _ChatScreenState extends State<ChatScreen> {
         'there';
 
     final moods = [
+      {'label': _lang.translate('Happy'), 'value': 'I am feeling happy'},
+      {'label': _lang.translate('Sad'), 'value': 'I am feeling sad'},
+      {'label': _lang.translate('Anxious'), 'value': 'I am feeling anxious'},
+      {'label': _lang.translate('Bored'), 'value': 'I am bored'},
       {
-        'emoji': '😊',
-        'label': _lang.translate('Happy'),
-        'value': 'I am feeling happy',
-      },
-      {
-        'emoji': '😢',
-        'label': _lang.translate('Sad'),
-        'value': 'I am feeling sad',
-      },
-      {
-        'emoji': '😰',
-        'label': _lang.translate('Anxious'),
-        'value': 'I am feeling anxious',
-      },
-      {'emoji': '😴', 'label': _lang.translate('Bored'), 'value': 'I am bored'},
-      {
-        'emoji': '💪',
         'label': _lang.translate('Motivated'),
         'value': 'I am feeling motivated',
       },
-      {
-        'emoji': '😍',
-        'label': _lang.translate('Romantic'),
-        'value': 'I am feeling romantic',
-      },
+      {'label': _lang.translate('Romantic'), 'value': 'I am feeling romantic'},
     ];
 
     final examples = _lang.language == 'Tamil'
@@ -406,7 +383,7 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: EdgeInsets.fromLTRB(hPad, screen.height * 0.05, hPad, 24),
       child: Column(
         children: [
-          // ── Avatar ──────────────────────────────────────────────────
+          // ── Avatar ────────────────────────────────────────────────────
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -418,12 +395,16 @@ class _ChatScreenState extends State<ChatScreen> {
               shape: BoxShape.circle,
               boxShadow: AppTheme.shadowPrimary,
             ),
-            child: const Text('🎬', style: TextStyle(fontSize: 40)),
+            child: const Icon(
+              Icons.movie_filter_rounded,
+              color: Colors.white,
+              size: 40,
+            ),
           ),
 
           SizedBox(height: screen.height * 0.025),
 
-          // ── Title ───────────────────────────────────────────────────
+          // ── Title ─────────────────────────────────────────────────────
           Text(
             _ui('welcome_title', name: name),
             style: TextStyle(
@@ -445,13 +426,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
           SizedBox(height: screen.height * 0.03),
 
-          // ── Mood chips — horizontal scroll, never wraps ─────────────
+          // ── Mood chips ────────────────────────────────────────────────
           SizedBox(
             height: 44,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              // No extra padding — let the parent handle horizontal padding
               itemCount: moods.length,
               separatorBuilder: (_, __) => const SizedBox(width: 10),
               itemBuilder: (_, i) {
@@ -475,25 +455,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       boxShadow: AppTheme.shadowSM,
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          mood['emoji']!,
-                          style: TextStyle(
-                            fontSize: AppTheme.bodyRegular(context),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          mood['label']!,
-                          style: TextStyle(
-                            color: AppTheme.primary,
-                            fontSize: AppTheme.bodyRegular(context),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      mood['label']!,
+                      style: TextStyle(
+                        color: AppTheme.primary,
+                        fontSize: AppTheme.bodyRegular(context),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 );
@@ -503,7 +471,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
           SizedBox(height: screen.height * 0.025),
 
-          // ── Try saying card ─────────────────────────────────────────
+          // ── Try saying card ───────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -529,7 +497,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     padding: const EdgeInsets.only(bottom: 6),
                     child: GestureDetector(
                       onTap: () {
-                        // Strip quotes and send directly
                         _messageController.text = e.replaceAll('"', '').trim();
                         _sendMessage();
                       },
@@ -567,16 +534,10 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Input bar ─────────────────────────────────────────────────────────
-  // KEY FIX: accounts for BOTH keyboard height (viewInsets.bottom)
-  // AND system nav bar height (padding.bottom) so the bar never
-  // hides behind Android's gesture nav / button bar.
   Widget _buildInputBar() {
     final mq = MediaQuery.of(context);
     final keyboardH = mq.viewInsets.bottom;
     final systemNavH = mq.padding.bottom;
-    // When keyboard is up, viewInsets.bottom already includes system nav.
-    // When keyboard is down, we need systemNavH explicitly.
     final bottomPad = keyboardH > 0 ? keyboardH + 8 : systemNavH + 8;
 
     return Container(
@@ -669,7 +630,6 @@ class _ChatScreenState extends State<ChatScreen> {
       listenable: _lang,
       builder: (context, _) => Scaffold(
         backgroundColor: AppTheme.background,
-        // resizeToAvoidBottomInset keeps body from being obscured by keyboard
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: AppTheme.surface,

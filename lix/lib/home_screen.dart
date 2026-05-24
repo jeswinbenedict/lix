@@ -86,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // ✅ Fixed: duplicate _ parameters → __
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page,
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _moods.length,
                       // ✅ Fixed: (_, __) not (_, _)
-                      separatorBuilder: (_, __) => const SizedBox(width: 10),
+                      separatorBuilder: (_, _) => const SizedBox(width: 10),
                       itemBuilder: (ctx, i) {
                         final mood = _moods[i];
                         final isSelected = _selectedMood == mood['label'];
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: _movies.length,
                             // ✅ Fixed: (_, __) not (_, _)
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MovieCard(
                               movie: _movies[i],
@@ -352,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: _music.length,
                             // ✅ Fixed: (_, __) not (_, _)
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(width: 14),
                             itemBuilder: (ctx, i) => _MusicCard(
                               track: _music[i],
@@ -385,8 +385,8 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 4,
       // ✅ Fixed: (_, __) not (_, _)
-      separatorBuilder: (_, __) => const SizedBox(width: 14),
-      itemBuilder: (_, __) => ClipRRect(
+      separatorBuilder: (_, _) => const SizedBox(width: 14),
+      itemBuilder: (_, _) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: const SizedBox(width: 140, child: _ShimmerBox()),
       ),
@@ -398,8 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 4,
-      separatorBuilder: (_, __) => const SizedBox(width: 14),
-      itemBuilder: (_, __) => ClipRRect(
+      separatorBuilder: (_, _) => const SizedBox(width: 14),
+      itemBuilder: (_, _) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: const SizedBox(width: 145, child: _ShimmerBox()),
       ),

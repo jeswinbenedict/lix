@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'notifications_service.dart';
-import 'home_screen.dart';
-import 'movies_screen.dart';
-import 'music_screen.dart';
-import 'profile_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -23,7 +19,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   List<Map<String, dynamic>> _notifications = [];
   bool _loading = true;
-  int _selectedNav = 3;
 
   @override
   void initState() {
@@ -100,7 +95,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   String _formatTime(dynamic ts) {
     if (ts == null) return '';
-    // ✅ Fixed: removed incorrect cast
     final dt = ts.toDate();
     final now = DateTime.now();
     final diff = now.difference(dt);
@@ -148,23 +142,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   int get _unreadCount =>
       _notifications.where((n) => n['read'] == false).length;
 
-  // ✅ Fixed: duplicate _ parameters → __
-  Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, _) => page,
-    transitionsBuilder: (_, animation, _, child) => SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-      child: child,
-    ),
-    transitionDuration: const Duration(milliseconds: 300),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bgColor,
+      // ── No bottomNavigationBar — removed entirely ──
       body: SafeArea(
         child: Column(
           children: [
@@ -242,14 +224,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           PopupMenuItem(
                             value: 'read',
                             child: Row(
-                              children: [
-                                const Icon(
+                              children: const [
+                                Icon(
                                   Icons.done_all_rounded,
                                   size: 18,
                                   color: _purple,
                                 ),
-                                const SizedBox(width: 10),
-                                const Text(
+                                SizedBox(width: 10),
+                                Text(
                                   'Mark all as read',
                                   style: TextStyle(color: _textDark),
                                 ),
@@ -259,14 +241,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           PopupMenuItem(
                             value: 'clear',
                             child: Row(
-                              children: [
-                                const Icon(
+                              children: const [
+                                Icon(
                                   Icons.delete_sweep_rounded,
                                   size: 18,
                                   color: Colors.redAccent,
                                 ),
-                                const SizedBox(width: 10),
-                                const Text(
+                                SizedBox(width: 10),
+                                Text(
                                   'Clear all',
                                   style: TextStyle(color: Colors.redAccent),
                                 ),
@@ -312,7 +294,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
@@ -371,7 +352,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Image.network(
                           imgUrl,
                           fit: BoxFit.cover,
-                          // ✅ Fixed: distinct parameter names
                           errorBuilder: (ctx, err, stack) =>
                               Icon(icon, color: Colors.white, size: 22),
                         ),
@@ -478,95 +458,4 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ],
     ),
   );
-
-  Widget _buildBottomNav(BuildContext context) {
-    final items = [
-      {'icon': Icons.home_rounded, 'label': 'Home'},
-      {'icon': Icons.movie_outlined, 'label': 'Movies'},
-      {'icon': Icons.music_note_outlined, 'label': 'Music'},
-      {'icon': Icons.person_rounded, 'label': 'Profile'},
-    ];
-
-    return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: _cardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final isActive = _selectedNav == i;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedNav = i);
-                if (i == 0) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    _slideRoute(const HomeScreen()),
-                    (r) => false,
-                  );
-                }
-                if (i == 1) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(MoviesScreen(mood: 'Happy')),
-                  );
-                }
-                if (i == 2) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(MusicScreen(mood: 'Happy')),
-                  );
-                }
-                if (i == 3) {
-                  Navigator.pushReplacement(
-                    context,
-                    _slideRoute(const ProfileScreen()),
-                  );
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items[i]['icon'] as IconData,
-                    color: isActive ? _purple : _textGrey,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    items[i]['label'] as String,
-                    style: TextStyle(
-                      color: isActive ? _purple : _textGrey,
-                      fontSize: 11,
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: isActive ? 18 : 0,
-                    height: isActive ? 3 : 0,
-                    decoration: BoxDecoration(
-                      color: _purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
 }

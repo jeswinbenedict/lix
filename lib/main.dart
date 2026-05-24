@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
@@ -13,25 +12,6 @@ import 'language_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    await dotenv.load(fileName: '.env');
-    debugPrint('✅ .env loaded successfully');
-    debugPrint('✅ dotenv keys: ${dotenv.env.keys.toList()}');
-    debugPrint(
-      '✅ GEMINI_API_KEY present: ${dotenv.env.containsKey('GEMINI_API_KEY')}',
-    );
-    debugPrint('✅ GEMINI_API_KEY raw: ${dotenv.env['GEMINI_API_KEY']}');
-    debugPrint(
-      '✅ GEMINI_API_KEY not empty: ${(dotenv.env['GEMINI_API_KEY'] ?? '').trim().isNotEmpty}',
-    );
-    debugPrint(
-      '✅ GEMINI_API_KEY length: ${(dotenv.env['GEMINI_API_KEY'] ?? '').length}',
-    );
-  } catch (e, st) {
-    debugPrint('🔴 Failed to load .env: $e');
-    debugPrint('🔴 .env stack: $st');
-  }
 
   FlutterError.onError = (FlutterErrorDetails details) {
     debugPrint('🔴 FLUTTER ERROR: ${details.exception}');
@@ -48,17 +28,13 @@ Future<void> main() async {
   }
 
   await ThemeService.instance.init();
-  debugPrint('✅ ThemeService done');
-
   await LanguageService.instance.init();
-  debugPrint('✅ LanguageService done');
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  debugPrint('✅ Calling runApp...');
   runApp(const LixApp());
 }
 
@@ -99,10 +75,6 @@ class _AuthGate extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        debugPrint(
-          '🔵 Auth state: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, error: ${snapshot.error}',
-        );
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             backgroundColor: AppTheme.background,
@@ -129,11 +101,9 @@ class _AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          debugPrint('✅ User logged in → HomeScreen');
           return const HomeScreen();
         }
 
-        debugPrint('✅ No user → LoginScreen');
         return const LoginScreen();
       },
     );

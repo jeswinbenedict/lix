@@ -104,12 +104,12 @@ class _MusicScreenState extends State<MusicScreen> {
       context,
       PageRouteBuilder(
         // ✅ Fixed: (_, animation, __) not (_, animation, _)
-        pageBuilder: (_, animation, __) => MusicPlayerScreen(
+        pageBuilder: (_, animation, _) => MusicPlayerScreen(
           song: enriched[index],
           playlist: enriched,
           currentIndex: index,
         ),
-        transitionsBuilder: (_, animation, __, child) => SlideTransition(
+        transitionsBuilder: (_, animation, _, child) => SlideTransition(
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
               .animate(
                 CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -341,8 +341,8 @@ class _MusicScreenState extends State<MusicScreen> {
   // ✅ Fixed: (_, animation, __) not (_, animation, _)
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page,
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -418,7 +418,7 @@ class _MusicScreenState extends State<MusicScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
                 // ✅ Fixed: (_, __) not (_, _)
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -479,7 +479,7 @@ class _MusicScreenState extends State<MusicScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
                       itemCount: _songs.length,
                       // ✅ Fixed: (_, __) not (_, _)
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (_, i) => _SongCard(
                         song: _songs[i],
                         onPlay: () => _openPlayer(i),
@@ -712,8 +712,8 @@ class _MusicScreenState extends State<MusicScreen> {
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
       itemCount: 7,
       // ✅ Fixed: (_, __) not (_, _)
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (_, __) => const _ShimmerCard(),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
+      itemBuilder: (_, _) => const _ShimmerCard(),
     );
   }
 

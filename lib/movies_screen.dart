@@ -29,7 +29,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
   static const Color _cardBg = Color(0xFFFFFFFF);
   static const Color _textDark = Color(0xFF1C1C1E);
   static const Color _textGrey = Color(0xFF8E8E93);
-
   static const Color _navBg = Color(0xFF1C1C1E);
   static const Color _navActive = Color(0xFF2C2C2E);
 
@@ -64,16 +63,14 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-              ),
-          child: child,
-        );
-      },
+      pageBuilder: (_, a, _) => page,
+      transitionsBuilder: (_, a, _, child) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(1, 0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
+        child: child,
+      ),
       transitionDuration: const Duration(milliseconds: 300),
     );
   }
@@ -88,6 +85,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Header ─────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Stack(
@@ -133,17 +131,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
             ),
             const SizedBox(height: 16),
 
+            // ── Mood chips ──────────────────────────────────────────────
             SizedBox(
               height: 38,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
-
                   return GestureDetector(
                     onTap: () {
                       HapticFeedback.lightImpact();
@@ -186,9 +184,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 },
               ),
             ),
-
             const SizedBox(height: 16),
 
+            // ── Grid ────────────────────────────────────────────────────
             Expanded(
               child: _loading
                   ? _buildShimmer()
@@ -226,7 +224,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         childAspectRatio: 0.62,
       ),
       itemCount: 6,
-      itemBuilder: (context, index) => const _ShimmerCard(),
+      itemBuilder: (_, _) => const _ShimmerCard(),
     );
   }
 
@@ -257,7 +255,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Widget _buildBottomNav(BuildContext context) {
     final systemNavHeight = MediaQuery.of(context).padding.bottom;
-
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.movie_outlined, 'label': 'Movies'},
@@ -287,21 +284,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
         child: Row(
           children: List.generate(items.length, (i) {
             final isActive = _selectedNav == i;
-
             return Expanded(
               child: GestureDetector(
                 onTap: () {
                   HapticFeedback.lightImpact();
                   setState(() => _selectedNav = i);
-
                   if (i == 0) {
                     Navigator.pushAndRemoveUntil(
                       context,
                       _slideRoute(const HomeScreen()),
-                      (route) => false,
+                      (_) => false,
                     );
                   } else if (i == 1) {
-                    return;
+                    return; // already here
                   } else if (i == 2) {
                     Navigator.push(context, _slideRoute(const ChatScreen()));
                   } else if (i == 3) {
@@ -355,9 +350,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 }
 
+// ── Shimmer card ──────────────────────────────────────────────────────────────
 class _ShimmerCard extends StatefulWidget {
   const _ShimmerCard();
-
   @override
   State<_ShimmerCard> createState() => _ShimmerCardState();
 }
@@ -397,6 +392,7 @@ class _ShimmerCardState extends State<_ShimmerCard>
   }
 }
 
+// ── Movie card ────────────────────────────────────────────────────────────────
 class _MovieCard extends StatelessWidget {
   final Map<String, String> movie;
   const _MovieCard({required this.movie});
@@ -444,7 +440,7 @@ class _MovieCard extends StatelessWidget {
                         poster,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (ctx, err, stack) => _placeholder(),
+                        errorBuilder: (_, _, _) => _placeholder(),
                       )
                     : _placeholder(),
               ),

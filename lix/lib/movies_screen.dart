@@ -66,8 +66,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   // ✅ Fixed: duplicate _ → __
   Route _slideRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, animation, __) => page,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
+      pageBuilder: (_, animation, _) => page,
+      transitionsBuilder: (_, animation, _, child) => SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
             .animate(
               CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -143,7 +143,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _moods.length,
                 // ✅ Fixed: (_, __) not (_, _)
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
                   final isSelected = mood == _selectedMood;
@@ -232,7 +232,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
       ),
       itemCount: 6,
       // ✅ Fixed: (_, __) not (_, _)
-      itemBuilder: (_, __) => const _ShimmerCard(),
+      itemBuilder: (_, _) => const _ShimmerCard(),
     );
   }
 

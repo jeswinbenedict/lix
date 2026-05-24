@@ -109,8 +109,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ✅ Fixed: duplicate _ → __
   Route _slideRoute(Widget page) => PageRouteBuilder(
-    pageBuilder: (_, animation, __) => page,
-    transitionsBuilder: (_, animation, __, child) => SlideTransition(
+    pageBuilder: (_, animation, _) => page,
+    transitionsBuilder: (_, animation, _, child) => SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
