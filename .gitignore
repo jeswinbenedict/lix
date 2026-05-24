@@ -13,16 +13,19 @@
 .swiftpm/
 migrate_working_dir/
 
+
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
 
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 #.vscode/
+
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -34,11 +37,14 @@ migrate_working_dir/
 /build/
 /coverage/
 
+
 # Symbolication related
 app.*.symbols
 
+
 # Obfuscation related
 app.*.map.json
+
 
 # Android Studio will place build artifacts here
 /android/app/debug
@@ -53,6 +59,7 @@ app.*.map.json
 *.swp
 .buildlog/
 .history
+
 
 
 
@@ -75,8 +82,10 @@ app.*.map.json
 version
 analysis_benchmark.json
 
+
 # packages file containing multi-root paths
 .packages.generated
+
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -93,6 +102,7 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 
+
 # Android related
 **/android/**/gradle-wrapper.jar
 .gradle/
@@ -103,6 +113,7 @@ unlinked_spec.ds
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
+
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -134,6 +145,7 @@ unlinked_spec.ds
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
+
 # macOS
 **/Flutter/ephemeral/
 **/Pods/
@@ -141,21 +153,26 @@ unlinked_spec.ds
 **/macos/Flutter/ephemeral
 **/xcuserdata/
 
+
 # Windows
 **/windows/flutter/generated_plugin_registrant.cc
 **/windows/flutter/generated_plugin_registrant.h
 **/windows/flutter/generated_plugins.cmake
+
 
 # Linux
 **/linux/flutter/generated_plugin_registrant.cc
 **/linux/flutter/generated_plugin_registrant.h
 **/linux/flutter/generated_plugins.cmake
 
+
 # Coverage
 coverage/
 
+
 # Symbols
 app.*.symbols
+
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
@@ -166,3 +183,4 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 >>>>>>> cd85372c1fa49b2858b2f23d70b0ec6b42d5a13e
 .env 
+i have this what i need to do
