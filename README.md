@@ -404,7 +404,7 @@ Never commit API keys, tokens, or private configuration to version control.
 ## Developer
 
 **Jeswin**
-Flutter Developer · Madurai, Tamil Nadu, India
+Flutter Developer · Tamil Nadu, India
 
 LIX was built with a clear purpose — to make entertainment discovery feel personal, inclusive, and intelligent. In a world where most platforms optimise for the majority, LIX is built for everyone. Every language supported, every mood considered, every user seen.
 
