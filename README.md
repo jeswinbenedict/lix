@@ -1,7 +1,7 @@
 # LIX — Multilingual Entertainment, Personalised for You
 
 <p align="center">
-  <img src="assets/images/logo.png" alt="LIX Logo" width="110"/>
+  <img src="assets/screenshots/LIX%20logo.jpg" alt="LIX Logo" width="110"/>
 </p>
 
 <p align="center">
@@ -404,7 +404,7 @@ Never commit API keys, tokens, or private configuration to version control.
 ## Developer
 
 **Jeswin**
-Flutter Developer · Tamil Nadu, India
+Flutter Developer · Madurai, Tamil Nadu, India
 
 LIX was built with a clear purpose — to make entertainment discovery feel personal, inclusive, and intelligent. In a world where most platforms optimise for the majority, LIX is built for everyone. Every language supported, every mood considered, every user seen.
 
