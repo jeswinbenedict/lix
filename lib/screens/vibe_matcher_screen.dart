@@ -252,7 +252,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                             _computeMatch();
                           }
                         },
-                        child: Text(_step == 2 ? 'Find My Match ✨' : 'Continue', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        child: Text(_step == 2 ? 'Find My Match' : 'Continue', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       ),
                     ),
                   ],
@@ -267,7 +267,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                       children: [
                         CircularProgressIndicator(color: AppTheme.primary),
                         SizedBox(height: 16),
-                        Text('Lix AI is computing your perfect match...', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
+                        Text('Lix AI is computing your match...', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
                       ],
                     ),
                   )
@@ -291,7 +291,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                           child: const Icon(Icons.star_rounded, color: Colors.white, size: 36),
                         ),
                         const SizedBox(height: 14),
-                        const Text('Your Perfect Match Is Ready!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
+                        const Text('Your Match Is Ready', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.textPrimary)),
                         const SizedBox(height: 4),
                         Text('Curated for $_place • $_time • $_targetVibe', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
                         const SizedBox(height: 24),
@@ -300,7 +300,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                         if (_matchedMovie != null) ...[
                           const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('🎬 #1 MATCHED MOVIE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: AppTheme.primary)),
+                            child: Text('PRIMARY MATCHED MOVIE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: AppTheme.primary)),
                           ),
                           const SizedBox(height: 8),
                           GestureDetector(
@@ -330,7 +330,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                                       children: [
                                         Text(_matchedMovie!['title'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                         const SizedBox(height: 4),
-                                        Text('⭐ ${_matchedMovie!['rating']} • ${_matchedMovie!['year']}', style: const TextStyle(color: AppTheme.warning, fontSize: 13, fontWeight: FontWeight.bold)),
+                                        Text('IMDb ${_matchedMovie!['rating']} • ${_matchedMovie!['year']}', style: const TextStyle(color: AppTheme.warning, fontSize: 13, fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ),
@@ -346,7 +346,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                         if (_matchedSong != null) ...[
                           const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('🎵 #1 MATCHED SONG', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: AppTheme.primary)),
+                            child: Text('PRIMARY MATCHED SONG', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: AppTheme.primary)),
                           ),
                           const SizedBox(height: 8),
                           GestureDetector(
@@ -396,7 +396,7 @@ class _VibeMatcherScreenState extends State<VibeMatcherScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusMD)),
                     ),
                     onPressed: () => setState(() => _step = 0),
-                    child: const Text('Retake Quiz 🔄', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Retake Quiz', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ],
               ],
