@@ -11,20 +11,21 @@
 ╚══════╝╚═╝╚═╝  ╚═╝
 ```
 
-### **Multilingual Entertainment, Personalised for You**
-*Discover movies and music in your language, matched to your mood.*
+### **Light Aurora UI · Multilingual Entertainment & AI Companion**
+*Apple Senior UI/UX Designed · Mood-Based Movies, Music & AI Discovery*
 
 <br/>
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![Design System](https://img.shields.io/badge/Design-Light%20Aurora%20UI-7C3AED?style=for-the-badge)
 ![Languages](https://img.shields.io/badge/Languages-42-6C5CE7?style=for-the-badge)
 ![RTL Support](https://img.shields.io/badge/RTL%20Support-Yes-27AE60?style=for-the-badge)
-![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Android%20%7C%20iOS%20%7C%20Desktop-lightgrey?style=for-the-badge)
 
 <br/>
 
-> *Built for everyone. In every language.*
+> *Built to Apple HIG standards. Designed for everyone, in every language.*
 
 <br/>
 
@@ -34,62 +35,66 @@
 
 ## Overview
 
-**LIX** is a multilingual entertainment platform built with Flutter that brings movies and music discovery to users across languages and regions. Whether you are a Tamil speaker in Chennai, an Arabic speaker in Dubai, or an English speaker in London — LIX adapts to your language, your culture, and your current mood.
+**LIX** is a next-generation entertainment and AI discovery platform built with Flutter. Inspired by Apple's Senior UI/UX design principles and modern Light Aurora aesthetic, LIX combines mood-driven movie recommendations, streaming audio previews, and natural AI conversation in a clean, highly polished interface.
 
-The app supports **42 languages** including 22 Indian regional languages and 20 global languages, with full **RTL layout support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri. At its core, LIX combines personalised mood-based recommendations with a clean, intuitive interface — making entertainment discovery inclusive, personal, and accessible to everyone.
+The app supports **42 languages** (22 Indian regional languages and 20 global languages) with complete **RTL (Right-to-Left) layout support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri.
 
 ---
 
-## Key Features
+## Key Features & Latest Capabilities
 
-### Multilingual Experience
-- Full UI switching across **42 languages**
-- **22 Indian languages** — Tamil, Hindi, Telugu, Malayalam, Kannada, Bengali, Gujarati, Marathi, Punjabi, and more
-- **20 global languages** — English, Arabic, French, Spanish, German, Japanese, Korean, and more
-- **RTL layout support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri
+### 🎨 1. Light Aurora & Apple HIG Design System
+- **Subtle Aurora Gradients**: Soft ambient backgrounds blending violet, rose, sky blue, and mint tints.
+- **Glassmorphic Cards**: Pure white card surfaces with crisp hairline borders and soft blurred micro-shadows.
+- **Interactive Micro-Animations**: Haptic touch feedback and animated press-scale transitions (`0.92` bounce) on interactive elements.
+- **Adaptive Navigation Shell**:
+  - **Desktop / Tablet (>700px)**: macOS Sonoma / iPadOS 18 glass sidebar with active gradient squircle badges.
+  - **Mobile (<700px)**: Floating glass capsule bottom navigation bar suspended over the screen edge.
+- **0 Emojis**: Clean, professional iconography throughout the application.
 
-### Mood-Based Discovery
-- Select your current mood — Happy, Sad, Anxious, Bored, Motivated, Romantic — and receive curated movie and music recommendations tailored to how you feel
-- Mood filter persists across the Movies and Music sections for a coherent discovery experience
+---
 
-### Movies
-- Browse Indian and international films
-- Mood-based recommendations that update the content grid in real time
-- View details including rating, year, genre, quality badge, and synopsis
-- Watch trailers directly via YouTube integration
-- Save to Favourites and track watch history
+### 🎛️ 2. Vibe Studio (AI Dual Mood Mixer)
+- Blend dual emotional states (e.g. *70% Motivated + 30% Happy*) using real-time ratio sliders.
+- Generates hybrid movie recommendations and custom music playlists on the fly.
+- Powered by free public APIs (iTunes Search API & TMDB API).
 
-### Music
-- Curated playlists shaped by the user's active mood
-- Browse songs across Bollywood, Tamil, Pop, Indian Pop, and more
-- 30-second song previews with a persistent mini player
-- Full Now Playing page with album art, artist info, and playlist position
+---
 
-### Chat with Lix
-- Built-in AI assistant named **Lix**
-- Ask for movie recommendations, music suggestions, or general entertainment conversation
-- Context-aware responses that understand mood and preference
-- Example prompts:
-  - *"Recommend a good movie for tonight"*
-  - *"Tell me about AR Rahman"*
-  - *"I just broke up, need comfort"*
-  - *"What makes Interstellar so special?"*
+### 🎯 3. Vibe Matcher (3-Step AI Quiz)
+- Interactive 3-card swipe questionnaire:
+  1. *Location / Environment* (Home, Commute, Workout, Chill)
+  2. *Available Time* (15 min, 1 Hour, Full Evening)
+  3. *Target Energy Vibe* (High Energy, Calm, Feel Good, Romantic)
+- Instantly computes and reveals the #1 matched movie and song with direct YouTube trailer preview and audio streaming.
 
-### Profile and Personalisation
-- User profile management
-- Favourites collection and watch history
-- Notification support and dark mode
+---
 
-### Smart Search
-- Search across movies and music
-- Language and genre-aware results
+### 📊 4. Mood Insights & Analytics Dashboard
+- Apple Health-style visual dashboard tracking personal vibe activity.
+- Active Vibe Streak counter, total interaction metrics, and linear progress charts for mood distributions.
+- Personalized Lix AI health & focus recommendations.
+
+---
+
+### 🤖 5. Lix AI Assistant & Conversational Hub
+- Apple Intelligence inspired AI conversation screen powered by Groq Llama-3.
+- Quick prompt cards for top requests (party songs, sad melodies, artist discographies, mood uplift).
+- Context-aware responses in 42 languages.
+
+---
+
+### 🎬 6. Movies & Music Experience
+- Real-time mood filtering across movies and music.
+- Detailed movie surface with IMDb ratings, quality badges, synopsis, and direct YouTube trailer integration.
+- Music player with 30-second audio previews, album artwork rotation, and playlist queues.
+- Local Favorites and Watch/Listen History tracking.
 
 ---
 
 ## Supported Languages
 
-### Indian Languages (22)
-
+### Indian Regional Languages (22)
 | # | Language      | # | Language   | # | Language       |
 |---|---------------|---|------------|---|----------------|
 | 1 | Hindi         | 9 | Odia       | 17 | Dogri          |
@@ -102,7 +107,6 @@ The app supports **42 languages** including 22 Indian regional languages and 20 
 | 8 | Marathi       | 16 | Urdu (RTL) |   |                |
 
 ### Global Languages (20)
-
 | # | Language     | # | Language   | # | Language      |
 |---|--------------|---|------------|---|---------------|
 | 1 | English      | 8 | Russian    | 15 | Turkish       |
@@ -113,153 +117,22 @@ The app supports **42 languages** including 22 Indian regional languages and 20 
 | 6 | Chinese      | 13 | Dutch      | 20 | Swahili       |
 | 7 | Malay        | 14 | Polish     |   |               |
 
-> RTL — Right-to-left layout is fully supported for all applicable languages.
+> *RTL — Full Right-to-Left layout support for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri.*
 
 ---
 
-## Application Screens
+## Tech Stack & Architecture
 
----
-
-<p align="center">
-  <img src="assets/screenshots/home.jpg" width="320"/>
-</p>
-
-<h3 align="center">Home Page</h3>
-
-<p align="center">
-The Home Page is the heart of the LIX experience. The moment a user lands here, the app greets them personally and presents a mood selector that sets the tone for everything that follows. Choosing a mood — whether Happy, Sad, Anxious, Bored, Motivated, or Romantic — instantly reshapes the entire content feed. Movies and music curated for that exact emotional state appear below, making every session feel intentional and personal. This is not a generic content grid. It is a living, responsive dashboard that understands how the user feels and responds accordingly.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/movies.jpg" width="320"/>
-</p>
-
-<h3 align="center">Movies Page</h3>
-
-<p align="center">
-The Movies Page brings together Indian and international cinema in one unified discovery experience. Films are surfaced based on the user's active mood, removing the burden of searching and replacing it with intelligent curation. Mood filter tabs at the top allow users to switch emotional contexts instantly, with the entire content grid updating in real time. Each film card presents the title, rating, and release year at a glance — clean, minimal, and built for quick decision-making.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/movie_detail.jpg" width="320"/>
-</p>
-
-<h3 align="center">Movie Detail Page</h3>
-
-<p align="center">
-The Movie Detail Page gives users everything they need to make an informed viewing decision without leaving the app. The full-screen poster, IMDb rating, release year, genre classification, and quality badge are presented in a structured, readable layout. A synopsis provides narrative context, and a direct YouTube trailer button lets users preview the film before committing to it. The page also supports saving to Favourites and watchlist management, making it a complete decision and action surface in one place.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/chat_home.jpg" width="320"/>
-</p>
-
-<h3 align="center">Chat Page</h3>
-
-<p align="center">
-The Chat Page introduces Lix — the built-in AI assistant and the conversational layer of the LIX platform. Lix is designed to feel like a knowledgeable companion who genuinely understands entertainment. Users can ask for movie recommendations, explore an artist's discography, seek comfort through curated content after a difficult day, or simply have a conversation about something they watched. Quick-tap mood buttons at the top allow users to set an emotional context before typing, and suggested prompts help new users discover what Lix is capable of immediately.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/chat_conversation.jpg" width="720"/>
-</p>
-
-<h3 align="center">Lix in Conversation</h3>
-
-<p align="center">
-This view demonstrates Lix operating at full capacity — understanding nuanced, natural language requests and responding with specific, thoughtful recommendations. When a user describes a difficult week and asks for something to unwind with, Lix considers the emotional context, draws from Indian and international content, and offers curated suggestions with genuine reasoning behind each one. The conversation feels considered, and the experience feels built around the individual.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/music.jpg" width="320"/>
-</p>
-
-<h3 align="center">Music Page</h3>
-
-<p align="center">
-The Music Page delivers a fully curated listening experience shaped by the user's mood. Rather than presenting an overwhelming library, it surfaces a focused playlist of songs selected for the user's current emotional state. Each track displays the title, artist, and genre tag, with a play button that launches a preview instantly. A persistent mini player at the bottom of the page ensures that music continues playing seamlessly as the user explores the app.
-</p>
-
----
-
-<p align="center">
-  <img src="assets/screenshots/now_playing.jpg" width="320"/>
-</p>
-
-<h3 align="center">Now Playing Page</h3>
-
-<p align="center">
-The Now Playing Page is where the listening experience reaches its fullest expression. The album artwork fills the upper portion of the page with rich visual presence, while the song title, artist name, and language tag are presented cleanly below. A 30-second preview progress bar tracks playback in real time. Previous, play/pause, and next controls are laid out with generous spacing for effortless one-handed use. The playlist position indicator at the bottom keeps users oriented within the full curated set.
-</p>
-
----
-
-## How the App Works
-
-```
-┌────────────────────────────────────────────────────────────┐
-│                                                            │
-│  1. Launch          →  App loads with language selection   │
-│                                                            │
-│  2. Language Pick   →  Select from 42 available languages  │
-│                                                            │
-│  3. Home Page       →  Personalised greeting, mood picker  │
-│                                                            │
-│  4. Mood Selection  →  Happy / Sad / Anxious / Bored /     │
-│                        Motivated / Romantic                │
-│                                                            │
-│  5. Discovery       →  Movies and music curated to mood    │
-│                                                            │
-│  6. Explore         →  Browse, search, view details,       │
-│                        watch trailers, preview songs       │
-│                                                            │
-│  7. Interact        →  Save to Favourites, track History,  │
-│                        chat with Lix                       │
-│                                                            │
-│  8. Profile         →  Manage account, preferences,        │
-│                        and settings                        │
-│                                                            │
-└────────────────────────────────────────────────────────────┘
-```
-
-### Navigation Structure
-
-The app uses a bottom navigation bar with five primary tabs:
-
-| Tab     | Description                                                 |
-|---------|-------------------------------------------------------------|
-| Home    | Personalised dashboard with mood picker and curated content |
-| Movies  | Full movies section with mood filters and discovery grid    |
-| Chat    | Conversational AI assistant (Lix) for recommendations       |
-| Music   | Curated playlists and song browsing by mood                 |
-| Profile | User account, favourites, history, and settings             |
-
----
-
-## Tech Stack
-
-| Layer            | Technology                                           |
-|------------------|------------------------------------------------------|
-| Framework        | Flutter (Dart)                                       |
-| State Management | Riverpod / Bloc / Provider                           |
-| Localisation     | Flutter Intl / ARB files (42 languages)              |
-| Navigation       | Flutter Navigator 2.0 / GoRouter                     |
-| AI Chat          | Claude API (Anthropic)                               |
-| Media Playback   | Flutter audio player                                 |
-| Movie Data       | External movie database API                          |
-| Storage          | SharedPreferences / Local DB                         |
-| Deep Links       | YouTube trailer integration                          |
+| Layer | Technology |
+|---|---|
+| **Framework** | Flutter 3.x (Dart 3.x) |
+| **Design Tokens** | Light Aurora Design System (`AppTheme`) |
+| **Navigation** | `AdaptiveScaffold` (macOS Sidebar & Floating Mobile Capsule) |
+| **State & Services** | `ListenableBuilder`, `SharedPreferences`, `AudioPlayers` |
+| **Movie Data API** | TMDB API (Free tier) |
+| **Music Data API** | iTunes Search API (Free public API, zero-key) |
+| **AI Conversational Engine** | Groq Llama-3 API |
+| **Video Trailer Integration** | YouTube Player Flutter |
 
 ---
 
@@ -268,30 +141,36 @@ The app uses a bottom navigation bar with five primary tabs:
 ```
 lix/
 ├── lib/
-│   ├── main.dart
-│   ├── app/
-│   │   ├── app.dart
-│   │   └── routes.dart
+│   ├── main.dart                      # App entry & AuthGate
 │   ├── core/
-│   │   ├── constants/
-│   │   ├── theme/
-│   │   └── utils/
-│   ├── features/
-│   │   ├── home/
-│   │   ├── movies/
-│   │   ├── music/
-│   │   ├── chat/
-│   │   └── profile/
-│   ├── l10n/
-│   │   └── *.arb              # 42 language files
-│   └── shared/
-│       ├── widgets/
-│       └── models/
+│   │   ├── app_theme.dart             # Light Aurora design system & tokens
+│   │   └── responsive.dart            # Breakpoints & centered layout wrapper
+│   ├── widgets/
+│   │   └── adaptive_scaffold.dart     # Apple glass sidebar & mobile capsule bar
+│   ├── screens/
+│   │   ├── home_screen.dart           # Primary feed & feature cards
+│   │   ├── chat_screen.dart           # Apple Intelligence AI Chat
+│   │   ├── movies_screen.dart         # Movie grid & search
+│   │   ├── music_screen.dart          # Music list & search
+│   │   ├── movie_detail_screen.dart   # Movie details & YouTube trailer
+│   │   ├── music_player_screen.dart   # Music player & rotating album art
+│   │   ├── profile_screen.dart        # Apple HIG grouped settings
+│   │   ├── vibe_studio_screen.dart    # AI Dual Mood Mixer
+│   │   ├── vibe_matcher_screen.dart   # 3-Step AI Matcher Quiz
+│   │   ├── mood_insights_screen.dart  # Usage & Mood Analytics
+│   │   ├── favourites_screen.dart     # Saved movies & songs
+│   │   ├── history_screen.dart        # Playback history logs
+│   │   └── language_screen.dart       # 42 Language selector
+│   └── services/
+│       ├── tmdb_service.dart          # TMDB movie API client
+│       ├── music_api_service.dart     # iTunes Search API client
+│       ├── groq_service.dart          # Groq AI client
+│       ├── vibe_mixer_service.dart    # Dual mood blending engine
+│       ├── mood_analytics_service.dart# Mood stats & streak tracker
+│       ├── favourites_service.dart    # Local favorites manager
+│       ├── history_service.dart       # History logger
+│       └── language_service.dart      # Translation manager
 ├── assets/
-│   ├── images/
-│   └── screenshots/
-├── android/
-├── ios/
 ├── pubspec.yaml
 └── README.md
 ```
@@ -301,17 +180,14 @@ lix/
 ## Getting Started
 
 ### Prerequisites
-
 - Flutter SDK `>=3.0.0`
 - Dart SDK `>=3.0.0`
-- Android Studio or Xcode (for device or emulator)
-- A configured physical device or emulator
+- Chrome / Android Studio / Xcode
 
-### Installation
-
+### Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/lix.git
+git clone https://github.com/jeswinbenedict/lix.git
 
 # Navigate into the project
 cd lix
@@ -319,79 +195,23 @@ cd lix
 # Install dependencies
 flutter pub get
 
-# Run the app
-flutter run
+# Run on Web / Device
+flutter run -d chrome --web-port=8080
 ```
-
-### Build
-
-```bash
-# Android APK
-flutter build apk --release
-
-# iOS (macOS only)
-flutter build ios --release
-```
-
----
-
-## Configuration
-
-> **Important:** This project requires local configuration files for API keys, environment variables, and private settings. These files are intentionally excluded from version control.
-
-Before running the app, create a local configuration file (e.g. `lib/core/constants/env.dart`) with your own values:
-
-```dart
-// Example — do not commit actual keys
-const String apiKey = 'YOUR_API_KEY_HERE';
-const String baseUrl = 'YOUR_BASE_URL_HERE';
-```
-
-Ensure the following entries are present in your `.gitignore`:
-
-```
-*.env
-lib/core/constants/secrets.dart
-google-services.json
-GoogleService-Info.plist
-```
-
-Never commit API keys, tokens, or private configuration to version control.
-
----
-
-## Roadmap
-
-| Status    | Feature                             |
-|-----------|-------------------------------------|
-| Completed | Mood-based movie recommendations    |
-| Completed | Mood-based music playlists          |
-| Completed | 42-language localisation            |
-| Completed | RTL layout support                  |
-| Completed | AI chat assistant (Lix)             |
-| Completed | Favourites and watch history        |
-| Completed | Dark mode                           |
-| Completed | 30-second song preview player       |
-| Planned   | Offline mode and content caching    |
-| Planned   | User reviews and ratings            |
-| Planned   | Social sharing                      |
-| Planned   | Push notifications for new releases |
-| Planned   | Watch party and sync feature        |
-| Planned   | Advanced search with filters        |
 
 ---
 
 ## Developer
 
-**Jeswin**
-Flutter Developer · Tamil Nadu, India
+**Jeswin**  
+*Flutter Developer · Tamil Nadu, India*  
 
-LIX was built with a clear purpose — to make entertainment discovery feel personal, inclusive, and intelligent. In a world where most platforms optimise for the majority, LIX is built for everyone. Every language supported, every mood considered, every user seen.
+LIX is built to make media discovery personal, inclusive, and intuitive.
 
 ---
 
 <div align="center">
 
-Built with Flutter &nbsp;|&nbsp; Made for everyone, in every language &nbsp;|&nbsp; LIX &copy; 2024
+Built with Flutter &nbsp;|&nbsp; Light Aurora UI &nbsp;|&nbsp; LIX &copy; 2026
 
 </div>
