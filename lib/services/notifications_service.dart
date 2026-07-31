@@ -7,7 +7,6 @@ class NotificationsService {
 
   static String? get _uid => _auth.currentUser?.uid;
 
-  // ── Fetch all notifications ───────────────────────────
   static Future<List<Map<String, dynamic>>> getNotifications() async {
     if (_uid == null) return [];
     final snap = await _db
@@ -19,7 +18,6 @@ class NotificationsService {
     return snap.docs.map((d) => {...d.data(), 'docId': d.id}).toList();
   }
 
-  // ── Unread count ──────────────────────────────────────
   static Future<int> getUnreadCount() async {
     if (_uid == null) return 0;
     final snap = await _db
@@ -31,7 +29,6 @@ class NotificationsService {
     return snap.docs.length;
   }
 
-  // ── Mark single as read ───────────────────────────────
   static Future<void> markAsRead(String docId) async {
     if (_uid == null) return;
     await _db
@@ -42,7 +39,6 @@ class NotificationsService {
         .update({'read': true});
   }
 
-  // ── Mark all as read ──────────────────────────────────
   static Future<void> markAllAsRead() async {
     if (_uid == null) return;
     final snap = await _db
@@ -56,7 +52,6 @@ class NotificationsService {
     }
   }
 
-  // ── Delete single ─────────────────────────────────────
   static Future<void> deleteNotification(String docId) async {
     if (_uid == null) return;
     await _db
@@ -67,7 +62,6 @@ class NotificationsService {
         .delete();
   }
 
-  // ── Clear all ─────────────────────────────────────────
   static Future<void> clearAll() async {
     if (_uid == null) return;
     final snap = await _db
@@ -80,11 +74,10 @@ class NotificationsService {
     }
   }
 
-  // ── Add a notification (called from app logic) ────────
   static Future<void> addNotification({
     required String title,
     required String body,
-    String type = 'general', // 'song' | 'movie' | 'mood' | 'general'
+    String type = 'general',
     String? imageUrl,
   }) async {
     if (_uid == null) return;

@@ -6,7 +6,7 @@ class LanguageService extends ChangeNotifier {
   static final LanguageService _instance = LanguageService._();
 
   factory LanguageService() => _instance;
-  static LanguageService get instance => _instance; // ✅ Added this
+  static LanguageService get instance => _instance;
 
   LanguageService._();
 

@@ -4,27 +4,27 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
-import 'login_screen.dart';
-import 'home_screen.dart';
-import 'app_theme.dart';
-import 'theme_service.dart';
-import 'language_service.dart';
+import 'core/app_theme.dart';
+import 'services/theme_service.dart';
+import 'services/language_service.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   FlutterError.onError = (FlutterErrorDetails details) {
-    debugPrint('🔴 FLUTTER ERROR: ${details.exception}');
-    debugPrint('🔴 STACK: ${details.stack}');
+    debugPrint('FLUTTER ERROR: ${details.exception}');
+    debugPrint('STACK: ${details.stack}');
   };
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    debugPrint('✅ Firebase initialized');
+    debugPrint('Firebase initialized');
   } catch (e) {
-    debugPrint('⚠️ Firebase init skipped: $e');
+    debugPrint('Firebase init skipped: $e');
   }
 
   await ThemeService.instance.init();
@@ -33,6 +33,8 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
   ]);
 
   runApp(const LixApp());
@@ -50,9 +52,8 @@ class LixApp extends StatelessWidget {
         builder: (context, _) => MaterialApp(
           title: 'Lix',
           debugShowCheckedModeBanner: false,
-          themeMode: ThemeService.instance.themeMode,
+          themeMode: ThemeMode.light,
           theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
           locale: LanguageService.instance.locale,
           supportedLocales: LanguageService.supportedLocales,
           localizationsDelegates: const [

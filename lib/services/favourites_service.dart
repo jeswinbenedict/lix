@@ -6,7 +6,6 @@ class FavouritesService {
   static final _db = FirebaseFirestore.instance;
   static String? get _uid => FirebaseAuth.instance.currentUser?.uid;
 
-  // ── Movies ───────────────────────────────────────────────
   static CollectionReference? get _moviesRef {
     final uid = _uid;
     return uid == null
@@ -56,7 +55,6 @@ class FavouritesService {
         );
   }
 
-  // ── Songs ────────────────────────────────────────────────
   static CollectionReference? get _songsRef {
     final uid = _uid;
     return uid == null
@@ -106,7 +104,6 @@ class FavouritesService {
         );
   }
 
-  // ── Toggle helpers ───────────────────────────────────────
   static Future<bool> toggleMovie(Map<String, String> movie) async {
     try {
       final id = movie['id'] ?? movie['title'] ?? '';

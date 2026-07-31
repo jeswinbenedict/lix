@@ -8,10 +8,6 @@ class HistoryService {
 
   static String? get _uid => _auth.currentUser?.uid;
 
-  // ════════════════════════════════════════════
-  //  SONG HISTORY
-  // ════════════════════════════════════════════
-
   static Future<void> addSongHistory(Map<String, String> song) async {
     final uid = _uid;
     if (uid == null) return;
@@ -61,7 +57,6 @@ class HistoryService {
           .doc(songId)
           .update({'resumePosition': posMs});
     } catch (e) {
-      // ✅ Doc may not exist yet — safe to ignore
       debugPrint('HistoryService.saveSongPosition: $e');
     }
   }
@@ -114,10 +109,6 @@ class HistoryService {
       debugPrint('HistoryService.clearAllSongs error: $e');
     }
   }
-
-  // ════════════════════════════════════════════
-  //  MOVIE HISTORY
-  // ════════════════════════════════════════════
 
   static Future<void> addMovieHistory(Map<String, String> movie) async {
     final uid = _uid;
@@ -189,10 +180,6 @@ class HistoryService {
     }
   }
 
-  // ════════════════════════════════════════════
-  //  COMBINED
-  // ════════════════════════════════════════════
-
   static Future<List<Map<String, dynamic>>> getHistory() async {
     final songs = await getSongHistory();
     final movies = await getMovieHistory();
@@ -200,7 +187,6 @@ class HistoryService {
     final combined = [...songs, ...movies];
 
     combined.sort((a, b) {
-      // ✅ Safe Timestamp extraction — server timestamps can be null on first write
       final aTs = a['playedAt'] ?? a['watchedAt'];
       final bTs = b['playedAt'] ?? b['watchedAt'];
 
@@ -209,7 +195,6 @@ class HistoryService {
       if (bTs == null) return -1;
 
       try {
-        // ✅ Fixed: .toDate() already returns DateTime, no need to cast
         final aTime = (aTs as Timestamp).toDate();
         final bTime = (bTs as Timestamp).toDate();
         return bTime.compareTo(aTime);

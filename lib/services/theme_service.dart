@@ -6,18 +6,17 @@ class ThemeService extends ChangeNotifier {
   static final ThemeService _instance = ThemeService._();
 
   factory ThemeService() => _instance;
-  static ThemeService get instance => _instance; // ✅ Added this
+  static ThemeService get instance => _instance;
 
   ThemeService._();
 
-  bool _isDark = true;
+  bool _isDark = false;
 
-  bool get isDark => _isDark;
-  ThemeMode get themeMode => _isDark ? ThemeMode.dark : ThemeMode.light;
+  bool get isDark => false;
+  ThemeMode get themeMode => ThemeMode.light;
 
   Future<void> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isDark = prefs.getBool(_key) ?? true;
+    _isDark = false;
     notifyListeners();
   }
 
@@ -29,7 +28,7 @@ class ThemeService extends ChangeNotifier {
   }
 
   Future<void> setDark(bool value) async {
-    if (_isDark == value) return; // ✅ Skip if no change
+    if (_isDark == value) return;
     _isDark = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_key, _isDark);
