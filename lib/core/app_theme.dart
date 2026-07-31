@@ -2,28 +2,30 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // ── Color Tokens ─────────────────────────────────────────
-  static const Color background = Color(0xFFF2F2F7);
+  static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceGlass = Color(0xFFFFFFFF);
   static const Color primary = Color(0xFF7C3AED);
   static const Color primaryLight = Color(0xFFF3E8FF);
   static const Color secondary = Color(0xFFEC4899);
   static const Color accent = Color(0xFF8B5CF6);
-  static const Color textPrimary = Color(0xFF1C1C1E);
-  static const Color textSecondary = Color(0xFF8E8E93);
-  static const Color border = Color(0xFFE5E5EA);
-  static const Color shimmerBase = Color(0xFFEFEFF4);
+  static const Color textPrimary = Color(0xFF0F172A);
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textMuted = Color(0xFF94A3B8);
+  static const Color border = Color(0xFFE2E8F0);
+  static const Color shimmerBase = Color(0xFFF1F5F9);
   static const Color shimmerHigh = Color(0xFFFFFFFF);
-  static const Color error = Color(0xFFFF3B30);
-  static const Color warning = Color(0xFFFF9500);
-  static const Color success = Color(0xFF34C759);
+  static const Color error = Color(0xFFEF4444);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color success = Color(0xFF10B981);
 
   // ── Mood Colors ───────────────────────────────────────────
-  static const Color moodHappy = Color(0xFFFFCC00);
-  static const Color moodSad = Color(0xFF0A84FF);
-  static const Color moodAnxious = Color(0xFFAF52DE);
-  static const Color moodBored = Color(0xFF30D158);
-  static const Color moodMotivated = Color(0xFFFF375F);
-  static const Color moodRomantic = Color(0xFFFF2D55);
+  static const Color moodHappy = Color(0xFFF59E0B);
+  static const Color moodSad = Color(0xFF3B82F6);
+  static const Color moodAnxious = Color(0xFFA855F7);
+  static const Color moodBored = Color(0xFF10B981);
+  static const Color moodMotivated = Color(0xFFEF4444);
+  static const Color moodRomantic = Color(0xFFEC4899);
 
   static LinearGradient get primaryGradient => const LinearGradient(
         colors: [Color(0xFF7C3AED), Color(0xFFA855F7), Color(0xFFEC4899)],
@@ -33,9 +35,19 @@ class AppTheme {
 
   static LinearGradient get auroraBackgroundGradient => const LinearGradient(
         colors: [
-          Color(0xFFF6F3FF),
-          Color(0xFFFFF1F6),
-          Color(0xFFF0F7FF),
+          Color(0xFFF5F3FF), // Soft Violet Tint
+          Color(0xFFFDF2F8), // Soft Rose Tint
+          Color(0xFFF0F9FF), // Soft Sky Tint
+          Color(0xFFF0FDF4), // Soft Mint Tint
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
+  static LinearGradient get cardGlassGradient => LinearGradient(
+        colors: [
+          Colors.white.withAlpha(240),
+          Colors.white.withAlpha(210),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -44,33 +56,33 @@ class AppTheme {
   // ── Border Radius Tokens ─────────────────────────────────
   static const double radiusXS = 8.0;
   static const double radiusSM = 12.0;
-  static const double radiusMD = 18.0;
-  static const double radiusLG = 24.0;
-  static const double radiusXL = 32.0;
+  static const double radiusMD = 16.0;
+  static const double radiusLG = 20.0;
+  static const double radiusXL = 28.0;
   static const double radiusFull = 100.0;
 
   // ── Shadow Definitions ───────────────────────────────────
   static List<BoxShadow> get shadowSM => [
         BoxShadow(
-          color: const Color(0xFF7C3AED).withAlpha(12),
-          blurRadius: 14,
-          offset: const Offset(0, 3),
+          color: const Color(0xFF0F172A).withAlpha(10),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
         ),
       ];
 
   static List<BoxShadow> get shadowMD => [
         BoxShadow(
-          color: const Color(0xFF7C3AED).withAlpha(18),
-          blurRadius: 24,
-          offset: const Offset(0, 6),
+          color: const Color(0xFF7C3AED).withAlpha(16),
+          blurRadius: 28,
+          offset: const Offset(0, 8),
         ),
       ];
 
   static List<BoxShadow> get shadowPrimary => [
         BoxShadow(
-          color: primary.withAlpha(50),
-          blurRadius: 28,
-          offset: const Offset(0, 10),
+          color: primary.withAlpha(55),
+          blurRadius: 32,
+          offset: const Offset(0, 12),
         ),
       ];
 

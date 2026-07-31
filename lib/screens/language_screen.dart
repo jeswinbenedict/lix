@@ -68,10 +68,26 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
                     controller: _searchController,
+                    style: const TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       hintText: _lang.translate('Search language...'),
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 15),
+                      prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                        borderSide: const BorderSide(color: AppTheme.border, width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                        borderSide: const BorderSide(color: AppTheme.primary, width: 1.8),
+                      ),
                     ),
                     onChanged: (v) => setState(() => _searchQuery = v),
                   ),

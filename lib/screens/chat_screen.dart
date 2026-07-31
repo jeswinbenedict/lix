@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_theme.dart';
 import '../core/responsive.dart';
@@ -1134,51 +1135,51 @@ class _ChatScreenState extends State<ChatScreen> {
         'label': _lang.translate('Happy'),
         'value': 'I am feeling happy',
         'icon': Icons.wb_sunny_rounded,
-        'color': const Color(0xFFFFB703),
+        'color': const Color(0xFFF59E0B),
       },
       {
         'label': _lang.translate('Sad'),
         'value': 'I am feeling sad',
         'icon': Icons.cloud_rounded,
-        'color': const Color(0xFF0A84FF),
+        'color': const Color(0xFF3B82F6),
       },
       {
         'label': _lang.translate('Anxious'),
         'value': 'I am feeling anxious',
         'icon': Icons.spa_rounded,
-        'color': const Color(0xFFAF52DE),
+        'color': const Color(0xFFA855F7),
       },
       {
         'label': _lang.translate('Bored'),
         'value': 'I am bored',
         'icon': Icons.bolt_rounded,
-        'color': const Color(0xFF30D158),
+        'color': const Color(0xFF10B981),
       },
       {
         'label': _lang.translate('Motivated'),
         'value': 'I am feeling motivated',
         'icon': Icons.fitness_center_rounded,
-        'color': const Color(0xFFFF375F),
+        'color': const Color(0xFFEF4444),
       },
       {
         'label': _lang.translate('Romantic'),
         'value': 'I am feeling romantic',
         'icon': Icons.favorite_rounded,
-        'color': const Color(0xFFFF2D55),
+        'color': const Color(0xFFEC4899),
       },
     ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 500;
+        final isWide = constraints.maxWidth > 520;
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: isWide ? 6 : 3,
-            mainAxisExtent: 94,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
+            mainAxisExtent: 84,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
           ),
           itemCount: moods.length,
           itemBuilder: (context, index) {
@@ -1190,12 +1191,13 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   _messageController.text = mood['value'] as String;
                   _sendMessage();
                 },
                 borderRadius: BorderRadius.circular(AppTheme.radiusMD),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                   decoration: BoxDecoration(
                     color: AppTheme.surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMD),
@@ -1206,12 +1208,15 @@ class _ChatScreenState extends State<ChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        width: 32,
+                        height: 32,
                         decoration: BoxDecoration(
-                          color: color.withAlpha(25),
-                          shape: BoxShape.circle,
+                          color: color.withAlpha(22),
+                          borderRadius: BorderRadius.circular(9),
                         ),
-                        child: Icon(icon, color: color, size: 20),
+                        child: Center(
+                          child: Icon(icon, color: color, size: 18),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -1220,6 +1225,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           color: AppTheme.textPrimary,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1240,109 +1246,122 @@ class _ChatScreenState extends State<ChatScreen> {
     final name =
         FirebaseAuth.instance.currentUser?.displayName?.split(' ').first ??
         'there';
-    final examples = _lang.language == 'Tamil'
-        ? [
-            'Tamil sad songs',
-            'AR Rahman hits',
-            'Action movies',
-            'Lofi chill music',
-          ]
-        : _lang.language == 'Hindi'
-        ? [
-            'Hindi party songs',
-            'Songs by Arijit Singh',
-            'Action movies',
-            'Lofi chill beats',
-          ]
-        : [
-            'Give me Hindi party songs',
-            'Tamil sad melodies',
-            'Songs by AR Rahman',
-            'Play some lofi music',
-            'Show me action movies',
-            'Songs to uplift my mood',
-          ];
+
+    final promptCards = [
+      {
+        'title': 'Hindi party songs',
+        'prompt': 'Give me Hindi party songs',
+        'icon': Icons.music_note_rounded,
+        'color': const Color(0xFF7C3AED),
+      },
+      {
+        'title': 'Tamil sad melodies',
+        'prompt': 'Tamil sad melodies',
+        'icon': Icons.headphones_rounded,
+        'color': const Color(0xFF3B82F6),
+      },
+      {
+        'title': 'Songs by AR Rahman',
+        'prompt': 'Songs by AR Rahman',
+        'icon': Icons.mic_rounded,
+        'color': const Color(0xFFEC4899),
+      },
+      {
+        'title': 'Chill lofi beats',
+        'prompt': 'Play some lofi music',
+        'icon': Icons.graphic_eq_rounded,
+        'color': const Color(0xFF10B981),
+      },
+      {
+        'title': 'Top action movies',
+        'prompt': 'Show me action movies',
+        'icon': Icons.movie_rounded,
+        'color': const Color(0xFFF59E0B),
+      },
+      {
+        'title': 'Uplift my mood',
+        'prompt': 'Songs to uplift my mood',
+        'icon': Icons.auto_awesome_rounded,
+        'color': const Color(0xFFEF4444),
+      },
+    ];
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 24),
       child: CenteredContent(
         maxWidth: 720,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Hero Assistant Glass Header ─────────────────
+            // ── Apple Intelligence Hero Card ─────────────────
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 28),
               decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
+                color: AppTheme.surface,
                 borderRadius: BorderRadius.circular(AppTheme.radiusXL),
-                boxShadow: AppTheme.shadowPrimary,
+                border: Border.all(color: AppTheme.primary.withAlpha(40), width: 1.5),
+                boxShadow: AppTheme.shadowMD,
               ),
               child: Column(
                 children: [
+                  // Multi-color AI Aura Sphere
                   Container(
-                    width: 68,
-                    height: 68,
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(45),
+                      gradient: AppTheme.primaryGradient,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withAlpha(70), width: 2),
+                      boxShadow: AppTheme.shadowPrimary,
                     ),
                     child: const Center(
                       child: Icon(
                         Icons.auto_awesome_rounded,
-                        size: 36,
+                        size: 32,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Text(
-                    _s('welcome_title', name: name),
+                    'How can I help today, $name?',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppTheme.textPrimary,
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
-                      letterSpacing: -0.4,
+                      letterSpacing: -0.5,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    _s('welcome_sub'),
+                  const Text(
+                    'Ask for songs in any language, search your favorite artists, or discover movies by your mood.',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
                       fontSize: 14,
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(35),
+                      color: AppTheme.primaryLight,
                       borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF30D158),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
+                        Icon(Icons.bolt_rounded, size: 14, color: AppTheme.primary),
+                        SizedBox(width: 4),
                         Text(
-                          _s('online'),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          'Powered by Lix AI Engine',
+                          style: TextStyle(
+                            color: AppTheme.primary,
                             fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -1351,89 +1370,117 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
-            // ── Section 1: Select Mood Cards ─────────────────
-            Align(
-              alignment: Alignment.centerLeft,
+            // ── Section 1: Choose Vibe ─────────────────────────
+            const Padding(
+              padding: EdgeInsets.only(left: 4, bottom: 10),
               child: Text(
-                'How are you feeling?',
+                'SELECT YOUR VIBE',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: AppTheme.heading3(context),
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppTheme.textSecondary,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
             _buildMoodButtons(),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
-            // ── Section 2: Quick Suggestions ────────────────
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  const Icon(Icons.lightbulb_outline_rounded, color: AppTheme.primary, size: 20),
-                  const SizedBox(width: 6),
-                  Text(
-                    _s('try_saying'),
-                    style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: AppTheme.heading3(context),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+            // ── Section 2: Popular Requests Grid ─────────────
+            const Padding(
+              padding: EdgeInsets.only(left: 4, bottom: 10),
+              child: Text(
+                'POPULAR REQUESTS',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppTheme.textSecondary,
+                ),
               ),
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: examples.map((prompt) {
-                return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      _messageController.text = prompt;
-                      _sendMessage();
-                    },
-                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surface,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                        border: Border.all(color: AppTheme.border),
-                        boxShadow: AppTheme.shadowSM,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            prompt,
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 14,
-                            color: AppTheme.primary,
-                          ),
-                        ],
-                      ),
-                    ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isTwoCol = constraints.maxWidth > 480;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTwoCol ? 2 : 1,
+                    mainAxisExtent: 58,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                   ),
+                  itemCount: promptCards.length,
+                  itemBuilder: (context, index) {
+                    final item = promptCards[index];
+                    final color = item['color'] as Color;
+                    final icon = item['icon'] as IconData;
+                    final title = item['title'] as String;
+                    final prompt = item['prompt'] as String;
+
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _messageController.text = prompt;
+                          _sendMessage();
+                        },
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.surface,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                            border: Border.all(color: AppTheme.border),
+                            boxShadow: AppTheme.shadowSM,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 34,
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: color.withAlpha(20),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Icon(icon, color: color, size: 18),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  style: const TextStyle(
+                                    color: AppTheme.textPrimary,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.chevron_right_rounded,
+                                size: 20,
+                                color: Color(0xFFCBD5E1),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
-              }).toList(),
+              },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 36),
           ],
         ),
       ),
@@ -1444,23 +1491,17 @@ class _ChatScreenState extends State<ChatScreen> {
     return Container(
       padding: EdgeInsets.fromLTRB(
         AppTheme.horizontalPadding(context),
-        10,
+        12,
         AppTheme.horizontalPadding(context),
-        10 + MediaQuery.of(context).viewInsets.bottom,
+        16,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        border: Border(top: BorderSide(color: AppTheme.border)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -3),
-          ),
-        ],
+        color: AppTheme.surface.withAlpha(245),
+        border: const Border(top: BorderSide(color: AppTheme.border, width: 1)),
+        boxShadow: AppTheme.shadowSM,
       ),
       child: CenteredContent(
-        maxWidth: 900,
+        maxWidth: 720,
         padding: EdgeInsets.zero,
         child: Row(
           children: [

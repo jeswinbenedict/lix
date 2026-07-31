@@ -12,6 +12,9 @@ import 'music_screen.dart';
 import 'profile_screen.dart';
 import 'movie_detail_screen.dart';
 import 'music_player_screen.dart';
+import 'vibe_studio_screen.dart';
+import 'vibe_matcher_screen.dart';
+import 'mood_insights_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -102,16 +105,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${_lang.translate("Welcome back")}, $userName',
+                          'Welcome, $userName',
                           style: TextStyle(
                             color: AppTheme.textPrimary,
                             fontSize: AppTheme.heading2(context),
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.4,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _lang.translate("How are you feeling today?"),
+                          _lang.translate("Select a mood category to filter recommendations"),
                           style: TextStyle(
                             color: AppTheme.textSecondary,
                             fontSize: AppTheme.bodyRegular(context),
@@ -120,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     IconButton(
-                      icon: const Icon(Icons.search, color: AppTheme.primary, size: 28),
+                      icon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 26),
                       onPressed: () {
                         setState(() => _selectedNav = 1);
                       },
@@ -145,7 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             _lang.translate(mood),
                             style: TextStyle(
                               color: isSelected ? Colors.white : AppTheme.textPrimary,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontSize: 13,
                             ),
                           ),
                           selectedColor: AppTheme.primary,
@@ -183,30 +188,31 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(50),
+                            color: Colors.white.withAlpha(45),
                             shape: BoxShape.circle,
                           ),
                           child: const Center(
-                            child: Icon(Icons.auto_awesome, color: Colors.white, size: 28),
+                            child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 26),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _lang.translate("Chat with Lix AI"),
-                                style: const TextStyle(
+                                "Lix AI Assistant",
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w800,
                                   fontSize: 18,
+                                  letterSpacing: -0.3,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
-                                _lang.translate("Get personalized recommendations in any language!"),
-                                style: const TextStyle(
+                                "Intelligent media recommendations and natural conversation",
+                                style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 13,
                                 ),
@@ -214,12 +220,126 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
+                        const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
+
+                // ── Modern Feature Cards Grid (Studio, Matcher, Analytics) ──
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const VibeStudioScreen()),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppTheme.surface,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                            border: Border.all(color: AppTheme.border),
+                            boxShadow: AppTheme.shadowSM,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryLight,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.tune_rounded, color: AppTheme.primary, size: 20),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text('Vibe Studio', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
+                              const SizedBox(height: 2),
+                              const Text('AI Dual Mixer', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const VibeMatcherScreen()),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppTheme.surface,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                            border: Border.all(color: AppTheme.border),
+                            boxShadow: AppTheme.shadowSM,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFDF2F8),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.auto_awesome_rounded, color: AppTheme.secondary, size: 20),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text('Vibe Matcher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
+                              const SizedBox(height: 2),
+                              const Text('Instant AI Quiz', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MoodInsightsScreen()),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppTheme.surface,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                            border: Border.all(color: AppTheme.border),
+                            boxShadow: AppTheme.shadowSM,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF0FDF4),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.bar_chart_rounded, color: Color(0xFF10B981), size: 20),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text('Insights', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
+                              const SizedBox(height: 2),
+                              const Text('Mood Analytics', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
                 // Section Title: Movie Picks
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

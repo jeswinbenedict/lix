@@ -117,26 +117,32 @@ class _MusicScreenState extends State<MusicScreen> {
                   children: [
                     const SizedBox(height: 16),
                     // Search Bar
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                        border: Border.all(color: AppTheme.border),
+                    TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                        color: AppTheme.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
                       ),
-                      child: TextField(
-                        controller: _searchController,
-                        style: TextStyle(color: AppTheme.textPrimary),
-                        onSubmitted: _search,
-                        decoration: InputDecoration(
-                          hintText: _lang.translate("Search song, artist, language..."),
-                          hintStyle: TextStyle(color: AppTheme.textSecondary),
-                          border: InputBorder.none,
-                          icon: const Icon(Icons.search, color: AppTheme.primary),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.send, color: AppTheme.primary, size: 20),
-                            onPressed: () => _search(_searchController.text),
-                          ),
+                      onSubmitted: _search,
+                      decoration: InputDecoration(
+                        hintText: _lang.translate("Search song, artist, language..."),
+                        hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 15),
+                        prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.arrow_forward_rounded, color: AppTheme.primary, size: 20),
+                          onPressed: () => _search(_searchController.text),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                          borderSide: const BorderSide(color: AppTheme.border, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                          borderSide: const BorderSide(color: AppTheme.primary, width: 1.8),
                         ),
                       ),
                     ),
