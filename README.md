@@ -1,138 +1,121 @@
 <div align="center">
 
-<br/>
+# LIX
 
-```
-██╗     ██╗██╗  ██╗
-██║     ██║╚██╗██╔╝
-██║     ██║ ╚███╔╝ 
-██║     ██║ ██╔██╗ 
-███████╗██║██╔╝ ██╗
-╚══════╝╚═╝╚═╝  ╚═╝
-```
-
-### **Light Aurora UI · Multilingual Entertainment & AI Companion**
-*Apple Senior UI/UX Designed · Mood-Based Movies, Music & AI Discovery*
+### Next-Generation Multilingual Media & AI Companion
+*Apple Senior UI/UX Design System • TMDb, Apple Music & IMDb Live Data Sources*
 
 <br/>
 
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Design System](https://img.shields.io/badge/Design-Light%20Aurora%20UI-7C3AED?style=for-the-badge)
-![Languages](https://img.shields.io/badge/Languages-42-6C5CE7?style=for-the-badge)
-![RTL Support](https://img.shields.io/badge/RTL%20Support-Yes-27AE60?style=for-the-badge)
-![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Android%20%7C%20iOS%20%7C%20Desktop-lightgrey?style=for-the-badge)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Service%20Layer-7C3AED?style=for-the-badge)](https://flutter.dev)
+[![Data Sources](https://img.shields.io/badge/Data%20Sources-TMDb%20%7C%20Apple%20Music%20%7C%20IMDb-059669?style=for-the-badge)](https://imdb.com)
+[![Languages](https://img.shields.io/badge/Languages-42%20Global%20%26%20Regional-6C5CE7?style=for-the-badge)](#supported-languages)
+[![License](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge)](LICENSE)
 
 <br/>
 
-> *Built to Apple HIG standards. Designed for everyone, in every language.*
-
-<br/>
+---
 
 </div>
 
----
+## Project Overview
 
-## Overview
+**LIX** is a cross-platform entertainment and AI discovery platform built with Flutter. Built adhering to Apple Human Interface Guidelines (HIG) and a custom Light Aurora UI design system, LIX integrates multi-source media data from TMDb, Apple Music, and live IMDb web scraping with intelligent natural language AI capabilities.
 
-**LIX** is a next-generation entertainment and AI discovery platform built with Flutter. Inspired by Apple's Senior UI/UX design principles and modern Light Aurora aesthetic, LIX combines mood-driven movie recommendations, streaming audio previews, and natural AI conversation in a clean, highly polished interface.
-
-The app supports **42 languages** (22 Indian regional languages and 20 global languages) with complete **RTL (Right-to-Left) layout support** for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri.
+The platform offers real-time mood-driven recommendation engines, streaming 30-second audio previews, live IMDb ratings and metadata, cloud synchronized watch and listen history, and localized content delivery across **42 languages** with native Right-to-Left (RTL) layout support.
 
 ---
 
-## Key Features & Latest Capabilities
+## Key Features
 
-### 🎨 1. Light Aurora & Apple HIG Design System
-- **Subtle Aurora Gradients**: Soft ambient backgrounds blending violet, rose, sky blue, and mint tints.
-- **Glassmorphic Cards**: Pure white card surfaces with crisp hairline borders and soft blurred micro-shadows.
-- **Interactive Micro-Animations**: Haptic touch feedback and animated press-scale transitions (`0.92` bounce) on interactive elements.
-- **Adaptive Navigation Shell**:
-  - **Desktop / Tablet (>700px)**: macOS Sonoma / iPadOS 18 glass sidebar with active gradient squircle badges.
-  - **Mobile (<700px)**: Floating glass capsule bottom navigation bar suspended over the screen edge.
-- **0 Emojis**: Clean, professional iconography throughout the application.
+### 1. Multi-Source Media Engine
+- **TMDb Integration**: Real-time retrieval of trending movies, genres, release metadata, and poster imagery.
+- **Apple Music Integration**: Live song discovery and high-fidelity 30-second audio previews via the Apple Music / iTunes API.
+- **IMDb Live Integration**: Asynchronous live scraping of IMDb ratings, top rank standings, title IDs, and direct web links with anti-scraping mitigation and in-memory TTL caching.
 
----
+### 2. Conversational AI Companion
+- **Groq Llama-3 Backend**: Natural conversation and media recommendation hub.
+- **Context-Aware Assistance**: Instant prompts for music discovery, movie recommendations, mood analysis, and personalized suggestions.
 
-### 🎛️ 2. Vibe Studio (AI Dual Mood Mixer)
-- Blend dual emotional states (e.g. *70% Motivated + 30% Happy*) using real-time ratio sliders.
-- Generates hybrid movie recommendations and custom music playlists on the fly.
-- Powered by free public APIs (iTunes Search API & TMDB API).
+### 3. Apple Light Aurora UI System
+- **Subtle Aurora Palette**: Ambient background layers blending violet, rose, sky blue, and mint tints.
+- **Glassmorphic Components**: Translucent white surfaces with crisp borders and subtle micro-shadows.
+- **Adaptive Shell**:
+  - **Desktop / Tablet (>700px)**: Glass sidebar with active indicator badges.
+  - **Mobile (<700px)**: Suspended glass bottom navigation capsule bar.
 
----
-
-### 🎯 3. Vibe Matcher (3-Step AI Quiz)
-- Interactive 3-card swipe questionnaire:
-  1. *Location / Environment* (Home, Commute, Workout, Chill)
-  2. *Available Time* (15 min, 1 Hour, Full Evening)
-  3. *Target Energy Vibe* (High Energy, Calm, Feel Good, Romantic)
-- Instantly computes and reveals the #1 matched movie and song with direct YouTube trailer preview and audio streaming.
+### 4. Cloud Synchronization & Persistence
+- **Firebase Auth & Firestore**: Secure user authentication (Email/Password & Google Sign-In) with cloud synchronization for favorites and history logs.
+- **Local Resilience**: In-memory caching and fallback handling ensure continuous functionality even during network drops.
 
 ---
 
-### 📊 4. Mood Insights & Analytics Dashboard
-- Apple Health-style visual dashboard tracking personal vibe activity.
-- Active Vibe Streak counter, total interaction metrics, and linear progress charts for mood distributions.
-- Personalized Lix AI health & focus recommendations.
+## Architecture & Data Flow
 
----
+```mermaid
+graph TD
+    Client[LIX Flutter App Shell] --> Scaffold[Adaptive Layout Shell]
+    Scaffold --> UI[Screens & Navigation]
+    
+    UI --> MovieService[TMDb Service]
+    UI --> MusicService[Music API Service]
+    UI --> ImdbService[IMDb Live Scraper]
+    UI --> GroqService[Groq AI Client]
+    UI --> AuthService[Firebase Auth & Firestore]
 
-### 🤖 5. Lix AI Assistant & Conversational Hub
-- Apple Intelligence inspired AI conversation screen powered by Groq Llama-3.
-- Quick prompt cards for top requests (party songs, sad melodies, artist discographies, mood uplift).
-- Context-aware responses in 42 languages.
-
----
-
-### 🎬 6. Movies & Music Experience
-- Real-time mood filtering across movies and music.
-- Detailed movie surface with IMDb ratings, quality badges, synopsis, and direct YouTube trailer integration.
-- Music player with 30-second audio previews, album artwork rotation, and playlist queues.
-- Local Favorites and Watch/Listen History tracking.
+    MovieService -->|REST API| TMDB[TMDb API]
+    MusicService -->|REST API| AppleMusic[Apple Music / iTunes API]
+    ImdbService -->|HTTP + Cache| IMDb[IMDb Live Suggestions & Scraping]
+    GroqService -->|REST API| Groq[Groq Llama-3 AI Engine]
+    AuthService -->|SDK| Firebase[Firebase Cloud Database]
+```
 
 ---
 
 ## Supported Languages
 
+LIX supports **42 total languages**, including 22 Indian regional languages and 20 global languages, complete with **Right-to-Left (RTL)** layout mirroring.
+
 ### Indian Regional Languages (22)
-| # | Language      | # | Language   | # | Language       |
-|---|---------------|---|------------|---|----------------|
-| 1 | Hindi         | 9 | Odia       | 17 | Dogri          |
-| 2 | Tamil         | 10 | Punjabi    | 18 | Santali        |
-| 3 | Telugu        | 11 | Assamese   | 19 | Kashmiri (RTL) |
-| 4 | Malayalam     | 12 | Maithili   | 20 | Sindhi (RTL)   |
-| 5 | Kannada       | 13 | Sanskrit   | 21 | Manipuri       |
-| 6 | Bengali       | 14 | Konkani    | 22 | Bodo           |
-| 7 | Gujarati      | 15 | Nepali     |   |                |
-| 8 | Marathi       | 16 | Urdu (RTL) |   |                |
+| # | Language | # | Language | # | Language |
+|---|---|---|---|---|---|
+| 1 | Hindi | 9 | Odia | 17 | Dogri |
+| 2 | Tamil | 10 | Punjabi | 18 | Santali |
+| 3 | Telugu | 11 | Assamese | 19 | Kashmiri (RTL) |
+| 4 | Malayalam | 12 | Maithili | 20 | Sindhi (RTL) |
+| 5 | Kannada | 13 | Sanskrit | 21 | Manipuri |
+| 6 | Bengali | 14 | Konkani | 22 | Bodo |
+| 7 | Gujarati | 15 | Nepali | | |
+| 8 | Marathi | 16 | Urdu (RTL) | | |
 
 ### Global Languages (20)
-| # | Language     | # | Language   | # | Language      |
-|---|--------------|---|------------|---|---------------|
-| 1 | English      | 8 | Russian    | 15 | Turkish       |
-| 2 | Arabic (RTL) | 9 | Japanese   | 16 | Vietnamese    |
-| 3 | French       | 10 | Korean    | 17 | Thai          |
-| 4 | Spanish      | 11 | Portuguese | 18 | Hebrew (RTL)  |
-| 5 | German       | 12 | Italian    | 19 | Indonesian    |
-| 6 | Chinese      | 13 | Dutch      | 20 | Swahili       |
-| 7 | Malay        | 14 | Polish     |   |               |
-
-> *RTL — Full Right-to-Left layout support for Arabic, Urdu, Hebrew, Sindhi, and Kashmiri.*
+| # | Language | # | Language | # | Language |
+|---|---|---|---|---|---|
+| 1 | English | 8 | Russian | 15 | Turkish |
+| 2 | Arabic (RTL) | 9 | Japanese | 16 | Vietnamese |
+| 3 | French | 10 | Korean | 17 | Thai |
+| 4 | Spanish | 11 | Portuguese | 18 | Hebrew (RTL) |
+| 5 | German | 12 | Italian | 19 | Indonesian |
+| 6 | Chinese | 13 | Dutch | 20 | Swahili |
+| 7 | Malay | 14 | Polish | | |
 
 ---
 
-## Tech Stack & Architecture
+## Technology Stack
 
-| Layer | Technology |
-|---|---|
-| **Framework** | Flutter 3.x (Dart 3.x) |
-| **Design Tokens** | Light Aurora Design System (`AppTheme`) |
-| **Navigation** | `AdaptiveScaffold` (macOS Sidebar & Floating Mobile Capsule) |
-| **State & Services** | `ListenableBuilder`, `SharedPreferences`, `AudioPlayers` |
-| **Movie Data API** | TMDB API (Free tier) |
-| **Music Data API** | iTunes Search API (Free public API, zero-key) |
-| **AI Conversational Engine** | Groq Llama-3 API |
-| **Video Trailer Integration** | YouTube Player Flutter |
+| Layer | Component | Details |
+|---|---|---|
+| **Framework** | Flutter 3.x | Cross-platform Dart framework targeting Web, Android, iOS, Windows, macOS |
+| **Language** | Dart 3.x | Type-safe asynchronous development with sound null safety |
+| **Authentication** | Firebase Auth | Email/Password and Google OAuth authentication |
+| **Cloud Database** | Cloud Firestore | User preferences, favorite media lists, and watch/listen history |
+| **Audio Engine** | AudioPlayers | Native audio preview rendering with position tracking and state controls |
+| **External APIs** | TMDb API | Movie metadata, posters, and category discovery |
+| | Apple Music API | Music catalog, artwork, and 30-second preview streams |
+| | Groq API | Groq Llama-3 LLM conversational endpoint |
+| **Scraper** | IMDb Service | Live HTTP search parser with anti-scraping User-Agent headers & TTL cache |
 
 ---
 
@@ -140,78 +123,122 @@ The app supports **42 languages** (22 Indian regional languages and 20 global la
 
 ```
 lix/
-├── lib/
-│   ├── main.dart                      # App entry & AuthGate
-│   ├── core/
-│   │   ├── app_theme.dart             # Light Aurora design system & tokens
-│   │   └── responsive.dart            # Breakpoints & centered layout wrapper
-│   ├── widgets/
-│   │   └── adaptive_scaffold.dart     # Apple glass sidebar & mobile capsule bar
-│   ├── screens/
-│   │   ├── home_screen.dart           # Primary feed & feature cards
-│   │   ├── chat_screen.dart           # Apple Intelligence AI Chat
-│   │   ├── movies_screen.dart         # Movie grid & search
-│   │   ├── music_screen.dart          # Music list & search
-│   │   ├── movie_detail_screen.dart   # Movie details & YouTube trailer
-│   │   ├── music_player_screen.dart   # Music player & rotating album art
-│   │   ├── profile_screen.dart        # Apple HIG grouped settings
-│   │   ├── vibe_studio_screen.dart    # AI Dual Mood Mixer
-│   │   ├── vibe_matcher_screen.dart   # 3-Step AI Matcher Quiz
-│   │   ├── mood_insights_screen.dart  # Usage & Mood Analytics
-│   │   ├── favourites_screen.dart     # Saved movies & songs
-│   │   ├── history_screen.dart        # Playback history logs
-│   │   └── language_screen.dart       # 42 Language selector
-│   └── services/
-│       ├── tmdb_service.dart          # TMDB movie API client
-│       ├── music_api_service.dart     # iTunes Search API client
-│       ├── groq_service.dart          # Groq AI client
-│       ├── vibe_mixer_service.dart    # Dual mood blending engine
-│       ├── mood_analytics_service.dart# Mood stats & streak tracker
-│       ├── favourites_service.dart    # Local favorites manager
-│       ├── history_service.dart       # History logger
-│       └── language_service.dart      # Translation manager
 ├── assets/
-├── pubspec.yaml
-└── README.md
+├── lib/
+│   ├── main.dart                      # Application Entry Point & AuthGate
+│   ├── core/
+│   │   ├── app_theme.dart             # Light Aurora Design System & Typography
+│   │   └── responsive.dart            # Layout Breakpoints & Centered Wrappers
+│   ├── widgets/
+│   │   └── adaptive_scaffold.dart     # Desktop Sidebar & Floating Capsule Bar
+│   ├── screens/
+│   │   ├── home_screen.dart           # Dashboard, Recommendations & Navigation
+│   │   ├── chat_screen.dart           # AI Conversational Assistant
+│   │   ├── movies_screen.dart         # Movie Catalogue & Mood Filtering
+│   │   ├── music_screen.dart          # Music Catalogue & Audio Streamer
+│   │   ├── movie_detail_screen.dart   # Detail View with TMDb & IMDb Ratings
+│   │   ├── music_player_screen.dart   # Interactive Music Player & Queue
+│   │   ├── favourites_screen.dart     # Cloud-Synchronized Saved Media
+│   │   ├── history_screen.dart        # Playback & Watch Log Screen
+│   │   ├── profile_screen.dart        # User Settings & Account Management
+│   │   ├── language_screen.dart       # Multilingual & RTL Language Selection
+│   │   └── help_support_screen.dart   # Help & Documentation Surface
+│   └── services/
+│       ├── tmdb_service.dart          # TMDb REST API Engine
+│       ├── music_api_service.dart     # Apple Music / iTunes Search API Engine
+│       ├── imdb_service.dart          # IMDb Live Scraper & In-Memory TTL Cache
+│       ├── groq_service.dart          # Groq Llama-3 AI Client
+│       ├── favourites_service.dart    # Firestore Favorite Sync Service
+│       ├── history_service.dart       # Firestore Playback History Logger
+│       ├── notifications_service.dart # Notification Management
+│       ├── theme_service.dart         # Theme State Controller
+│       └── language_service.dart      # 42 Language Manager & Translations
+├── pubspec.yaml                       # Dependencies & Assets Configuration
+└── README.md                          # Project Documentation
 ```
 
 ---
 
-## Getting Started
+## Installation & Setup
 
 ### Prerequisites
-- Flutter SDK `>=3.0.0`
-- Dart SDK `>=3.0.0`
-- Chrome / Android Studio / Xcode
+- **Flutter SDK**: Version `3.10.4` or higher
+- **Dart SDK**: Version `3.0.0` or higher
+- **Browser / IDE**: Google Chrome, VS Code, or Android Studio
 
-### Quick Start
+### Installation Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/jeswinbenedict/lix.git
+   cd lix/lix
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Environment File**
+   Create a `.env` file in the project root:
+   ```env
+   GROQ_API_KEY=your_groq_api_key_here
+   ```
+
+4. **Run the Application Locally**
+   ```bash
+   flutter run -d chrome --web-port=8080
+   ```
+
+---
+
+## Technical Integration Details
+
+### IMDb Live Data Source (`ImdbService`)
+The `ImdbService` operates as an asynchronous secondary data provider:
+- **Search Querying**: Executes targeted requests against IMDb search suggestion endpoints (`https://v3.sg.media-imdb.com/suggestion/...`).
+- **Rating Extraction**: Parses live IMDb ratings, top rank standings, and direct title links (`https://www.imdb.com/title/{id}/`).
+- **Anti-Scraping Mitigation**: Employs realistic browser User-Agent headers, timeout limits (`8 seconds`), and fallback algorithms.
+- **In-Memory TTL Caching**: Caches search results locally for 1 hour (`_cacheTtl`), preventing redundant network requests.
+
+### Data Type Safety & History Engine
+- All Firestore document fields undergo explicit type checking (`_parseDateTime`) handling `Timestamp`, `DateTime`, `int`, or ISO string values to prevent casting runtime errors.
+- Media items passed to detail screens strip transient timestamp attributes before re-persisting history logs.
+
+---
+
+## Build & Deployment
+
+### Web Build
 ```bash
-# Clone the repository
-git clone https://github.com/jeswinbenedict/lix.git
-
-# Navigate into the project
-cd lix
-
-# Install dependencies
-flutter pub get
-
-# Run on Web / Device
-flutter run -d chrome --web-port=8080
+flutter build web --release
 ```
+Output files are generated in `build/web/` for static hosting (e.g., Firebase Hosting, Vercel, Netlify).
+
+### Android APK Build
+```bash
+flutter build apk --release
+```
+Output APK is generated in `build/app/outputs/flutter-apk/app-release.apk`.
 
 ---
 
-## Developer
+## Contribution Guidelines
 
-**Jeswin**  
-*Flutter Developer · Tamil Nadu, India*  
-
-LIX is built to make media discovery personal, inclusive, and intuitive.
+1. **Fork the Repository**: Create a personal fork on GitHub.
+2. **Create a Feature Branch**:
+   ```bash
+   git checkout -b feature/new-capability
+   ```
+3. **Commit Changes**: Follow conventional commit conventions.
+4. **Code Quality**: Ensure zero warnings or errors via `flutter analyze`.
+5. **Submit a Pull Request**: Submit a clear description of modifications and verification steps.
 
 ---
 
-<div align="center">
+## License & Attribution
 
-Built with Flutter &nbsp;|&nbsp; Light Aurora UI &nbsp;|&nbsp; LIX &copy; 2026
+Distributed under the MIT License. See `LICENSE` for details.
 
-</div>
+- **Developer**: Jeswin
+- **Platform**: LIX Media Platform
