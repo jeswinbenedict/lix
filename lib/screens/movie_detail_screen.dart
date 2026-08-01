@@ -5,6 +5,7 @@ import '../core/app_theme.dart';
 import '../services/tmdb_service.dart';
 import '../services/favourites_service.dart';
 import '../services/history_service.dart';
+import '../services/imdb_service.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Map<String, String> movie;
@@ -27,6 +28,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   bool _trailerLoading = false;
   List<Map<String, String>> _similarMovies = [];
   bool _loadingSimilar = true;
+  Map<String, String> _imdbData = {};
+  bool _loadingImdb = true;
 
   @override
   void initState() {
@@ -34,8 +37,21 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSimilarMovies();
       _checkFav();
+      _loadImdbData();
       HistoryService.addMovieHistory(widget.movie);
     });
+  }
+
+  Future<void> _loadImdbData() async {
+    final title = widget.movie['title'] ?? '';
+    final year = widget.movie['year'];
+    final data = await ImdbService.getMovieImdbData(title, year: year);
+    if (mounted) {
+      setState(() {
+        _imdbData = data;
+        _loadingImdb = false;
+      });
+    }
   }
 
   Future<void> _checkFav() async {
@@ -52,7 +68,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         _similarMovies = movies
             .where((m) => m['title'] != widget.movie['title'])
             .take(10)
-            .map((m) => Map<String, String>.from(m))
+            .map((m) => m.map((k, v) => MapEntry(k.toString(), v.toString())))
             .toList();
         _loadingSimilar = false;
       });
@@ -113,6 +129,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       debugPrint('Trailer launch error: $e');
     } finally {
       if (mounted) setState(() => _trailerLoading = false);
+    }
+  }
+
+  Future<void> _openImdbUrl() async {
+    final title = widget.movie['title'] ?? '';
+    final urlStr = _imdbData['imdbUrl'] ??
+        'https://www.imdb.com/find/?q=${Uri.encodeComponent(title)}';
+    final url = Uri.parse(urlStr);
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint('IMDb url launch error: $e');
     }
   }
 
@@ -294,13 +324,56 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ..._buildStars(rating),
                       const SizedBox(width: 8),
                       Text(
-                        '$rating / 10',
+                        '$rating / 10 (TMDb)',
                         style: const TextStyle(
                           color: _gold,
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      if (_loadingImdb) ...[
+                        const SizedBox(width: 8),
+                        const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            color: Color(0xFFF5C518),
+                          ),
+                        ),
+                      ] else if (_imdbData['rating'] != null &&
+                          _imdbData['rating']!.isNotEmpty) ...[
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5C518),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'IMDb ',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              Text(
+                                _imdbData['rating']!,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -321,6 +394,42 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           Colors.teal,
                         ),
                       _infoChip('HD Quality', Icons.hd_rounded, Colors.green),
+                      if (_imdbData['rank'] != null &&
+                          _imdbData['rank']!.isNotEmpty)
+                        _infoChip(
+                          'IMDb ${_imdbData['rank']}',
+                          Icons.trending_up_rounded,
+                          const Color(0xFFF5C518),
+                        ),
+                      GestureDetector(
+                        onTap: _openImdbUrl,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5C518).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: const Color(0xFFF5C518).withValues(alpha: 0.6)),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.open_in_new_rounded,
+                                  size: 14, color: Color(0xFFE2B616)),
+                              SizedBox(width: 5),
+                              Text(
+                                'View on IMDb',
+                                style: TextStyle(
+                                  color: Color(0xFFE2B616),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),

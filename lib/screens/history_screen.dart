@@ -88,18 +88,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         subtitle: Text(isSong ? (item['artist'] ?? '') : (item['genre'] ?? '')),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {
+                          final Map<String, String> stringMap = {};
+                          item.forEach((k, v) {
+                            if (v != null && k != 'playedAt' && k != 'watchedAt') {
+                              stringMap[k.toString()] = v.toString();
+                            }
+                          });
                           if (isSong) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => MusicPlayerScreen(song: Map<String, String>.from(item)),
+                                builder: (_) => MusicPlayerScreen(song: stringMap),
                               ),
                             );
                           } else {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => MovieDetailScreen(movie: Map<String, String>.from(item)),
+                                builder: (_) => MovieDetailScreen(movie: stringMap),
                               ),
                             );
                           }

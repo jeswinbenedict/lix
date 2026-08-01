@@ -51,7 +51,7 @@ class FavouritesService {
         .snapshots()
         .map(
           (snap) =>
-              snap.docs.map((d) => Map<String, String>.from(d.data())).toList(),
+              snap.docs.map((d) => d.data().map((k, v) => MapEntry(k.toString(), v?.toString() ?? ''))).toList(),
         );
   }
 
@@ -100,7 +100,7 @@ class FavouritesService {
         .snapshots()
         .map(
           (snap) =>
-              snap.docs.map((d) => Map<String, String>.from(d.data())).toList(),
+              snap.docs.map((d) => d.data().map((k, v) => MapEntry(k.toString(), v?.toString() ?? ''))).toList(),
         );
   }
 

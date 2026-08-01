@@ -12,9 +12,6 @@ import 'music_screen.dart';
 import 'profile_screen.dart';
 import 'movie_detail_screen.dart';
 import 'music_player_screen.dart';
-import 'vibe_studio_screen.dart';
-import 'vibe_matcher_screen.dart';
-import 'mood_insights_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -226,120 +223,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // ── Modern Feature Cards Grid (Studio, Matcher, Analytics) ──
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const VibeStudioScreen()),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: AppTheme.surface,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                            border: Border.all(color: AppTheme.border),
-                            boxShadow: AppTheme.shadowSM,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryLight,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(Icons.tune_rounded, color: AppTheme.primary, size: 20),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text('Vibe Studio', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
-                              const SizedBox(height: 2),
-                              const Text('AI Dual Mixer', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const VibeMatcherScreen()),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: AppTheme.surface,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                            border: Border.all(color: AppTheme.border),
-                            boxShadow: AppTheme.shadowSM,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFDF2F8),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(Icons.auto_awesome_rounded, color: AppTheme.secondary, size: 20),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text('Vibe Matcher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
-                              const SizedBox(height: 2),
-                              const Text('Instant AI Quiz', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const MoodInsightsScreen()),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: AppTheme.surface,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                            border: Border.all(color: AppTheme.border),
-                            boxShadow: AppTheme.shadowSM,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF0FDF4),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(Icons.bar_chart_rounded, color: Color(0xFF10B981), size: 20),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text('Insights', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary)),
-                              const SizedBox(height: 2),
-                              const Text('Mood Analytics', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 28),
                 // Section Title: Movie Picks
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

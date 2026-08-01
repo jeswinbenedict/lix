@@ -8,11 +8,23 @@ class HistoryService {
 
   static String? get _uid => _auth.currentUser?.uid;
 
+  static DateTime? _parseDateTime(dynamic ts) {
+    if (ts == null) return null;
+    if (ts is Timestamp) return ts.toDate();
+    if (ts is DateTime) return ts;
+    if (ts is int) return DateTime.fromMillisecondsSinceEpoch(ts);
+    if (ts is String) return DateTime.tryParse(ts);
+    return null;
+  }
+
   static Future<void> addSongHistory(Map<String, String> song) async {
     final uid = _uid;
     if (uid == null) return;
     final id = song['id'] ?? song['title'] ?? '';
     if (id.isEmpty) return;
+    final cleanSong = Map<String, String>.from(song)
+      ..remove('playedAt')
+      ..remove('watchedAt');
     try {
       await _db
           .collection('users')
@@ -20,7 +32,7 @@ class HistoryService {
           .collection('history_songs')
           .doc(id)
           .set({
-            ...song,
+            ...cleanSong,
             'type': 'song',
             'playedAt': FieldValue.serverTimestamp(),
           });
@@ -115,6 +127,9 @@ class HistoryService {
     if (uid == null) return;
     final id = movie['id'] ?? movie['title'] ?? '';
     if (id.isEmpty) return;
+    final cleanMovie = Map<String, String>.from(movie)
+      ..remove('playedAt')
+      ..remove('watchedAt');
     try {
       await _db
           .collection('users')
@@ -122,7 +137,7 @@ class HistoryService {
           .collection('history_movies')
           .doc(id)
           .set({
-            ...movie,
+            ...cleanMovie,
             'type': 'movie',
             'watchedAt': FieldValue.serverTimestamp(),
           });
@@ -190,18 +205,14 @@ class HistoryService {
       final aTs = a['playedAt'] ?? a['watchedAt'];
       final bTs = b['playedAt'] ?? b['watchedAt'];
 
-      if (aTs == null && bTs == null) return 0;
-      if (aTs == null) return 1;
-      if (bTs == null) return -1;
+      final aTime = _parseDateTime(aTs);
+      final bTime = _parseDateTime(bTs);
 
-      try {
-        final aTime = (aTs as Timestamp).toDate();
-        final bTime = (bTs as Timestamp).toDate();
-        return bTime.compareTo(aTime);
-      } catch (e) {
-        debugPrint('HistoryService.getHistory sort error: $e');
-        return 0;
-      }
+      if (aTime == null && bTime == null) return 0;
+      if (aTime == null) return 1;
+      if (bTime == null) return -1;
+
+      return bTime.compareTo(aTime);
     });
 
     return combined;
