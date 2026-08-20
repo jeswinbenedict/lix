@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_theme.dart';
 import '../core/responsive.dart';
 import '../services/language_service.dart';
+import '../services/theme_service.dart';
 import 'favourites_screen.dart';
 import 'history_screen.dart';
 import 'notifications_screen.dart';
@@ -21,6 +22,85 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final User? _user = FirebaseAuth.instance.currentUser;
   LanguageService get _lang => LanguageService.instance;
+  String _currentDisplayName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _currentDisplayName = _user?.displayName ?? 'Lix User';
+  }
+
+  void _editProfileName() {
+    HapticFeedback.lightImpact();
+    final nameCtrl = TextEditingController(text: _currentDisplayName);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Edit Profile Name',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: nameCtrl,
+                autofocus: true,
+                decoration: InputDecoration(
+                  labelText: 'Display Name',
+                  prefixIcon: const Icon(Icons.person_outline_rounded),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () async {
+                  final newName = nameCtrl.text.trim();
+                  if (newName.isNotEmpty) {
+                    await FirebaseAuth.instance.currentUser?.updateDisplayName(newName);
+                    if (mounted) {
+                      setState(() => _currentDisplayName = newName);
+                    }
+                  }
+                  if (ctx.mounted) Navigator.pop(ctx);
+                },
+                child: const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _logout() {
     HapticFeedback.mediumImpact();
@@ -257,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      displayName,
+                                      _currentDisplayName,
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w800,
@@ -269,18 +349,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.primaryLight,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Text(
-                                      'Member',
-                                      style: TextStyle(
+                                  GestureDetector(
+                                    onTap: _editProfileName,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primaryLight,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Icon(
+                                        Icons.edit_outlined,
+                                        size: 14,
                                         color: AppTheme.primary,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ),
@@ -330,6 +410,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Section 2: Preferences
                   _buildSectionHeader(_lang.translate('Preferences & Configuration')),
                   _buildSettingsGroup([
+                    _buildSettingsItem(
+                      icon: ThemeService.instance.isDark
+                          ? Icons.dark_mode_rounded
+                          : Icons.light_mode_rounded,
+                      iconBgColor: ThemeService.instance.isDark
+                          ? const Color(0xFF6366F1)
+                          : const Color(0xFFF59E0B),
+                      title: _lang.translate('Dark Mode'),
+                      subtitle: ThemeService.instance.isDark ? 'Dark theme active' : 'Light theme active',
+                      trailingWidget: Switch.adaptive(
+                        value: ThemeService.instance.isDark,
+                        activeTrackColor: AppTheme.primary,
+                        onChanged: (val) => ThemeService.instance.setDark(val),
+                      ),
+                      onTap: () => ThemeService.instance.toggleTheme(),
+                    ),
                     _buildSettingsItem(
                       icon: Icons.notifications_rounded,
                       iconBgColor: const Color(0xFFD97706),

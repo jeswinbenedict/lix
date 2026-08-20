@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/app_theme.dart';
 import '../core/responsive.dart';
 import '../services/tmdb_service.dart';
 import '../services/language_service.dart';
+import '../widgets/shimmer_skeleton.dart';
 import 'movie_detail_screen.dart';
 
 class MoviesScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   bool _loading = true;
   String _selectedMood = 'Happy';
   final _searchController = TextEditingController();
+  Timer? _debounce;
+  bool _isSearching = false;
 
   final List<String> _moods = const [
     'Happy',
@@ -40,7 +45,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 
   Future<void> _fetchMovies(String mood) async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _isSearching = false;
+    });
     try {
       final list = await TmdbService.getMoviesByMood(mood);
       if (mounted) {
@@ -54,8 +62,38 @@ class _MoviesScreenState extends State<MoviesScreen> {
     }
   }
 
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (query.trim().isNotEmpty) {
+        _searchMovies(query.trim());
+      } else {
+        _fetchMovies(_selectedMood);
+      }
+    });
+  }
+
+  Future<void> _searchMovies(String query) async {
+    setState(() {
+      _loading = true;
+      _isSearching = true;
+    });
+    try {
+      final results = await TmdbService.searchMovies(query);
+      if (mounted) {
+        setState(() {
+          _movies = results;
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -65,9 +103,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
     return ListenableBuilder(
       listenable: _lang,
       builder: (context, _) => Scaffold(
-        backgroundColor: AppTheme.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: AppTheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 0,
           title: Row(
             children: [
@@ -76,7 +114,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
               Text(
                 _lang.translate("Movies"),
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: AppTheme.heading2(context),
                 ),
@@ -85,187 +123,234 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Divider(height: 1, color: AppTheme.border),
+            child: Divider(height: 1, color: Theme.of(context).dividerColor.withAlpha(40)),
           ),
         ),
-        body: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: CenteredContent(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    // Search box
-                    TextField(
-                      controller: _searchController,
-                      style: const TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: _lang.translate("Search movies, genres..."),
-                        hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 15),
-                        prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                          borderSide: const BorderSide(color: AppTheme.border, width: 1),
+        body: RefreshIndicator(
+          color: AppTheme.primary,
+          onRefresh: () async {
+            if (_isSearching && _searchController.text.isNotEmpty) {
+              await _searchMovies(_searchController.text.trim());
+            } else {
+              await _fetchMovies(_selectedMood);
+            }
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            slivers: [
+              SliverToBoxAdapter(
+                child: CenteredContent(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      // Search Box
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          onSubmitted: (q) => _searchMovies(q.trim()),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: _lang.translate("Search movies, genres..."),
+                            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 15),
+                            prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear_rounded, size: 18),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _fetchMovies(_selectedMood);
+                                    },
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.surface,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor.withAlpha(40), width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                              borderSide: const BorderSide(color: AppTheme.primary, width: 1.8),
+                            ),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                          borderSide: const BorderSide(color: AppTheme.primary, width: 1.8),
-                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Mood Chips
-                    SizedBox(
-                      height: 44,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _moods.length,
-                        itemBuilder: (context, index) {
-                          final mood = _moods[index];
-                          final isSelected = mood == _selectedMood;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ChoiceChip(
-                              label: Text(_lang.translate(mood)),
-                              selected: isSelected,
-                              selectedColor: AppTheme.primary,
-                              labelStyle: TextStyle(
-                                color: isSelected ? Colors.white : AppTheme.textPrimary,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              ),
-                              onSelected: (selected) {
-                                if (selected) {
-                                  setState(() => _selectedMood = mood);
-                                  _fetchMovies(mood);
-                                }
+                      const SizedBox(height: 16),
+                      // Mood Filter Chips
+                      if (!_isSearching)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: SizedBox(
+                            height: 44,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _moods.length,
+                              itemBuilder: (context, index) {
+                                final mood = _moods[index];
+                                final isSelected = mood == _selectedMood;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: ChoiceChip(
+                                    label: Text(_lang.translate(mood)),
+                                    selected: isSelected,
+                                    selectedColor: AppTheme.primary,
+                                    labelStyle: TextStyle(
+                                      color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                    ),
+                                    onSelected: (selected) {
+                                      if (selected) {
+                                        HapticFeedback.selectionClick();
+                                        setState(() => _selectedMood = mood);
+                                        _fetchMovies(mood);
+                                      }
+                                    },
+                                  ),
+                                );
                               },
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              sliver: _loading
-                  ? const SliverToBoxAdapter(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: CircularProgressIndicator(color: AppTheme.primary),
-                        ),
-                      ),
-                    )
-                  : SliverGrid(
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 220,
-                        mainAxisExtent: 310,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final movie = _movies[index];
-                          return GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MovieDetailScreen(movie: movie),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                sliver: _loading
+                    ? buildMovieShimmerGrid()
+                    : _movies.isEmpty
+                        ? SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.all(40.0),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.search_off_rounded, size: 48, color: AppTheme.textSecondary),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      _lang.translate("No movies found."),
+                                      style: const TextStyle(color: AppTheme.textSecondary, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMD),
-                                border: Border.all(color: AppTheme.border),
-                                boxShadow: AppTheme.shadowSM,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(AppTheme.radiusMD),
+                          )
+                        : SliverGrid(
+                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 220,
+                              mainAxisExtent: 310,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final movie = _movies[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MovieDetailScreen(movie: movie),
                                       ),
-                                      child: movie['poster'] != null && movie['poster']!.isNotEmpty
-                                          ? Image.network(
-                                              movie['poster']!,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) => Container(
-                                                color: AppTheme.shimmerBase,
-                                                child: const Icon(Icons.movie, size: 40, color: AppTheme.primary),
-                                              ),
-                                            )
-                                          : Container(
-                                              color: AppTheme.shimmerBase,
-                                              child: const Icon(Icons.movie, size: 40, color: AppTheme.primary),
-                                            ),
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.surface,
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                                      border: Border.all(color: Theme.of(context).dividerColor.withAlpha(40)),
+                                      boxShadow: AppTheme.shadowSM,
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          movie['title'] ?? 'Movie',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: const BorderRadius.vertical(
+                                              top: Radius.circular(AppTheme.radiusMD),
+                                            ),
+                                            child: movie['poster'] != null && movie['poster']!.isNotEmpty
+                                                ? Hero(
+                                                    tag: 'movie_poster_${movie['title']}',
+                                                    child: Image.network(
+                                                      movie['poster']!,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder: (context, error, stackTrace) => Container(
+                                                        color: AppTheme.shimmerBase,
+                                                        child: const Icon(Icons.movie, size: 40, color: AppTheme.primary),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    color: AppTheme.shimmerBase,
+                                                    child: const Icon(Icons.movie, size: 40, color: AppTheme.primary),
+                                                  ),
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              '⭐ ${movie['rating']}',
-                                              style: const TextStyle(
-                                                color: AppTheme.warning,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                movie['title'] ?? 'Unknown Movie',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              movie['year'] ?? '',
-                                              style: TextStyle(
-                                                color: AppTheme.textSecondary,
-                                                fontSize: 12,
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.star_rounded, size: 16, color: Color(0xFFF59E0B)),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    movie['rating'] ?? 'N/A',
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  const Spacer(),
+                                                  Text(
+                                                    movie['year'] ?? '',
+                                                    style: const TextStyle(
+                                                      color: AppTheme.textSecondary,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
+                              childCount: _movies.length,
                             ),
-                          );
-                        },
-                        childCount: _movies.length,
-                      ),
-                    ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 30)),
-          ],
+                          ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
+          ),
         ),
       ),
     );

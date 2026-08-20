@@ -112,25 +112,74 @@ $songText
   }
 
   static String detectMood(String message) {
-    message = message.toLowerCase();
-    if (message.contains('happy') || message.contains('good')) {
-      return 'Happy';
+    final lower = message.toLowerCase();
+
+    // 1. Emoji Direct Matching
+    if (RegExp(r'[😊😄😃😁🎉🥳✨💃🕺🌞]').hasMatch(message)) return 'Happy';
+    if (RegExp(r'[😢😭😔💔😞🌧️😿🥀]').hasMatch(message)) return 'Sad';
+    if (RegExp(r'[😰😨😥😱🥺🧘‍♂️🧘‍♀️🕯️]').hasMatch(message)) return 'Anxious';
+    if (RegExp(r'[🥱😴💤😑😒🛋️]').hasMatch(message)) return 'Bored';
+    if (RegExp(r'[💪🔥⚡🏃‍♂️🏋️‍♀️🏆🚀]').hasMatch(message)) return 'Motivated';
+    if (RegExp(r'[❤️💖💕😍🥰🌹😘💌]').hasMatch(message)) return 'Romantic';
+
+    // 2. Phrase & Keyword Patterns
+    final happyScores = _countMatches(lower, [
+      'happy', 'good', 'great', 'joy', 'cheerful', 'party', 'dance', 'celebrate',
+      'blessed', 'fun', 'awesome', 'smiling', 'ecstatic', 'upbeat'
+    ]);
+
+    final sadScores = _countMatches(lower, [
+      'sad', 'depressed', 'crying', 'broken', 'heartbreak', 'gloomy', 'lonely',
+      'down', 'hurt', 'pain', 'grief', 'melancholy', 'miss you', 'unhappy'
+    ]);
+
+    final anxiousScores = _countMatches(lower, [
+      'anxious', 'worried', 'stress', 'nervous', 'calm', 'relax', 'peace',
+      'meditate', 'chill', 'lofi', 'panic', 'overwhelmed', 'deep breath', 'soothe'
+    ]);
+
+    final boredScores = _countMatches(lower, [
+      'bored', 'tired', 'dull', 'nothing to do', 'sleepy', 'lazy', 'uninspired',
+      'tedious', 'exhausted', 'slow day'
+    ]);
+
+    final motivatedScores = _countMatches(lower, [
+      'motivated', 'excited', 'workout', 'gym', 'energy', 'grind', 'focus',
+      'run', 'power', 'hustle', 'beast', 'pump', 'ambition', 'action'
+    ]);
+
+    final romanticScores = _countMatches(lower, [
+      'romantic', 'love', 'date', 'couple', 'crush', 'kiss', 'candle',
+      'valentine', 'sweetheart', 'darling', 'romance', 'slow dance'
+    ]);
+
+    final scores = {
+      'Happy': happyScores,
+      'Sad': sadScores,
+      'Anxious': anxiousScores,
+      'Bored': boredScores,
+      'Motivated': motivatedScores,
+      'Romantic': romanticScores,
+    };
+
+    String bestMood = 'Happy';
+    int maxScore = 0;
+
+    scores.forEach((mood, score) {
+      if (score > maxScore) {
+        maxScore = score;
+        bestMood = mood;
+      }
+    });
+
+    return bestMood;
+  }
+
+  static int _countMatches(String text, List<String> keywords) {
+    int count = 0;
+    for (final kw in keywords) {
+      if (text.contains(kw)) count++;
     }
-    if (message.contains('sad') || message.contains('depressed')) {
-      return 'Sad';
-    }
-    if (message.contains('anxious') || message.contains('worried')) {
-      return 'Anxious';
-    }
-    if (message.contains('bored') || message.contains('tired')) {
-      return 'Bored';
-    }
-    if (message.contains('motivated') || message.contains('excited')) {
-      return 'Motivated';
-    }
-    if (message.contains('romantic') || message.contains('love')) {
-      return 'Romantic';
-    }
-    return 'Happy';
+    return count;
   }
 }

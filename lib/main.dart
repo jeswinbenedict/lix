@@ -52,8 +52,9 @@ class LixApp extends StatelessWidget {
         builder: (context, _) => MaterialApp(
           title: 'Lix',
           debugShowCheckedModeBanner: false,
-          themeMode: ThemeMode.light,
+          themeMode: ThemeService.instance.themeMode,
           theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
           locale: LanguageService.instance.locale,
           supportedLocales: LanguageService.supportedLocales,
           localizationsDelegates: const [

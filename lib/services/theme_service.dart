@@ -12,11 +12,12 @@ class ThemeService extends ChangeNotifier {
 
   bool _isDark = false;
 
-  bool get isDark => false;
-  ThemeMode get themeMode => ThemeMode.light;
+  bool get isDark => _isDark;
+  ThemeMode get themeMode => _isDark ? ThemeMode.dark : ThemeMode.light;
 
   Future<void> init() async {
-    _isDark = false;
+    final prefs = await SharedPreferences.getInstance();
+    _isDark = prefs.getBool(_key) ?? false;
     notifyListeners();
   }
 

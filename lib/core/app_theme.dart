@@ -193,6 +193,103 @@ class AppTheme {
         ),
       );
 
+  // ── Dark Theme Color Tokens ────────────────────────────────
+  static const Color darkBackground = Color(0xFF0F1117);
+  static const Color darkSurface = Color(0xFF1A1D27);
+  static const Color darkSurfaceGlass = Color(0xFF1E2130);
+  static const Color darkTextPrimary = Color(0xFFF1F5F9);
+  static const Color darkTextSecondary = Color(0xFF94A3B8);
+  static const Color darkBorder = Color(0xFF2D3348);
+
+  static LinearGradient get darkAuroraBackgroundGradient => const LinearGradient(
+        colors: [
+          Color(0xFF0F1117),
+          Color(0xFF13111F),
+          Color(0xFF0F1219),
+          Color(0xFF0F1315),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
+  static LinearGradient get darkCardGlassGradient => LinearGradient(
+        colors: [
+          const Color(0xFF1A1D27).withAlpha(240),
+          const Color(0xFF1E2130).withAlpha(210),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
+  // ── Dark Theme ──────────────────────────────────────────
+  static ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primary,
+          brightness: Brightness.dark,
+          surface: darkSurface,
+          primary: primary,
+          secondary: secondary,
+          error: error,
+        ).copyWith(surfaceContainerHighest: darkBackground),
+        scaffoldBackgroundColor: darkBackground,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: darkSurface,
+          foregroundColor: darkTextPrimary,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          titleTextStyle: TextStyle(
+            color: darkTextPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.4,
+          ),
+        ),
+        cardTheme: CardThemeData(
+          color: darkSurface,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusMD),
+            side: const BorderSide(color: darkBorder, width: 1),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primary,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 54),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusMD),
+            ),
+            elevation: 0,
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.2,
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: darkSurface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radiusMD),
+            borderSide: const BorderSide(color: darkBorder, width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radiusMD),
+            borderSide: const BorderSide(color: darkBorder, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radiusMD),
+            borderSide: const BorderSide(color: primary, width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          hintStyle: const TextStyle(color: darkTextSecondary, fontSize: 15),
+        ),
+      );
+
   static double _lerp(
     double val,
     double minVal,
@@ -204,4 +301,3 @@ class AppTheme {
     return minOut + t * (maxOut - minOut);
   }
 }
-

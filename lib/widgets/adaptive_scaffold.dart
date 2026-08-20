@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/responsive.dart';
 import '../core/app_theme.dart';
+import '../services/theme_service.dart';
+import 'mini_player_widget.dart';
 
 class AdaptiveScaffold extends StatefulWidget {
   final int selectedIndex;
@@ -37,19 +39,24 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = Responsive.isDesktop(context) || Responsive.isTablet(context);
+    final isDark = ThemeService.instance.isDark;
+    final bgColor = isDark ? AppTheme.darkBackground : AppTheme.background;
+    final surfaceColor = isDark ? AppTheme.darkSurface : AppTheme.surface;
+    final borderColor = isDark ? AppTheme.darkBorder : AppTheme.border;
+    final auroraGradient = isDark ? AppTheme.darkAuroraBackgroundGradient : AppTheme.auroraBackgroundGradient;
 
     if (isDesktop) {
       return Scaffold(
-        backgroundColor: AppTheme.background,
+        backgroundColor: bgColor,
         body: Row(
           children: [
             // Apple macOS Sonoma / iPadOS 18 Glass Sidebar
             Container(
               width: 104,
               decoration: BoxDecoration(
-                color: AppTheme.surface.withAlpha(245),
-                border: const Border(
-                  right: BorderSide(color: AppTheme.border, width: 1),
+                color: surfaceColor.withAlpha(245),
+                border: Border(
+                  right: BorderSide(color: borderColor, width: 1),
                 ),
                 boxShadow: AppTheme.shadowSM,
               ),
@@ -116,9 +123,14 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: AppTheme.auroraBackgroundGradient,
+                  gradient: auroraGradient,
                 ),
-                child: widget.body,
+                child: Column(
+                  children: [
+                    Expanded(child: widget.body),
+                    const MiniPlayerWidget(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -128,45 +140,51 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
 
     // Mobile Layout with Floating Glass Capsule Navbar
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: bgColor,
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.auroraBackgroundGradient,
+          gradient: auroraGradient,
         ),
         child: widget.body,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: SafeArea(
-          child: Container(
-            height: 66,
-            decoration: BoxDecoration(
-              color: AppTheme.surface.withAlpha(245),
-              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-              border: Border.all(color: AppTheme.border, width: 1),
-              boxShadow: AppTheme.shadowMD,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(widget.destinations.length, (index) {
-                final destination = widget.destinations[index];
-                final isSelected = index == widget.selectedIndex;
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const MiniPlayerWidget(),
+          Container(
+            color: Colors.transparent,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: SafeArea(
+              child: Container(
+                height: 66,
+                decoration: BoxDecoration(
+                  color: surfaceColor.withAlpha(245),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                  border: Border.all(color: borderColor, width: 1),
+                  boxShadow: AppTheme.shadowMD,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(widget.destinations.length, (index) {
+                    final destination = widget.destinations[index];
+                    final isSelected = index == widget.selectedIndex;
 
-                return Expanded(
-                  child: _MobileNavTile(
-                    destination: destination,
-                    isSelected: isSelected,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      widget.onDestinationSelected(index);
-                    },
-                  ),
-                );
-              }),
+                    return Expanded(
+                      child: _MobileNavTile(
+                        destination: destination,
+                        isSelected: isSelected,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          widget.onDestinationSelected(index);
+                        },
+                      ),
+                    );
+                  }),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

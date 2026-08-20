@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/app_theme.dart';
 import '../services/tmdb_service.dart';
@@ -218,6 +219,32 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
             ),
             actions: [
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  final title = widget.movie['title'] ?? 'Movie';
+                  final year = widget.movie['year'] ?? '';
+                  final rating = widget.movie['rating'] ?? '';
+                  final imdbUrl = _imdbData['imdbUrl'] ?? '';
+                  final text = imdbUrl.isNotEmpty
+                      ? '🎬 Check out "$title" ($year) ⭐ $rating/10 on Lix!\n$imdbUrl'
+                      : '🎬 Check out "$title" ($year) ⭐ $rating/10 on Lix — Mood-Based Movies & Music!';
+                  Share.share(text, subject: 'Movie Recommendation: $title');
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.share_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   HapticFeedback.lightImpact();

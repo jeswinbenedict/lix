@@ -3,9 +3,31 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+class _MusicCacheEntry {
+  final DateTime timestamp;
+  final List<Map<String, String>> data;
+  _MusicCacheEntry(this.timestamp, this.data);
+}
+
 class MusicApiService {
   static const String _baseUrl = 'https://itunes.apple.com/search';
   static const Duration _timeout = Duration(seconds: 12);
+
+  // ── In-Memory TTL Cache ─────────────────────────────────
+  static final Map<String, _MusicCacheEntry> _cache = {};
+  static const Duration _cacheTtl = Duration(minutes: 15);
+
+  static List<Map<String, String>>? _getFromCache(String key) {
+    final entry = _cache[key];
+    if (entry != null && DateTime.now().difference(entry.timestamp) < _cacheTtl) {
+      return entry.data;
+    }
+    return null;
+  }
+
+  static void _setCache(String key, List<Map<String, String>> data) {
+    _cache[key] = _MusicCacheEntry(DateTime.now(), data);
+  }
 
   static const Map<String, List<String>> _moodQueries = {
     'Happy': [
@@ -166,6 +188,10 @@ class MusicApiService {
   }
 
   static Future<List<Map<String, String>>> getSongsByMood(String mood) async {
+    final cacheKey = 'mood:$mood';
+    final cached = _getFromCache(cacheKey);
+    if (cached != null) return cached;
+
     final queries = _moodQueries[mood] ?? _moodQueries['Happy']!;
     final query = queries[Random().nextInt(queries.length)];
 
@@ -175,7 +201,10 @@ class MusicApiService {
           'iTunes attempt $attempt | query: "$query" | mood: $mood',
         );
         final result = await _fetchSongs(query, mood);
-        if (result.isNotEmpty) return result;
+        if (result.isNotEmpty) {
+          _setCache(cacheKey, result);
+          return result;
+        }
       } on http.ClientException catch (e) {
         debugPrint('iTunes ClientException attempt $attempt: $e');
         if (attempt < 2) await Future.delayed(const Duration(seconds: 2));
@@ -190,8 +219,15 @@ class MusicApiService {
   }
 
   static Future<List<Map<String, String>>> searchSongs(String query) async {
+    if (query.trim().isEmpty) return [];
+    final cacheKey = 'search:${query.trim().toLowerCase()}';
+    final cached = _getFromCache(cacheKey);
+    if (cached != null) return cached;
+
     try {
-      return await _fetchSongs(query, '');
+      final result = await _fetchSongs(query, '');
+      if (result.isNotEmpty) _setCache(cacheKey, result);
+      return result;
     } on http.ClientException catch (e) {
       debugPrint('iTunes search ClientException: $e');
       return [];
