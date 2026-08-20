@@ -263,6 +263,28 @@ class TmdbService {
     return [];
   }
 
+  /// Feature 4: Get now playing movies
+  static Future<List<Map<String, String>>> getNowPlaying() async {
+    const cacheKey = 'now_playing';
+    final cached = _getFromCache(cacheKey);
+    if (cached != null) return cached;
+
+    final url = Uri.parse('$_baseUrl/movie/now_playing?api_key=$_apiKey&page=1');
+    try {
+      final response = await http.get(url).timeout(_timeout);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final movies = data['results'] as List;
+        final result = movies.take(10).map(_parseMovie).toList();
+        _setCache(cacheKey, result);
+        return result;
+      }
+    } catch (e) {
+      debugPrint('TMDb now_playing error: $e');
+    }
+    return [];
+  }
+
   /// Feature 4: Get top rated movies
   static Future<List<Map<String, String>>> getTopRated() async {
     const cacheKey = 'top_rated';

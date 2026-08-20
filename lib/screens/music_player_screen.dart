@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../core/app_theme.dart';
 import '../services/favourites_service.dart';
 import '../services/global_audio_service.dart';
+import '../widgets/synesthetic_visualizer.dart';
 
 class MusicPlayerScreen extends StatefulWidget {
   final Map<String, String> song;
@@ -292,34 +293,45 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                   ),
                 ),
                 const Spacer(),
-                // Spinning Vinyl / Album Artwork with Hero
+                // Spinning Vinyl / Album Artwork with Synesthetic Visualizer Aura
                 Center(
-                  child: AnimatedBuilder(
-                    animation: _rotationController,
-                    builder: (_, child) => Transform.rotate(
-                      angle: _rotationController.value * 6.28318,
-                      child: child,
-                    ),
-                    child: Hero(
-                      tag: 'song_cover_${song['title']}',
-                      child: Container(
-                        width: (MediaQuery.of(context).size.width * 0.65).clamp(200.0, 320.0),
-                        height: (MediaQuery.of(context).size.width * 0.65).clamp(200.0, 320.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: AppTheme.shadowPrimary,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SynestheticVisualizer(
+                        isPlaying: isPlaying,
+                        primaryColor: AppTheme.primary,
+                        accentColor: const Color(0xFF06B6D4),
+                        size: (MediaQuery.of(context).size.width * 0.85).clamp(260.0, 360.0),
+                      ),
+                      AnimatedBuilder(
+                        animation: _rotationController,
+                        builder: (_, child) => Transform.rotate(
+                          angle: _rotationController.value * 6.28318,
+                          child: child,
                         ),
-                        child: ClipOval(
-                          child: hasCover
-                              ? Image.network(
-                                  cover,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (ctx, err, stack) => _artPlaceholder(),
-                                )
-                              : _artPlaceholder(),
+                        child: Hero(
+                          tag: 'song_cover_${song['title']}',
+                          child: Container(
+                            width: (MediaQuery.of(context).size.width * 0.55).clamp(180.0, 260.0),
+                            height: (MediaQuery.of(context).size.width * 0.55).clamp(180.0, 260.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: AppTheme.shadowPrimary,
+                            ),
+                            child: ClipOval(
+                              child: hasCover
+                                  ? Image.network(
+                                      cover,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (ctx, err, stack) => _artPlaceholder(),
+                                    )
+                                  : _artPlaceholder(),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
                 const Spacer(),

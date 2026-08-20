@@ -10,12 +10,14 @@ import '../services/language_service.dart';
 import '../services/tmdb_service.dart';
 import '../services/music_api_service.dart';
 import '../services/global_audio_service.dart';
+import '../services/prefetch_engine.dart';
 import 'chat_screen.dart';
 import 'movies_screen.dart';
 import 'music_screen.dart';
 import 'profile_screen.dart';
 import 'movie_detail_screen.dart';
 import 'music_player_screen.dart';
+import 'brainwave_studio_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,9 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _fetchData(_selectedMood),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData(_selectedMood);
+      PrefetchEngine.instance.prefetchColdStart();
+    });
   }
 
   Future<void> _fetchData(String mood) async {
@@ -199,6 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 HapticFeedback.selectionClick();
                                 setState(() => _selectedMood = mood);
                                 _fetchData(mood);
+                                PrefetchEngine.instance.onUserSelectedMood(mood);
                               }
                             },
                           ),
@@ -206,7 +210,77 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
+
+                  // Futuristic Neural Brainwave Studio Banner
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BrainwaveStudioScreen()),
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF4F46E5), Color(0xFF7C3AED), Color(0xFF06B6D4)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6366F1).withAlpha(80),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withAlpha(40),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+                          ),
+                          const SizedBox(width: 14),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Neural Soundscape Studio',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  'Alpha & Theta brainwave focus generator',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // Section Title: Trending Movies
                   if (_trendingMovies.isNotEmpty) ...[
