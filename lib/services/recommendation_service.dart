@@ -114,23 +114,30 @@ $songText
   static String detectMood(String message) {
     final lower = message.toLowerCase();
 
-    // 1. Emoji Direct Matching
-    if (RegExp(r'[😊😄😃😁🎉🥳✨💃🕺🌞]').hasMatch(message)) return 'Happy';
-    if (RegExp(r'[😢😭😔💔😞🌧️😿🥀]').hasMatch(message)) return 'Sad';
-    if (RegExp(r'[😰😨😥😱🥺🧘‍♂️🧘‍♀️🕯️]').hasMatch(message)) return 'Anxious';
-    if (RegExp(r'[🥱😴💤😑😒🛋️]').hasMatch(message)) return 'Bored';
-    if (RegExp(r'[💪🔥⚡🏃‍♂️🏋️‍♀️🏆🚀]').hasMatch(message)) return 'Motivated';
-    if (RegExp(r'[❤️💖💕😍🥰🌹😘💌]').hasMatch(message)) return 'Romantic';
+    // 1. Emoji Direct Matching (using exact code-point containment)
+    const happyEmojis = ['😊', '😄', '😃', '😁', '🎉', '🥳', '✨', '💃', '🕺', '🌞'];
+    const sadEmojis = ['😢', '😭', '😔', '💔', '😞', '🌧️', '🌧', '😿', '🥀'];
+    const anxiousEmojis = ['😰', '😨', '😥', '😱', '🥺', '🧘‍♂️', '🧘‍♀️', '🧘', '🕯️'];
+    const boredEmojis = ['🥱', '😴', '💤', '😑', '😒', '🛋️'];
+    const motivatedEmojis = ['💪', '🔥', '⚡', '🏃‍♂️', '🏃', '🏋️‍♀️', '🏋️', '🏆', '🚀'];
+    const romanticEmojis = ['❤️', '💖', '💕', '😍', '🥰', '🌹', '😘', '💌'];
+
+    if (sadEmojis.any(message.contains)) return 'Sad';
+    if (happyEmojis.any(message.contains)) return 'Happy';
+    if (anxiousEmojis.any(message.contains)) return 'Anxious';
+    if (boredEmojis.any(message.contains)) return 'Bored';
+    if (motivatedEmojis.any(message.contains)) return 'Motivated';
+    if (romanticEmojis.any(message.contains)) return 'Romantic';
 
     // 2. Phrase & Keyword Patterns
     final happyScores = _countMatches(lower, [
       'happy', 'good', 'great', 'joy', 'cheerful', 'party', 'dance', 'celebrate',
-      'blessed', 'fun', 'awesome', 'smiling', 'ecstatic', 'upbeat'
+      'blessed', 'fun', 'awesome', 'smiling', 'ecstatic', 'upbeat', 'wonderful'
     ]);
 
     final sadScores = _countMatches(lower, [
       'sad', 'depressed', 'crying', 'broken', 'heartbreak', 'gloomy', 'lonely',
-      'down', 'hurt', 'pain', 'grief', 'melancholy', 'miss you', 'unhappy'
+      'down', 'hurt', 'pain', 'grief', 'melancholy', 'miss you', 'unhappy', 'terrible', 'awful'
     ]);
 
     final anxiousScores = _countMatches(lower, [
